@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>سوق الجملة للصوصات — بوابة توريد الكافيهات والمطاعم بالدقهلية</title>
+  <title>VELO — بوابة توريد جملة للصوصات في الدقهلية</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -14,14 +14,14 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- الشريط العلوي -->
+  <!-- الشريط العلوي لـ VELO -->
   <header class="sticky top-0 z-40 bg-stone-900 text-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center gap-3">
-      <div class="flex items-center gap-2 shrink-0 cursor-pointer" onclick="switchTab('client'); filterCategory('all');">
-        <div class="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 font-black flex items-center justify-center text-lg">ص</div>
+      <div class="flex items-center gap-2.5 shrink-0 cursor-pointer" onclick="switchTab('client'); filterCategory('all');">
+        <div class="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 font-black flex items-center justify-center text-lg tracking-tight">V</div>
         <div>
-          <div class="font-black text-base leading-tight">صوصات<span class="text-amber-400">.جملة</span></div>
-          <div class="text-[10px] text-stone-400">توريد الكافيهات والمطاعم • الدقهلية</div>
+          <div class="font-black text-base leading-tight tracking-wide">VELO <span class="text-amber-400 text-xs font-extrabold">B2B</span></div>
+          <div class="text-[10px] text-stone-400">بوابة توريد جملة للصوصات • الدقهلية</div>
         </div>
       </div>
 
@@ -43,7 +43,7 @@
           <option value="pumps_bottles">بمبات وعبوات</option>
           <option value="bundles">باقات مجمعة</option>
         </select>
-        <input id="searchInput" oninput="renderProducts()" type="text" placeholder="ابحث عن صوص كراميل، شوكولاتة، شيدر، بمب صوصات، جركن..."
+        <input id="searchInput" oninput="renderProducts()" type="text" placeholder="ابحث في VELO عن صوص كراميل، شوكولاتة، شيدر، بمب، جركن..."
           class="w-full px-3.5 py-2 text-sm focus:outline-none" />
         <button onclick="renderProducts()" class="bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold px-4 text-sm">بحث</button>
       </div>
@@ -87,13 +87,12 @@
   <!-- ================= واجهة المتجر للعميل ================= -->
   <main id="clientView" class="max-w-7xl w-full mx-auto px-4 py-5 space-y-5 flex-1">
 
-    <!-- بانر المتجر + شريط إعادة الطلب السريع -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-8 bg-gradient-to-l from-stone-900 via-stone-800 to-amber-950 text-white rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span class="inline-block bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md mb-1.5">فاتورة واحدة • عروض وخصومات جملة</span>
+          <span class="inline-block bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md mb-1.5">VELO • فاتورة موحدة • عروض وخصومات جملة</span>
           <h1 class="text-lg md:text-2xl font-black">توريد جملة للصوصات ومستلزمات التشغيل في الدقهلية</h1>
-          <p class="text-xs text-stone-300 mt-1">اجمع طلبك من مختلف البراندات في سلة واحدة واستلم بفاتورة موحدة باسم المنصة.</p>
+          <p class="text-xs text-stone-300 mt-1">اجمع طلبك من مختلف البراندات في سلة واحدة واستلم بفاتورة موحدة باسم VELO.</p>
         </div>
         <button onclick="filterCategory('bundles')" class="bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs px-4 py-3 rounded-xl shrink-0">تصفح الباقات المجمعة</button>
       </div>
@@ -112,7 +111,6 @@
       </div>
     </div>
 
-    <!-- هيكل المتجر: فلاتر جانبية + شبكة المنتجات -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
       <aside class="lg:col-span-3 bg-white border border-stone-200 rounded-2xl p-4 space-y-5 hidden lg:block sticky top-28">
@@ -161,7 +159,7 @@
   <aside id="cartDrawer" class="fixed top-0 left-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col">
     <div class="p-4 bg-stone-900 text-white flex items-center justify-between">
       <div>
-        <h2 class="font-black text-base">الفاتورة الموحدة</h2>
+        <h2 class="font-black text-base">فاتورة VELO الموحدة</h2>
         <p class="text-[11px] text-stone-300">تجميع أصنافك من عدة موردين في شحنة وفاتورة واحدة</p>
       </div>
       <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-lg bg-stone-800 hover:bg-stone-700 text-white font-bold">✕</button>
@@ -199,13 +197,12 @@
   <section id="adminView" class="max-w-7xl w-full mx-auto px-4 py-6 space-y-6 hidden flex-1">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h2 class="text-xl font-black text-stone-900">لوحة تشغيل المنصة وإدارة الكتالوج وأوامر الاستلام</h2>
+        <h2 class="text-xl font-black text-stone-900">لوحة تشغيل VELO — إدارة الكتالوج وأوامر الاستلام</h2>
         <p class="text-xs text-stone-500">أضف منتجات بالصور ونسب الخصم وتدرج الأسعار، وتابع أوامر الاستلام المقسّمة على التجار</p>
       </div>
-      <button onclick="switchTab('client')" class="bg-stone-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl">العودة لواجهة المتجر</button>
+      <button onclick="switchTab('client')" class="bg-stone-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl">العودة لمتجر VELO</button>
     </div>
 
-    <!-- مؤشرات الأداء -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي الطلبات المسجلة</div><div id="statOrdersCount" class="text-2xl font-black mt-1">0</div></div>
       <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي مبيعات الفواتير الموحدة</div><div id="statSalesTotal" class="text-2xl font-black mt-1">0 ج.م</div></div>
@@ -216,8 +213,8 @@
     <form id="addProductForm" onsubmit="handleAddProduct(event)" class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
       <div class="flex items-center justify-between border-b border-stone-100 pb-3">
         <div>
-          <h3 class="text-base font-black text-stone-900">➕ إضافة منتج جديد للكتالوج</h3>
-          <p class="text-xs text-stone-500">تُحسب نسبة الخصم تلقائياً عند إدخال "السعر قبل الخصم" أعلى من "سعر الوحدة الحالي"</p>
+          <h3 class="text-base font-black text-stone-900">➕ إضافة منتج جديد لكتالوج VELO</h3>
+          <p class="text-xs text-stone-500">تُحسب نسبة الخصم تلقائياً عند إدخال "السعر قبل الخصم" أعلى من "سعر البيع الحالي"</p>
         </div>
         <span id="liveDiscountPreview" class="text-xs font-black px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 hidden"></span>
       </div>
@@ -304,7 +301,7 @@
 
       <div class="flex justify-end pt-1">
         <button type="submit" class="bg-stone-900 hover:bg-stone-800 text-white font-black text-xs px-6 py-3 rounded-xl">
-          حفظ وإضافة المنتج للمتجر
+          حفظ وإضافة المنتج لـ VELO
         </button>
       </div>
     </form>
@@ -380,7 +377,7 @@
       },
       {
         id: 'p6', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
-        category: 'bundles', brand: 'باقة المنصة', name: 'باقة افتتاح الكافيه والوافل (كراميل + شوكولاتة + طقم بمب)',
+        category: 'bundles', brand: 'VELO Bundle', name: 'باقة افتتاح الكافيه والوافل (كراميل + شوكولاتة + طقم بمب)',
         unitLabel: 'باقة متكاملة', weightG: 2200, doseG: 20, stock: 'available',
         imageUrl: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80',
         compareAtPrice: 635,
@@ -391,15 +388,15 @@
     const DEFAULT_IMG_FALLBACK = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80';
 
     let zones = [...FALLBACK_ZONES];
-    let products = JSON.parse(localStorage.getItem('b2b_sauces_custom_products') || 'null') || [...FALLBACK_PRODUCTS];
+    let products = JSON.parse(localStorage.getItem('velo_custom_products') || 'null') || [...FALLBACK_PRODUCTS];
     let state = {
       selectedZoneId: FALLBACK_ZONES[0].id,
       category: 'all',
       selectedBrand: 'all',
       isAdmin: false,
       cart: [],
-      orders: JSON.parse(localStorage.getItem('b2b_sauces_orders') || '[]'),
-      lastOrder: JSON.parse(localStorage.getItem('b2b_sauces_last_order') || 'null')
+      orders: JSON.parse(localStorage.getItem('velo_orders') || '[]'),
+      lastOrder: JSON.parse(localStorage.getItem('velo_last_order') || 'null')
     };
 
     const isUuid = (val) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(val || ''));
@@ -464,7 +461,7 @@
       };
 
       products.unshift(newProd);
-      localStorage.setItem('b2b_sauces_custom_products', JSON.stringify(products));
+      localStorage.setItem('velo_custom_products', JSON.stringify(products));
 
       try {
         await supabase.from('products').insert({
@@ -499,7 +496,7 @@
       document.getElementById('liveDiscountPreview').classList.add('hidden');
       renderBrandFilters();
       renderProducts();
-      showBanner(`تمت إضافة المنتج "${name}" إلى المتجر بنجاح.`);
+      showBanner(`تمت إضافة المنتج "${name}" إلى كتالوج VELO بنجاح.`);
     }
 
     function getActiveTier(product, qty) {
@@ -609,7 +606,6 @@
         return `
           <article class="bg-white border border-stone-200 hover:border-amber-400 rounded-2xl overflow-hidden flex flex-col justify-between transition shadow-2xs">
             <div>
-              <!-- صورة المنتج مع شارة الخصم وحالة التوفر -->
               <div class="relative h-44 bg-stone-100 border-b border-stone-100 overflow-hidden">
                 <img src="${p.imageUrl || DEFAULT_IMG_FALLBACK}" alt="${p.name}" loading="lazy"
                   onerror="this.onerror=null;this.src='${DEFAULT_IMG_FALLBACK}';"
@@ -627,7 +623,6 @@
                   <div class="text-xs text-stone-500 mt-0.5">العبوة: <b class="text-stone-700">${p.unitLabel}</b></div>
                 </div>
 
-                <!-- السعر الحالي + السعر قبل الخصم + شرائح الجملة -->
                 <div class="pt-1">
                   <div class="flex items-baseline gap-2">
                     <span class="text-xl font-black text-stone-900">${activeTier.price}</span>
@@ -653,7 +648,6 @@
               </div>
             </div>
 
-            <!-- زر الإضافة أو العدّاد المباشر -->
             <div class="p-4 pt-0">
               ${qty > 0 ? `
                 <div class="flex items-center justify-between bg-amber-50 border-2 border-amber-500 rounded-xl px-3 py-1.5">
@@ -701,7 +695,7 @@
 
       const container = document.getElementById('cartItemsContainer');
       if (!state.cart.length) {
-        container.innerHTML = `<div class="text-center py-12 text-xs text-stone-400">سلتك فارغة حالياً.<br>أضف أصنافاً من المتجر لبدء الفاتورة الموحدة.</div>`;
+        container.innerHTML = `<div class="text-center py-12 text-xs text-stone-400">سلتك فارغة حالياً.<br>أضف أصنافاً من VELO لبدء الفاتورة الموحدة.</div>`;
       } else {
         container.innerHTML = state.cart.map(item => {
           const tier = getActiveTier(item.product, item.qty);
@@ -835,7 +829,7 @@
       const pickups = buildPickupOrders(state.cart);
 
       const order = {
-        id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+        id: 'VELO-' + Math.floor(1000 + Math.random() * 9000),
         createdAt: new Date().toLocaleString('ar-EG'),
         venue, phone, zoneId: zone.id, zoneName: zone.name_ar,
         subtotal, delivery, total,
@@ -848,8 +842,8 @@
 
       state.orders.unshift(order);
       state.lastOrder = order.items;
-      localStorage.setItem('b2b_sauces_orders', JSON.stringify(state.orders));
-      localStorage.setItem('b2b_sauces_last_order', JSON.stringify(state.lastOrder));
+      localStorage.setItem('velo_orders', JSON.stringify(state.orders));
+      localStorage.setItem('velo_last_order', JSON.stringify(state.lastOrder));
 
       renderLastOrderCard();
       renderAdmin();
@@ -857,7 +851,7 @@
 
       if (viaWhatsapp) {
         const lines = [
-          `طلب توريد جملة جديد (${order.id})`,
+          `طلب توريد VELO جديد (${order.id})`,
           `المنشأة: ${venue} | هاتف: ${phone}`,
           `المركز: ${zone.name_ar}`,
           `الأصناف المطلوبة:`,
@@ -868,8 +862,8 @@
       } else {
         showBanner(
           synced
-            ? `تم تأكيد الفاتورة ${order.id} وحفظها وتقسيم أوامر الاستلام على التجار.`
-            : `تم تسجيل الفاتورة ${order.id} وتقسيم أوامر الاستلام في لوحة الإدارة.`
+            ? `تم تأكيد فاتورة VELO رقم ${order.id} وحفظها وتقسيم أوامر الاستلام على التجار.`
+            : `تم تسجيل فاتورة VELO رقم ${order.id} وتقسيم أوامر الاستلام في لوحة الإدارة.`
         );
       }
 
@@ -951,7 +945,7 @@
       document.getElementById('clientView').classList.toggle('hidden', state.isAdmin);
       document.getElementById('subNavBar').classList.toggle('hidden', state.isAdmin);
       document.getElementById('adminView').classList.toggle('hidden', !state.isAdmin);
-      document.getElementById('toggleModeBtn').textContent = state.isAdmin ? 'واجهة المتجر' : 'لوحة الإدارة';
+      document.getElementById('toggleModeBtn').textContent = state.isAdmin ? 'متجر VELO' : 'لوحة الإدارة';
     }
 
     function showBanner(msg) {
@@ -972,7 +966,7 @@
             id: z.id, name_ar: z.name_ar || z.name,
             delivery_fee: Number(z.delivery_fee) || 0,
             free_delivery_threshold: z.free_delivery_threshold !== null ? Number(z.free_delivery_threshold) : null,
-            schedule: z.delivery_schedule_ar || 'حسب الجدولة المعتمدة'
+            schedule: z.delivery_schedule_ar || z.schedule || 'حسب الجدولة المعتمدة'
           }));
         }
 
