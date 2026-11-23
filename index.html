@@ -505,4 +505,248 @@
 
       const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
       const isFree = subtotal >= zone.freeAbove && subtotal > 0;
-      const deliveryFee = subtotal === 0 ?
+      const deliveryFee = subtotal === 0 ? 0 : (isFree ? 0 : zone.fee);
+      const total = subtotal + deliveryFee;
+      const remaining = Math.max(0, zone.freeAbove - subtotal);
+
+      return { zone, lines, subtotal, deliveryFee, total, isFree, remaining };
+    }
+
+    function renderCart() {
+      const { zone, lines, subtotal, deliveryFee, total, isFree, remaining } = getCartBreakdown();
+      document.getElementById("cartCountBadge").textContent = `${lines.length} أصناف`;
+
+      const listEl = document.getElementById("cartItemsList");
+      if (lines.length === 0) {
+        listEl.innerHTML = `<p class="text-sm text-stone-500 py-6 text-center">السلة فارغة — أضف صوصات أو بمبات لبدء الطلب.</p>`;
+      } else {
+        listEl.innerHTML = lines.map(l => `
+          <div class="flex items-start justify-between gap-2 text-sm border-b border-stone-100 pb-2.5">
+            <div>
+              <p class="font-bold text-ink leading-snug">${l.prod.name}</p>
+              <p class="text-xs text-stone-500 tabular-nums">${l.qty} × ${l.unitPrice} ج.م (${l.prod.unit})</p>
+            </div>
+            <span class="font-bold tabular-nums shrink-0">${l.lineTotal} ج.م</span>
+          </div>
+        `).join("");
+      }
+
+      const hintEl = document.getElementById("freeDeliveryHint");
+      if (subtotal === 0) {
+        hintEl.innerHTML = `الحد الأدنى للتوصيل المجاني إلى <strong>${zone.name}</strong> هو <strong>${zone.freeAbove} ج.م</strong>.`;
+      } else if (isFree) {
+        hintEl.innerHTML = `<span class="text-emerald-700 font-bold">مبروك! طلبك مؤهل للتوصيل المجاني إلى ${zone.name}.</span>`;
+      } else {
+        hintEl.innerHTML = `أضف بقيمة <strong>${remaining} ج.م</strong> للحصول على <strong>توصيل مجاني</strong> إلى ${zone.name}.`;
+      }
+
+      document.getElementById("cartDeliveryLabel").textContent = `توصيل (${zone.name})`;
+      document.getElementById("cartDeliveryFee").textContent = deliveryFee === 0 ? "مجاني" : `${deliveryFee} ج.م`;
+      document.getElementById("cartSubtotal").textContent = `${subtotal} ج.م`;
+      document.getElementById("cartTotal").textContent = `${total} ج.م`;
+    }
+
+    function placeOrder(viaWhatsApp) {
+      const { zone, lines, deliveryFee, total } = getCartBreakdown();
+      if (!lines.length) return;
+
+      const businessName = document.getElementById("inputBusinessName").value.trim() || "عميل جملة - الدقهلية";
+      const orderId = `VELO-${Math.floor(1050 + Math.random() * 8900)}`;
+
+      orders.unshift({
+        id: orderId,
+        date: new Date().toISOString().slice(0, 10),
+        businessName,
+        zoneId: zone.id,
+        items: lines.map(l => ({
+          productId: l.prod.id,
+          qty: l.qty,
+          unitPrice: l.unitPrice,
+          unitCost: l.prod.costPrice
+        }))
+      });
+
+      renderLastOrderBox();
+      const alertBox = document.getElementById("orderSuccessAlert");
+      alertBox.classList.remove("hidden");
+      alertBox.innerHTML = `تم تسجيل طلب VELO الموحد <strong>#${orderId}</strong> وتقسيم أوامر الاستلام على التجار تلقائياً في لوحة الإدارة.`;
+
+      if (viaWhatsApp) {
+        const itemsText = lines.map(l => `• ${l.prod.name} × ${l.qty} = ${l.lineTotal} ج.م`).join("\n");
+        const msg = encodeURIComponent(`طلب توريد VELO (${orderId})\nالمنشأة: ${businessName}\nالمركز: ${zone.name}\n\n${itemsText}\n\nالتوصيل: ${deliveryFee} ج.م\nالإجمالي: ${total} ج.م`);
+        window.open(`https://wa.me/201000000000?text=${msg}`, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    function switchRole(role) {
+      const isClient = role === "client";
+      document.getElementById("clientView").classList.toggle("hidden", !isClient);
+      document.getElementById("adminView").classList.toggle("hidden", isClient);
+
+      document.getElementById("btnRoleClient").className = `px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer ${isClient ? 'bg-ink text-white' : 'text-stone-600 hover:text-ink'}`;
+      document.getElementById("btnRoleAdmin").className = `px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer ${!isClient ? 'bg-brand text-white' : 'text-stone-600 hover:text-ink'}`;
+
+      if (!isClient) {
+        renderAdminSplitOrders();
+        renderAdminProductsTable();
+        renderAdminZones();
+      }
+    }
+
+    function switchAdminTab(tab) {
+      document.getElementById("adminSplitSection").classList.toggle("hidden", tab !== "split");
+      document.getElementById("adminProductsSection").classList.toggle("hidden", tab !== "products");
+      document.getElementById("adminZonesSection").classList.toggle("hidden", tab !== "zones");
+
+      ["split", "products", "zones"].forEach(t => {
+        const btn = document.getElementById(`tabAdmin${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        btn.className = `px-4 py-2 rounded-xl text-sm font-bold cursor-pointer ${t === tab ? 'bg-ink text-white' : 'bg-white border border-stone-200 text-stone-700'}`;
+      });
+    }
+
+    function renderAdminSplitOrders() {
+      const grouped = {};
+      orders.forEach(ord => {
+        ord.items.forEach(it => {
+          const prod = products.find(p => p.id === it.productId);
+          if (!prod) return;
+          if (!grouped[prod.supplierId]) {
+            grouped[prod.supplierId] = {
+              supplier: suppliers.find(s => s.id === prod.supplierId),
+              lines: [],
+              totalCost: 0
+            };
+          }
+          const costLine = (it.unitCost ?? prod.costPrice) * it.qty;
+          const zoneName = zones.find(z => z.id === ord.zoneId)?.name || ord.zoneId;
+          grouped[prod.supplierId].lines.push({
+            orderId: ord.id,
+            businessName: ord.businessName,
+            zoneName,
+            productName: prod.name,
+            qty: it.qty,
+            costLine
+          });
+          grouped[prod.supplierId].totalCost += costLine;
+        });
+      });
+
+      document.getElementById("adminSplitSection").innerHTML = Object.values(grouped).map(({ supplier, lines, totalCost }) => `
+        <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
+          <div class="border-b border-stone-100 pb-2.5">
+            <span class="text-[11px] font-bold text-brand block">${supplier?.mode}</span>
+            <h3 class="font-bold text-base text-ink">${supplier?.name}</h3>
+            <p class="text-xs text-stone-500">هاتف التواصل: ${supplier?.phone}</p>
+          </div>
+          <div class="space-y-2 text-xs">
+            ${lines.map(ln => `
+              <div class="bg-stone-50 rounded-xl p-2.5 border border-stone-200/70 space-y-1">
+                <div class="flex justify-between font-bold text-ink">
+                  <span>${ln.productName}</span>
+                  <span class="tabular-nums">× ${ln.qty}</span>
+                </div>
+                <div class="flex justify-between text-stone-500">
+                  <span>#${ln.orderId} (${ln.businessName} - ${ln.zoneName})</span>
+                  <span class="font-bold text-stone-700 tabular-nums">تكلفة: ${ln.costLine} ج.م</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+          <div class="pt-2 border-t border-stone-100 flex justify-between font-extrabold text-sm">
+            <span>إجمالي مستحقات التاجر</span>
+            <span class="text-brand tabular-nums">${totalCost} ج.م</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function addNewProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById("newProdName").value.trim();
+      const unit = document.getElementById("newProdUnit").value.trim();
+      const supplierId = document.getElementById("newProdSupplier").value;
+      const costPrice = Number(document.getElementById("newProdCost").value) || 100;
+      const tier1 = Number(document.getElementById("newProdTier1").value) || 130;
+      const tier4 = Number(document.getElementById("newProdTier4").value) || 115;
+
+      products.unshift({
+        id: `p-${Date.now()}`,
+        name,
+        brand: "VELO Select",
+        category: "cafe_desserts",
+        unit,
+        supplierId,
+        costPrice,
+        servingLabel: "جرعة قياسية",
+        servingsPerUnit: 120,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 3, price: tier1 },
+          { min: 4, max: null, price: tier4 }
+        ]
+      });
+
+      document.getElementById("newProdName").value = "";
+      renderProducts();
+      renderAdminProductsTable();
+    }
+
+    function toggleProdAvailability(id) {
+      const cycle = { available: "limited", limited: "out_of_stock", out_of_stock: "available" };
+      const p = products.find(item => item.id === id);
+      if (p) p.availability = cycle[p.availability];
+      renderProducts();
+      renderAdminProductsTable();
+    }
+
+    function renderAdminProductsTable() {
+      document.getElementById("adminProductsTable").innerHTML = products.map(p => {
+        const sup = suppliers.find(s => s.id === p.supplierId);
+        const av = AVAILABILITY_META[p.availability];
+        return `
+          <tr>
+            <td class="p-3">
+              <div class="font-bold text-ink">${p.name}</div>
+              <div class="text-xs text-stone-500">${CATEGORY_LABELS[p.category]} — ${p.unit}</div>
+            </td>
+            <td class="p-3 text-xs font-semibold text-stone-700">${sup?.name}</td>
+            <td class="p-3 tabular-nums font-bold">${p.costPrice} ج.م</td>
+            <td class="p-3 text-xs tabular-nums">${p.tiers.map(t => `${t.min}${t.max ? `-${t.max}` : '+'}: ${t.price}ج`).join(" | ")}</td>
+            <td class="p-3">
+              <button onclick="toggleProdAvailability('${p.id}')" class="text-xs font-bold px-2.5 py-1 rounded-full border cursor-pointer ${av.cls}">${av.label} (تبديل)</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function updateZoneSetting(id, field, value) {
+      const z = zones.find(item => item.id === id);
+      if (z) z[field] = Number(value) || 0;
+      const zoneSelect = document.getElementById("zoneSelect");
+      zoneSelect.innerHTML = zones.map(item => `<option value="${item.id}">${item.name} (${item.fee} ج.م)</option>`).join("");
+      zoneSelect.value = selectedZoneId;
+      updateZoneBanner();
+      renderCart();
+    }
+
+    function renderAdminZones() {
+      document.getElementById("adminZonesGrid").innerHTML = zones.map(z => `
+        <div class="border border-stone-200 rounded-xl p-3.5 space-y-2.5 text-sm">
+          <div class="font-bold text-ink">${z.name}</div>
+          <label class="flex items-center justify-between text-xs text-stone-600">
+            <span>رسوم التوصيل (ج.م):</span>
+            <input type="number" value="${z.fee}" onchange="updateZoneSetting('${z.id}', 'fee', this.value)" class="w-24 px-2 py-1 border border-stone-300 rounded-lg text-ink font-bold tabular-nums" />
+          </label>
+          <label class="flex items-center justify-between text-xs text-stone-600">
+            <span>حد التوصيل المجاني (ج.م):</span>
+            <input type="number" value="${z.freeAbove}" onchange="updateZoneSetting('${z.id}', 'freeAbove', this.value)" class="w-24 px-2 py-1 border border-stone-300 rounded-lg text-ink font-bold tabular-nums" />
+          </label>
+        </div>
+      `).join("");
+    }
+
+    init();
+  </script>
+</body>
+</html>
