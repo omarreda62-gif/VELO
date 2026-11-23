@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VELO | فِيلو — بوابة توريد جملة للصوصات في الدقهلية</title>
+  <title>بوابة توريد جملة للصوصات | الدقهلية</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg: #F5F5F4;
@@ -14,9 +15,9 @@
       --ink: #18181B;
       --muted: #64748B;
       --line: #E4E4E7;
-      --brand: #C7873B;
-      --brand-dark: #A96E2A;
-      --brand-soft: #FDF6EE;
+      --accent: #C7873B;
+      --accent-dark: #A96E2A;
+      --accent-soft: #FDF6EE;
       --ok-bg: #ECFDF5;
       --ok-fg: #047857;
       --warn-bg: #FFFBEB;
@@ -25,417 +26,71 @@
       --off-fg: #B91C1C;
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "IBM Plex Sans Arabic", sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      line-height: 1.5;
-    }
+    body { margin: 0; font-family: "IBM Plex Sans Arabic", sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
     .num { font-variant-numeric: tabular-nums; }
     .container { max-width: 1260px; margin: 0 auto; padding: 0 16px; }
-
-    /* Top App Header */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      background: var(--card);
-      border-bottom: 1px solid var(--line);
-    }
-    .header-main {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 0;
-    }
-    .brand-box { display: flex; align-items: center; gap: 12px; }
-    .logo-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      background: var(--ink);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "Plus Jakarta Sans", sans-serif;
-      font-weight: 800;
-      font-size: 20px;
-      border-bottom: 3px solid var(--brand);
-    }
-    .brand-title-row { display: flex; align-items: center; gap: 8px; }
-    .brand-name {
-      font-family: "Plus Jakarta Sans", sans-serif;
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: -0.02em;
-    }
-    .brand-tag {
-      font-size: 11px;
-      font-weight: 700;
-      background: var(--brand-soft);
-      color: var(--brand-dark);
-      border: 1px solid #F3D5AE;
-      padding: 2px 8px;
-      border-radius: 7px;
-    }
-    .brand-sub { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
-
+    header { position: sticky; top: 0; z-index: 30; background: var(--card); border-bottom: 1px solid var(--line); }
+    .header-main { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; }
+    .brand-title { margin: 0; font-size: 19px; font-weight: 700; }
+    .brand-sub { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
     .header-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-    .zone-picker {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #F4F4F5;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 6px 12px;
-      font-size: 13px;
-    }
-    .zone-picker select {
-      border: none;
-      background: transparent;
-      font-family: inherit;
-      font-weight: 700;
-      color: var(--ink);
-      cursor: pointer;
-      outline: none;
-    }
-    .role-switch {
-      display: inline-flex;
-      background: #F4F4F5;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 4px;
-      gap: 4px;
-    }
-    .role-btn {
-      border: none;
-      background: transparent;
-      color: #52525B;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 7px 14px;
-      border-radius: 9px;
-      cursor: pointer;
-    }
+    .zone-picker { display: flex; align-items: center; gap: 8px; background: #F4F4F5; border: 1px solid var(--line); border-radius: 12px; padding: 6px 12px; font-size: 13px; }
+    .zone-picker select { border: none; background: transparent; font-family: inherit; font-weight: 700; color: var(--ink); cursor: pointer; outline: none; }
+    .role-switch { display: inline-flex; background: #F4F4F5; border: 1px solid var(--line); border-radius: 12px; padding: 4px; gap: 4px; }
+    .role-btn { border: none; background: transparent; color: #52525B; font-family: inherit; font-size: 13px; font-weight: 700; padding: 7px 14px; border-radius: 9px; cursor: pointer; }
     .role-btn.active-client { background: var(--ink); color: #fff; }
-    .role-btn.active-admin { background: var(--brand); color: #fff; }
-
-    .zone-banner {
-      background: var(--brand-soft);
-      border-top: 1px solid #F3D5AE;
-      padding: 8px 0;
-      font-size: 13px;
-    }
-    .zone-banner-inner {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    /* Main Grid */
+    .role-btn.active-admin { background: var(--accent); color: #fff; }
+    .zone-banner { background: var(--accent-soft); border-top: 1px solid #F3D5AE; padding: 8px 0; font-size: 13px; }
+    .zone-banner-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
     main { padding: 20px 0 44px; }
-    .client-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.9fr) minmax(325px, 1fr);
-      gap: 20px;
-      align-items: start;
-    }
-    @media (max-width: 980px) {
-      .client-grid { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-    }
+    .client-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(325px, 1fr); gap: 20px; align-items: start; }
+    @media (max-width: 980px) { .client-grid { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
     .stack { display: flex; flex-direction: column; gap: 16px; }
-
-    /* Hero Promo Card inspired by Food App UI */
-    .promo-hero {
-      background: linear-gradient(135deg, #18181B 0%, #27272A 65%, #3B2814 100%);
-      color: #FFFFFF;
-      border: none;
-      border-radius: 20px;
-      padding: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-    .promo-pill {
-      display: inline-block;
-      background: rgba(199, 135, 59, 0.22);
-      color: #FCD38D;
-      border: 1px solid rgba(199, 135, 59, 0.45);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 999px;
-      margin-bottom: 8px;
-    }
-    .promo-title { margin: 0; font-size: 20px; font-weight: 800; line-height: 1.35; }
-    .promo-sub { margin: 6px 0 0; font-size: 13px; color: #D4D4D8; max-width: 520px; }
-    .promo-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-
-    /* Quick Reorder */
-    .reorder-box {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .reorder-kicker { font-size: 12px; font-weight: 700; color: var(--brand-dark); }
-    .reorder-desc { font-size: 14px; font-weight: 600; margin: 2px 0 0; }
-
-    /* Search & Categories */
-    .search-input {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #D4D4D8;
-      border-radius: 13px;
-      font-family: inherit;
-      font-size: 14px;
-      outline: none;
-      background: #FAFAF9;
-    }
-    .search-input:focus { border-color: var(--brand); background: #fff; }
+    .promo-hero { background: linear-gradient(135deg, #18181B 0%, #27272A 65%, #3B2814 100%); color: #fff; border-radius: 20px; padding: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+    .promo-title { margin: 0; font-size: 19px; font-weight: 700; }
+    .promo-sub { margin: 6px 0 0; font-size: 13px; color: #D4D4D8; max-width: 540px; }
+    .search-input { width: 100%; padding: 12px 15px; border: 1px solid #D4D4D8; border-radius: 13px; font-family: inherit; font-size: 14px; outline: none; background: #FAFAF9; }
     .cats-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .cat-pill {
-      border: 1px solid var(--line);
-      background: #F4F4F5;
-      color: #27272A;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 15px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-    .cat-pill.active {
-      background: var(--brand);
-      border-color: var(--brand);
-      color: #fff;
-    }
-
-    /* Products Grid */
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-    @media (max-width: 640px) {
-      .products-grid { grid-template-columns: 1fr; }
-    }
-    .prod-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
-    }
+    .cat-pill { border: 1px solid var(--line); background: #F4F4F5; color: #27272A; font-family: inherit; font-size: 13px; font-weight: 700; padding: 8px 15px; border-radius: 999px; cursor: pointer; }
+    .cat-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .products-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    @media (max-width: 640px) { .products-grid { grid-template-columns: 1fr; } }
+    .prod-card { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
     .prod-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-    .prod-meta { font-size: 12px; font-weight: 700; color: var(--brand-dark); }
+    .prod-meta { font-size: 12px; font-weight: 700; color: var(--accent-dark); }
     .prod-title { font-size: 16px; font-weight: 700; margin: 3px 0 0; }
-    .badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
+    .badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
     .badge-available { background: var(--ok-bg); color: var(--ok-fg); }
     .badge-limited { background: var(--warn-bg); color: var(--warn-fg); }
     .badge-out_of_stock { background: var(--off-bg); color: var(--off-fg); }
-
-    .tiers-box {
-      background: #FAFAF9;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      padding: 10px;
-      margin-top: 10px;
-    }
-    .tiers-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+    .tiers-box { background: #FAFAF9; border: 1px solid var(--line); border-radius: 13px; padding: 10px; margin-top: 10px; }
     .tiers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
-    .tier-cell {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 6px 4px;
-    }
-    .tier-cell.active-tier {
-      background: #FEF3C7;
-      border-color: var(--brand);
-      font-weight: 700;
-    }
-    .tier-range { font-size: 11px; color: var(--muted); }
-    .tier-val { font-size: 13px; font-weight: 700; margin-top: 2px; }
-
-    .serving-strip {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      background: #F4F4F5;
-      border-radius: 11px;
-      padding: 8px 12px;
-      font-size: 12px;
-      color: #3F3F46;
-      margin-top: 10px;
-    }
-
-    .prod-foot {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      border-top: 1px solid #F4F4F5;
-      padding-top: 12px;
-    }
-    .price-now { font-size: 19px; font-weight: 800; }
-
-    /* Buttons & Qty */
-    .btn {
-      border: none;
-      border-radius: 12px;
-      font-family: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 10px 16px;
-      font-size: 13px;
-    }
-    .btn-brand { background: var(--brand); color: #fff; }
-    .btn-brand:hover { background: var(--brand-dark); }
-    .btn-light { background: #FFFFFF; color: var(--ink); }
+    .tier-cell { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 6px 4px; }
+    .tier-cell.active-tier { background: #FEF3C7; border-color: var(--accent); font-weight: 700; }
+    .serving-strip { display: flex; justify-content: space-between; gap: 8px; background: #F4F4F5; border-radius: 11px; padding: 8px 12px; font-size: 12px; margin-top: 10px; }
+    .prod-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-top: 1px solid #F4F4F5; padding-top: 12px; }
+    .price-now { font-size: 19px; font-weight: 700; }
+    .btn { border: none; border-radius: 12px; font-family: inherit; font-weight: 700; cursor: pointer; padding: 10px 16px; font-size: 13px; }
+    .btn-brand { background: var(--accent); color: #fff; }
     .btn-dark { background: var(--ink); color: #fff; width: 100%; padding: 12px; font-size: 14px; }
-    .btn-dark:hover { background: #27272A; }
     .btn-wa { background: #059669; color: #fff; width: 100%; padding: 11px; font-size: 13px; }
-    .btn-wa:hover { background: #047857; }
-
-    .qty-box {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #F4F4F5;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 4px;
-    }
-    .qty-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      border: none;
-      background: #fff;
-      font-weight: 700;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    /* Cart */
+    .qty-box { display: inline-flex; align-items: center; gap: 8px; background: #F4F4F5; border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+    .qty-btn { width: 30px; height: 30px; border-radius: 8px; border: none; background: #fff; font-weight: 700; font-size: 16px; cursor: pointer; }
     .cart-sticky { position: sticky; top: 96px; }
-    .cart-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #F4F4F5;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
-    }
-    .cart-title { margin: 0; font-size: 17px; font-weight: 800; }
     .cart-items { display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; }
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      border-bottom: 1px solid #F4F4F5;
-      padding-bottom: 8px;
-      font-size: 13px;
-    }
-    .hint-box {
-      background: #FAFAF9;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 12px;
-      margin: 12px 0;
-    }
-    .field-input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #D4D4D8;
-      border-radius: 11px;
-      font-family: inherit;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-    .totals-box {
-      border-top: 1px solid var(--line);
-      padding-top: 12px;
-      margin-top: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 13px;
-    }
+    .cart-item { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid #F4F4F5; padding-bottom: 8px; font-size: 13px; }
+    .hint-box { background: #FAFAF9; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 12px; margin: 12px 0; }
+    .field-input { width: 100%; padding: 10px 12px; border: 1px solid #D4D4D8; border-radius: 11px; font-family: inherit; font-size: 13px; margin-bottom: 8px; }
+    .totals-box { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
     .total-row { display: flex; justify-content: space-between; }
-    .grand-total {
-      border-top: 1px solid #F4F4F5;
-      padding-top: 8px;
-      font-size: 16px;
-      font-weight: 800;
-    }
-    .alert-ok {
-      margin-top: 10px;
-      background: var(--ok-bg);
-      color: var(--ok-fg);
-      border: 1px solid #A7F3D0;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    /* Admin */
+    .grand-total { border-top: 1px solid #F4F4F5; padding-top: 8px; font-size: 16px; font-weight: 700; }
+    .alert-ok { margin-top: 10px; background: var(--ok-bg); color: var(--ok-fg); border: 1px solid #A7F3D0; border-radius: 12px; padding: 10px 12px; font-size: 12px; font-weight: 600; }
     .admin-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-    .admin-tab {
-      border: 1px solid var(--line);
-      background: #fff;
-      color: #3F3F46;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 9px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-    }
+    .admin-tab { border: 1px solid var(--line); background: #fff; color: #3F3F46; font-family: inherit; font-size: 13px; font-weight: 700; padding: 9px 16px; border-radius: 12px; cursor: pointer; }
     .admin-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
     .split-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-    .po-line {
-      background: #FAFAF9;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      padding: 10px;
-      margin-top: 8px;
-      font-size: 12px;
-    }
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
-    }
+    .po-line { background: #FAFAF9; border: 1px solid var(--line); border-radius: 11px; padding: 10px; margin-top: 8px; font-size: 12px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { padding: 12px; text-align: right; border-bottom: 1px solid #F4F4F5; }
     th { background: #FAFAF9; color: var(--muted); font-size: 12px; }
@@ -446,17 +101,10 @@
   <header>
     <div class="container">
       <div class="header-main">
-        <div class="brand-box">
-          <div class="logo-badge">V</div>
-          <div>
-            <div class="brand-title-row">
-              <span class="brand-name">VELO</span>
-              <span class="brand-tag">فِيلو • B2B</span>
-            </div>
-            <p class="brand-sub">بوابة توريد جملة للصوصات، البمبات، والباقات للكافيهات والمطاعم في الدقهلية بفاتورة موحدة</p>
-          </div>
+        <div>
+          <h1 class="brand-title">بوابة توريد جملة للصوصات — الدقهلية</h1>
+          <p class="brand-sub">تجميع طلبات الكافيهات والمطاعم بفاتورة موحدة وتقسيم أوامر الاستلام على التجار خلف الكواليس</p>
         </div>
-
         <div class="header-controls">
           <label class="zone-picker">
             <span>المركز:</span>
@@ -464,7 +112,7 @@
           </label>
           <div class="role-switch">
             <button id="btnRoleClient" class="role-btn active-client" onclick="switchRole('client')">واجهة الكافيه / المطعم</button>
-            <button id="btnRoleAdmin" class="role-btn" onclick="switchRole('admin')">لوحة إدارة VELO</button>
+            <button id="btnRoleAdmin" class="role-btn" onclick="switchRole('admin')">لوحة إدارة المنصة</button>
           </div>
         </div>
       </div>
@@ -474,104 +122,73 @@
     </div>
   </header>
 
-  <!-- واجهة الكافيه / المطعم -->
   <main id="clientView" class="container">
     <div class="client-grid">
       <div class="stack">
-        <!-- بانر ترويجي للباقات وتوريد الجملة -->
         <div class="promo-hero">
           <div>
-            <span class="promo-pill">توريد جملة • الدقهلية</span>
-            <h2 class="promo-title">اجمع صوصات الكافيه والمطعم والبمبات في فاتورة واحدة باسم VELO</h2>
-            <p class="promo-sub">تسعير متدرج حسب الكمية، توضيح تكلفة الجرعة، توصيل مجاني فوق الحد المحدد لكل مركز، وتقسيم تلقائي لأوامر الاستلام خلف الكواليس.</p>
+            <h2 class="promo-title">اطلب صوصات الكافيه والمطعم والبمبات في فاتورة واحدة</h2>
+            <p class="promo-sub">تسعير متدرج حسب الكمية، توضيح تكلفة الجرعة على الكوب أو الوجبة، وتوصيل مجاني فوق الحد المحدد لكل مركز.</p>
           </div>
-          <div class="promo-actions">
-            <button class="btn btn-brand" onclick="setCategory('bundles')">تصفح الباقات المجمعة</button>
-            <button class="btn btn-light" onclick="quickReorderLast()">إعادة طلب آخر فاتورة</button>
-          </div>
+          <button class="btn btn-brand" onclick="setCategory('bundles')">الباقات المجمعة</button>
         </div>
 
-        <!-- إعادة الطلب السريع -->
-        <div class="card reorder-box">
+        <div class="card" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
           <div>
-            <div class="reorder-kicker">إعادة طلب سريع (Quick Reorder)</div>
-            <p class="reorder-desc" id="lastOrderSummary"></p>
+            <div style="font-size:12px; font-weight:700; color:var(--accent-dark);">إعادة طلب سريع (Quick Reorder)</div>
+            <p id="lastOrderSummary" style="margin:2px 0 0; font-size:14px; font-weight:600;"></p>
           </div>
           <button class="btn btn-dark" style="width:auto;" onclick="quickReorderLast()">تحميل آخر فاتورة في السلة</button>
         </div>
 
-        <!-- البحث والفئات -->
         <div class="card">
-          <input id="searchInput" class="search-input" type="text" oninput="renderProducts()" placeholder="ابحث باسم الصوص أو البراند (كراميل، شوكولاتة، شيدر، باربيكيو، بمب، باقة...)" />
+          <input id="searchInput" class="search-input" type="text" oninput="renderProducts()" placeholder="ابحث باسم الصوص أو البراند..." />
           <div id="categoryTabs" class="cats-row"></div>
         </div>
 
-        <!-- شبكة المنتجات -->
         <div id="productsGrid" class="products-grid"></div>
       </div>
 
-      <!-- السلة الموحدة -->
       <aside class="card cart-sticky">
-        <div class="cart-head">
-          <h2 class="cart-title">فاتورة VELO الموحدة</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #F4F4F5; padding-bottom:12px; margin-bottom:12px;">
+          <h2 style="margin:0; font-size:17px; font-weight:700;">الفاتورة الموحدة</h2>
           <span class="badge badge-available num" id="cartCountBadge">0 أصناف</span>
         </div>
-
         <div id="cartItemsList" class="cart-items"></div>
         <div id="freeDeliveryHint" class="hint-box"></div>
-
-        <div>
-          <input id="inputBusinessName" class="field-input" type="text" value="كافيه ومخبز شاليمو" placeholder="اسم الكافيه أو المطعم" />
-          <input id="inputCustomerPhone" class="field-input" type="tel" value="01012345678" placeholder="رقم الهاتف / واتساب" />
-        </div>
-
+        <input id="inputBusinessName" class="field-input" type="text" placeholder="اسم الكافيه أو المطعم" />
+        <input id="inputCustomerPhone" class="field-input" type="tel" placeholder="رقم الهاتف / واتساب للتأكيد" />
         <div class="totals-box">
-          <div class="total-row">
-            <span>إجمالي الأصناف</span>
-            <strong class="num" id="cartSubtotal">0 ج.م</strong>
-          </div>
-          <div class="total-row">
-            <span id="cartDeliveryLabel">التوصيل</span>
-            <strong class="num" id="cartDeliveryFee">0 ج.م</strong>
-          </div>
-          <div class="total-row grand-total">
-            <span>الإجمالي المستحق</span>
-            <span class="num" id="cartTotal">0 ج.م</span>
-          </div>
+          <div class="total-row"><span>إجمالي الأصناف</span><strong class="num" id="cartSubtotal">0 ج.م</strong></div>
+          <div class="total-row"><span id="cartDeliveryLabel">التوصيل</span><strong class="num" id="cartDeliveryFee">0 ج.م</strong></div>
+          <div class="total-row grand-total"><span>الإجمالي المستحق</span><span class="num" id="cartTotal">0 ج.م</span></div>
         </div>
-
         <div class="stack" style="margin-top:14px; gap:8px;">
-          <button class="btn btn-dark" onclick="placeOrder(false)">إرسال طلب التوريد عبر VELO</button>
+          <button class="btn btn-dark" onclick="placeOrder(false)">إرسال طلب التوريد</button>
           <button class="btn btn-wa" onclick="placeOrder(true)">تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)</button>
         </div>
-
         <div id="orderSuccessAlert" class="alert-ok hidden"></div>
       </aside>
     </div>
   </main>
 
-  <!-- لوحة إدارة VELO -->
   <main id="adminView" class="container hidden">
-    <div class="admin-tabs">
-      <button id="tabAdminSplit" class="admin-tab active" onclick="switchAdminTab('split')">أوامر الاستلام المقسّمة للتجار</button>
-      <button id="tabAdminProducts" class="admin-tab" onclick="switchAdminTab('products')">إدارة الصوصات والأسعار والتوفر</button>
-      <button id="tabAdminZones" class="admin-tab" onclick="switchAdminTab('zones')">مناطق ورسوم الدقهلية</button>
+    <div id="adminLoginBox" class="card" style="max-width:420px; margin:0 auto 18px;">
+      <h3 style="margin:0 0 10px; font-size:16px;">تسجيل دخول إدارة المنصة</h3>
+      <input id="adminEmail" class="field-input" type="email" placeholder="البريد الإلكتروني للإدارة" />
+      <input id="adminPassword" class="field-input" type="password" placeholder="كلمة المرور" />
+      <button class="btn btn-dark" onclick="signInAdmin()">دخول لوحة الإدارة</button>
+      <p id="adminAuthMsg" style="font-size:12px; color:var(--muted); margin:8px 0 0;"></p>
     </div>
 
-    <section id="adminSplitSection" class="split-grid"></section>
-
-    <section id="adminProductsSection" class="hidden">
-      <form class="card form-grid" onsubmit="addNewProduct(event)">
-        <input id="newProdName" class="field-input" style="margin:0;" type="text" required placeholder="اسم الصوص أو الملحق" />
-        <input id="newProdUnit" class="field-input" style="margin:0;" type="text" value="جركن 2.5 كجم" placeholder="وحدة البيع" />
-        <select id="newProdSupplier" class="field-input" style="margin:0; background:#fff;"></select>
-        <input id="newProdCost" class="field-input" style="margin:0;" type="number" required placeholder="تكلفة الشراء من التاجر" />
-        <input id="newProdTier1" class="field-input" style="margin:0;" type="number" required placeholder="سعر البيع شريحة 1-3" />
-        <input id="newProdTier4" class="field-input" style="margin:0;" type="number" required placeholder="سعر البيع شريحة 4+" />
-        <button type="submit" class="btn btn-brand">+ إضافة للكتالوج</button>
-      </form>
-
-      <div class="card" style="padding:0; overflow-x:auto;">
+    <div id="adminPanelContent" class="hidden">
+      <div class="admin-tabs">
+        <button id="tabAdminSplit" class="admin-tab active" onclick="switchAdminTab('split')">أوامر الاستلام المقسّمة للتجار</button>
+        <button id="tabAdminProducts" class="admin-tab" onclick="switchAdminTab('products')">إدارة المنتجات والأسعار والتوفر</button>
+        <button id="tabAdminZones" class="admin-tab" onclick="switchAdminTab('zones')">مناطق ورسوم الدقهلية</button>
+      </div>
+      <section id="adminSplitSection" class="split-grid"></section>
+      <section id="adminProductsSection" class="card hidden" style="padding:0; overflow-x:auto;">
         <table>
           <thead>
             <tr>
@@ -584,134 +201,17 @@
           </thead>
           <tbody id="adminProductsTable"></tbody>
         </table>
-      </div>
-    </section>
-
-    <section id="adminZonesSection" class="card hidden">
-      <h3 style="margin:0 0 14px; font-size:16px;">إدارة رسوم وحدود التوصيل المجاني لمراكز الدقهلية</h3>
-      <div id="adminZonesGrid" class="split-grid"></div>
-    </section>
+      </section>
+      <section id="adminZonesSection" class="card hidden">
+        <div id="adminZonesGrid" class="split-grid"></div>
+      </section>
+    </div>
   </main>
 
   <script>
-    const zones = [
-      { id: "mansoura", name: "المنصورة", fee: 50, freeAbove: 2500, schedule: "يومياً - خلال 24 ساعة" },
-      { id: "talkha", name: "طلخا", fee: 60, freeAbove: 2800, schedule: "يومياً - خلال 24 ساعة" },
-      { id: "senbellawein", name: "السنبلاوين", fee: 75, freeAbove: 3200, schedule: "السبت، الاثنين، الأربعاء" },
-      { id: "mit_ghamr", name: "ميت غمر", fee: 90, freeAbove: 3800, schedule: "الأحد والثلاثاء" },
-      { id: "dekrnes", name: "دكرنس", fee: 85, freeAbove: 3500, schedule: "الأحد والخميس" },
-      { id: "aga", name: "أجا", fee: 80, freeAbove: 3400, schedule: "الاثنين والخميس" },
-      { id: "belqas", name: "بلقاس", fee: 85, freeAbove: 3500, schedule: "الأحد والأربعاء" }
-    ];
-
-    const suppliers = [
-      { id: "sup-1", name: "مؤسسة الدلتا لتوريدات الكافيهات", phone: "01000000011", mode: "Milk-Run (تجميع)" },
-      { id: "sup-2", name: "مجموعة النيل لصوصات المطاعم", phone: "01000000022", mode: "تجميع / تسليم مباشر" },
-      { id: "sup-3", name: "المصرية لبمبات وعبوات التقديم", phone: "01000000033", mode: "تجميع" }
-    ];
-
-    const products = [
-      {
-        id: "p-1",
-        name: "صوص كراميل مملح (Salted Caramel)",
-        brand: "CremaPro",
-        category: "cafe_desserts",
-        unit: "جركن 2.5 كجم",
-        supplierId: "sup-1",
-        costPrice: 245,
-        servingLabel: "بمب 15 جم للكوب",
-        servingsPerUnit: 166,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 3, price: 295 },
-          { min: 4, max: 9, price: 275 },
-          { min: 10, max: null, price: 258 }
-        ]
-      },
-      {
-        id: "p-2",
-        name: "صوص شوكولاتة داكنة للوافل والكريب",
-        brand: "ChocoLab",
-        category: "cafe_desserts",
-        unit: "جركن 2.5 كجم",
-        supplierId: "sup-1",
-        costPrice: 260,
-        servingLabel: "جرعة 25 جم للوافل",
-        servingsPerUnit: 100,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 3, price: 315 },
-          { min: 4, max: 9, price: 292 },
-          { min: 10, max: null, price: 274 }
-        ]
-      },
-      {
-        id: "p-3",
-        name: "صوص جبنة شيدر كريمي للبطاطس والبرجر",
-        brand: "CheddarCo",
-        category: "restaurant_sauces",
-        unit: "جركن 3 كجم",
-        supplierId: "sup-2",
-        costPrice: 310,
-        servingLabel: "جرعة 25 جم للوجبة",
-        servingsPerUnit: 120,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 2, price: 375 },
-          { min: 3, max: 7, price: 348 },
-          { min: 8, max: null, price: 328 }
-        ]
-      },
-      {
-        id: "p-4",
-        name: "صوص سموكي باربيكيو وشيلي للبرجر",
-        brand: "GrillMaster",
-        category: "restaurant_sauces",
-        unit: "جركن 4 كجم",
-        supplierId: "sup-2",
-        costPrice: 290,
-        servingLabel: "جرعة 30 جم للوجبة",
-        servingsPerUnit: 133,
-        availability: "limited",
-        tiers: [
-          { min: 1, max: 2, price: 350 },
-          { min: 3, max: 7, price: 325 },
-          { min: 8, max: null, price: 305 }
-        ]
-      },
-      {
-        id: "p-5",
-        name: "بمب صوص (10 مل / ضغطة) للجراكن",
-        brand: "DispenseX",
-        category: "pumps_bottles",
-        unit: "كرتونة 12 بمب",
-        supplierId: "sup-3",
-        costPrice: 210,
-        servingLabel: "ضغطة ثابتة 10 مل",
-        servingsPerUnit: 12,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 2, price: 260 },
-          { min: 3, max: null, price: 235 }
-        ]
-      },
-      {
-        id: "p-6",
-        name: "باقة الكافيهات المتكاملة (6 جراكن صوص + 2 بمب)",
-        brand: "VELO Bundles",
-        category: "bundles",
-        unit: "باقة متكاملة",
-        supplierId: "sup-1",
-        costPrice: 1580,
-        servingLabel: "توفير فوري عن الشراء الفردي",
-        servingsPerUnit: 750,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 2, price: 1850 },
-          { min: 3, max: null, price: 1740 }
-        ]
-      }
-    ];
+    const SUPABASE_URL = "https://YOUR_PROJECT_REF.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const CATEGORY_LABELS = {
       all: "كل الأصناف",
@@ -727,424 +227,268 @@
       out_of_stock: { label: "غير متاح", cls: "badge-out_of_stock" }
     };
 
-    let selectedZoneId = "mansoura";
-    let activeCategory = "all";
-    let cart = [
-      { productId: "p-1", qty: 4 },
-      { productId: "p-3", qty: 2 }
-    ];
-
-    const orders = [
-      {
-        id: "VELO-1042",
-        date: "2026-11-23",
-        businessName: "كافيه ومخبز شاليمو",
-        zoneId: "senbellawein",
-        items: [
-          { productId: "p-1", qty: 5, unitPrice: 275, unitCost: 245 },
-          { productId: "p-5", qty: 1, unitPrice: 260, unitCost: 210 }
-        ]
-      }
-    ];
+    let zones = [], suppliers = [], products = [], orders = [];
+    let selectedZoneId = "mansoura", activeCategory = "all", cart = [];
 
     function getTierUnitPrice(product, qty) {
       const q = Math.max(1, Number(qty) || 1);
-      const found = product.tiers.find(t => q >= t.min && (t.max === null || q <= t.max));
-      return found ? found.price : product.tiers[product.tiers.length - 1].price;
+      const tiers = Array.isArray(product.tiers) ? product.tiers : [];
+      const found = tiers.find(t => q >= t.min && (t.max === null || q <= t.max));
+      return found ? found.price : (tiers[tiers.length - 1]?.price ?? 0);
     }
 
-    function init() {
+    async function loadCatalogAndZones() {
+      const [{ data: zData }, { data: pData }] = await Promise.all([
+        sb.from("governorate_zones").select("*").order("name"),
+        sb.from("products").select("*").order("created_at", { ascending: false })
+      ]);
+      zones = zData || [];
+      products = pData || [];
+      if (zones.length && !zones.some(z => z.id === selectedZoneId)) selectedZoneId = zones[0].id;
       const zoneSelect = document.getElementById("zoneSelect");
       zoneSelect.innerHTML = zones.map(z => `<option value="${z.id}">${z.name} (${z.fee} ج.م)</option>`).join("");
       zoneSelect.value = selectedZoneId;
-      zoneSelect.addEventListener("change", (e) => {
-        selectedZoneId = e.target.value;
-        updateZoneBanner();
-        renderCart();
-      });
-
-      const supSelect = document.getElementById("newProdSupplier");
-      supSelect.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
-
+      zoneSelect.onchange = (e) => { selectedZoneId = e.target.value; updateZoneBanner(); renderCart(); };
       updateZoneBanner();
       renderCategoryTabs();
-      renderLastOrderBox();
       renderProducts();
       renderCart();
     }
 
     function updateZoneBanner() {
       const z = zones.find(item => item.id === selectedZoneId) || zones[0];
+      if (!z) return;
       document.getElementById("zoneBanner").innerHTML = `
-        <span>التوصيل إلى <strong>${z.name}</strong>: رسوم <strong>${z.fee} ج.م</strong> • توصيل مجاني للطلبات من <strong>${z.freeAbove} ج.م</strong> فأكثر</span>
+        <span>التوصيل إلى <strong>${z.name}</strong>: رسوم <strong>${z.fee} ج.م</strong> • توصيل مجاني للطلبات من <strong>${z.free_above} ج.م</strong> فأكثر</span>
         <span style="color:#52525B;">جدول التوريد: ${z.schedule}</span>
       `;
     }
 
     function renderCategoryTabs() {
-      const container = document.getElementById("categoryTabs");
-      container.innerHTML = Object.entries(CATEGORY_LABELS).map(([key, label]) => {
-        const active = activeCategory === key ? "active" : "";
-        return `<button class="cat-pill ${active}" onclick="setCategory('${key}')">${label}</button>`;
-      }).join("");
+      document.getElementById("categoryTabs").innerHTML = Object.entries(CATEGORY_LABELS).map(([key, label]) =>
+        `<button class="cat-pill ${activeCategory === key ? "active" : ""}" onclick="setCategory('${key}')">${label}</button>`
+      ).join("");
     }
 
-    function setCategory(cat) {
-      activeCategory = cat;
-      renderCategoryTabs();
-      renderProducts();
-    }
-
-    function renderLastOrderBox() {
-      const last = orders[0];
-      if (!last) return;
-      document.getElementById("lastOrderSummary").textContent =
-        `آخر فاتورة #${last.id} (${last.date}) — ${last.items.length} أصناف`;
-    }
-
-    function quickReorderLast() {
-      const last = orders[0];
-      if (!last) return;
-      selectedZoneId = last.zoneId;
-      document.getElementById("zoneSelect").value = selectedZoneId;
-      updateZoneBanner();
-      cart = last.items.map(it => ({ productId: it.productId, qty: it.qty }));
-      renderProducts();
-      renderCart();
-    }
+    function setCategory(cat) { activeCategory = cat; renderCategoryTabs(); renderProducts(); }
 
     function renderProducts() {
-      const query = document.getElementById("searchInput").value.trim().toLowerCase();
-      const filtered = products.filter(p => {
-        const matchCat = activeCategory === "all" || p.category === activeCategory;
-        const matchText = !query || p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query);
-        return matchCat && matchText;
-      });
-
-      document.getElementById("productsGrid").innerHTML = filtered.map(p => {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const list = products.filter(p => (activeCategory === "all" || p.category === activeCategory) && (!q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)));
+      document.getElementById("productsGrid").innerHTML = list.map(p => {
         const inCart = cart.find(c => c.productId === p.id);
         const qty = inCart ? inCart.qty : 0;
         const unitPrice = getTierUnitPrice(p, qty || 1);
-        const perServing = (unitPrice / (p.servingsPerUnit || 1)).toFixed(2);
-        const avail = AVAILABILITY_META[p.availability];
-
-        const tiersHtml = p.tiers.map(t => {
-          const isCurrent = qty > 0 && qty >= t.min && (t.max === null || qty <= t.max);
-          return `
-            <div class="tier-cell ${isCurrent ? "active-tier" : ""}">
-              <div class="tier-range num">${t.max ? `${t.min}-${t.max}` : `${t.min}+`}</div>
-              <div class="tier-val num">${t.price} ج</div>
-            </div>
-          `;
+        const perServing = (unitPrice / (p.servings_per_unit || 1)).toFixed(2);
+        const av = AVAILABILITY_META[p.availability] || AVAILABILITY_META.available;
+        const tiersHtml = (p.tiers || []).map(t => {
+          const active = qty > 0 && qty >= t.min && (t.max === null || qty <= t.max);
+          return `<div class="tier-cell ${active ? "active-tier" : ""}"><div style="font-size:11px; color:var(--muted);" class="num">${t.max ? `${t.min}-${t.max}` : `${t.min}+`}</div><div style="font-size:13px; font-weight:700;" class="num">${t.price} ج</div></div>`;
         }).join("");
-
         const actionHtml = p.availability === "out_of_stock"
-          ? `<span style="font-size:12px; font-weight:700; color:#94A3B8;">غير متاح للطلب</span>`
+          ? `<span style="font-size:12px; font-weight:700; color:#94A3B8;">غير متاح</span>`
           : qty === 0
             ? `<button class="btn btn-brand" onclick="changeQty('${p.id}', 1)">+ إضافة للسلة</button>`
-            : `<div class="qty-box">
-                <button class="qty-btn" onclick="changeQty('${p.id}', ${qty - 1})">-</button>
-                <span class="num" style="min-width:24px; text-align:center; font-weight:700;">${qty}</span>
-                <button class="qty-btn" onclick="changeQty('${p.id}', ${qty + 1})">+</button>
-              </div>`;
-
+            : `<div class="qty-box"><button class="qty-btn" onclick="changeQty('${p.id}', ${qty - 1})">-</button><span class="num" style="min-width:24px; text-align:center; font-weight:700;">${qty}</span><button class="qty-btn" onclick="changeQty('${p.id}', ${qty + 1})">+</button></div>`;
         return `
           <div class="card prod-card">
             <div>
-              <div class="prod-top">
-                <div>
-                  <div class="prod-meta">${p.brand} • ${p.unit}</div>
-                  <h2 class="prod-title">${p.name}</h2>
-                </div>
-                <span class="badge ${avail.cls}">${avail.label}</span>
-              </div>
-
-              <div class="tiers-box">
-                <div class="tiers-label">تسعير متدرج حسب الكمية:</div>
-                <div class="tiers-grid">${tiersHtml}</div>
-              </div>
-
-              <div class="serving-strip">
-                <span>${p.servingLabel}</span>
-                <strong class="num">≈ ${perServing} ج.م / جرعة</strong>
-              </div>
+              <div class="prod-top"><div><div class="prod-meta">${p.brand} • ${p.unit}</div><h2 class="prod-title">${p.name}</h2></div><span class="badge ${av.cls}">${av.label}</span></div>
+              <div class="tiers-box"><div class="tiers-grid">${tiersHtml}</div></div>
+              <div class="serving-strip"><span>${p.serving_label}</span><strong class="num">≈ ${perServing} ج.م / جرعة</strong></div>
             </div>
-
-            <div class="prod-foot">
-              <div>
-                <div style="font-size:11px; color:var(--muted);">سعر الوحدة الحالي</div>
-                <div class="price-now num">${unitPrice} <span style="font-size:12px; font-weight:500;">ج.م</span></div>
-              </div>
-              ${actionHtml}
-            </div>
-          </div>
-        `;
+            <div class="prod-foot"><div><div style="font-size:11px; color:var(--muted);">سعر الوحدة الحالي</div><div class="price-now num">${unitPrice} <span style="font-size:12px; font-weight:500;">ج.م</span></div></div>${actionHtml}</div>
+          </div>`;
       }).join("");
     }
 
     function changeQty(productId, nextQty) {
-      const qty = Number(nextQty);
-      if (qty <= 0) {
-        cart = cart.filter(c => c.productId !== productId);
-      } else {
-        const exists = cart.find(c => c.productId === productId);
-        if (exists) exists.qty = qty;
-        else cart.push({ productId, qty });
-      }
+      const q = Number(nextQty);
+      if (q <= 0) cart = cart.filter(c => c.productId !== productId);
+      else { const f = cart.find(c => c.productId === productId); if (f) f.qty = q; else cart.push({ productId, qty: q }); }
       renderProducts();
       renderCart();
     }
 
     function getCartBreakdown() {
-      const zone = zones.find(z => z.id === selectedZoneId) || zones[0];
-      const lines = cart.map(item => {
-        const prod = products.find(p => p.id === item.productId);
+      const zone = zones.find(z => z.id === selectedZoneId) || zones[0] || { id: "mansoura", name: "المنصورة", fee: 50, free_above: 2500 };
+      const lines = cart.map(it => {
+        const prod = products.find(p => p.id === it.productId);
         if (!prod) return null;
-        const unitPrice = getTierUnitPrice(prod, item.qty);
-        return { ...item, prod, unitPrice, lineTotal: unitPrice * item.qty };
+        const unitPrice = getTierUnitPrice(prod, it.qty);
+        return { ...it, prod, unitPrice, lineTotal: unitPrice * it.qty };
       }).filter(Boolean);
-
-      const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
-      const isFree = subtotal >= zone.freeAbove && subtotal > 0;
+      const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
+      const isFree = subtotal >= zone.free_above && subtotal > 0;
       const deliveryFee = subtotal === 0 ? 0 : (isFree ? 0 : zone.fee);
-      const total = subtotal + deliveryFee;
-      const remaining = Math.max(0, zone.freeAbove - subtotal);
-
-      return { zone, lines, subtotal, deliveryFee, total, isFree, remaining };
+      return { zone, lines, subtotal, deliveryFee, total: subtotal + deliveryFee, isFree, remaining: Math.max(0, zone.free_above - subtotal) };
     }
 
     function renderCart() {
       const { zone, lines, subtotal, deliveryFee, total, isFree, remaining } = getCartBreakdown();
       document.getElementById("cartCountBadge").textContent = `${lines.length} أصناف`;
-
-      const listEl = document.getElementById("cartItemsList");
-      if (!lines.length) {
-        listEl.innerHTML = `<p style="font-size:13px; color:var(--muted); text-align:center; padding:18px 0;">السلة فارغة — أضف صوصات أو بمبات لبدء الطلب.</p>`;
-      } else {
-        listEl.innerHTML = lines.map(l => `
-          <div class="cart-item">
-            <div>
-              <div style="font-weight:700;">${l.prod.name}</div>
-              <div class="num" style="font-size:12px; color:var(--muted);">${l.qty} × ${l.unitPrice} ج.م (${l.prod.unit})</div>
-            </div>
-            <strong class="num">${l.lineTotal} ج.م</strong>
-          </div>
-        `).join("");
-      }
-
-      const hintEl = document.getElementById("freeDeliveryHint");
-      if (subtotal === 0) {
-        hintEl.innerHTML = `الحد الأدنى للتوصيل المجاني إلى <strong>${zone.name}</strong> هو <strong>${zone.freeAbove} ج.م</strong>.`;
-      } else if (isFree) {
-        hintEl.innerHTML = `<span style="color:var(--ok-fg); font-weight:700;">مبروك! طلبك مؤهل للتوصيل المجاني إلى ${zone.name}.</span>`;
-      } else {
-        hintEl.innerHTML = `أضف بقيمة <strong>${remaining} ج.م</strong> للحصول على <strong>توصيل مجاني</strong> إلى ${zone.name}.`;
-      }
-
+      document.getElementById("cartItemsList").innerHTML = lines.length
+        ? lines.map(l => `<div class="cart-item"><div><div style="font-weight:700;">${l.prod.name}</div><div class="num" style="font-size:12px; color:var(--muted);">${l.qty} × ${l.unitPrice} ج.م (${l.prod.unit})</div></div><strong class="num">${l.lineTotal} ج.م</strong></div>`).join("")
+        : `<p style="font-size:13px; color:var(--muted); text-align:center; padding:18px 0;">السلة فارغة — أضف صوصات أو بمبات لبدء الطلب.</p>`;
+      document.getElementById("freeDeliveryHint").innerHTML = subtotal === 0
+        ? `الحد الأدنى للتوصيل المجاني إلى <strong>${zone.name}</strong> هو <strong>${zone.free_above} ج.م</strong>.`
+        : isFree ? `<span style="color:var(--ok-fg); font-weight:700;">طلبك مؤهل للتوصيل المجاني إلى ${zone.name}.</span>`
+        : `أضف بقيمة <strong>${remaining} ج.م</strong> للحصول على <strong>توصيل مجاني</strong> إلى ${zone.name}.`;
       document.getElementById("cartDeliveryLabel").textContent = `توصيل (${zone.name})`;
       document.getElementById("cartDeliveryFee").textContent = deliveryFee === 0 ? "مجاني" : `${deliveryFee} ج.م`;
       document.getElementById("cartSubtotal").textContent = `${subtotal} ج.م`;
       document.getElementById("cartTotal").textContent = `${total} ج.م`;
     }
 
-    function placeOrder(viaWhatsApp) {
-      const { zone, lines, deliveryFee, total } = getCartBreakdown();
+    async function placeOrder(viaWhatsApp) {
+      const { zone, lines, subtotal, deliveryFee, total } = getCartBreakdown();
       if (!lines.length) return;
+      const businessName = document.getElementById("inputBusinessName").value.trim() || "كافيه / مطعم - الدقهلية";
+      const customerPhone = document.getElementById("inputCustomerPhone").value.trim() || "";
+      const orderId = `ORD-${Date.now().toString().slice(-6)}`;
 
-      const businessName = document.getElementById("inputBusinessName").value.trim() || "عميل جملة - الدقهلية";
-      const orderId = `VELO-${Math.floor(1050 + Math.random() * 8900)}`;
-
-      orders.unshift({
-        id: orderId,
-        date: new Date().toISOString().slice(0, 10),
-        businessName,
-        zoneId: zone.id,
-        items: lines.map(l => ({
-          productId: l.prod.id,
-          qty: l.qty,
-          unitPrice: l.unitPrice,
-          unitCost: l.prod.costPrice
-        }))
+      await sb.from("customer_orders").insert({
+        id: orderId, business_name: businessName, customer_phone: customerPhone,
+        zone_id: zone.id, subtotal, delivery_fee: deliveryFee, total, status: "new"
       });
+      await sb.from("customer_order_items").insert(lines.map(l => ({
+        order_id: orderId, product_id: l.prod.id, product_name: l.prod.name,
+        supplier_id: l.prod.supplier_id, qty: l.qty, unit_price: l.unitPrice, unit_cost: l.prod.cost_price
+      })));
+      const bySupplier = {};
+      lines.forEach(l => {
+        if (!l.prod.supplier_id) return;
+        bySupplier[l.prod.supplier_id] = (bySupplier[l.prod.supplier_id] || 0) + (l.prod.cost_price * l.qty);
+      });
+      const poRows = Object.entries(bySupplier).map(([supplier_id, total_cost]) => ({
+        order_id: orderId, supplier_id, status: "pending_pickup", total_cost
+      }));
+      if (poRows.length) await sb.from("supplier_purchase_orders").insert(poRows);
 
+      localStorage.setItem("last_b2b_order", JSON.stringify({ orderId, date: new Date().toISOString().slice(0, 10), zoneId: zone.id, items: lines.map(l => ({ productId: l.prod.id, qty: l.qty })) }));
       renderLastOrderBox();
+
       const alertBox = document.getElementById("orderSuccessAlert");
       alertBox.classList.remove("hidden");
-      alertBox.innerHTML = `تم تسجيل طلب VELO الموحد <strong>#${orderId}</strong> وتقسيم أوامر الاستلام على التجار تلقائياً في لوحة الإدارة.`;
+      alertBox.innerHTML = `تم تسجيل الفاتورة الموحدة <strong>#${orderId}</strong> وتقسيم أوامر الاستلام على التجار في Supabase.`;
 
       if (viaWhatsApp) {
         const itemsText = lines.map(l => `• ${l.prod.name} × ${l.qty} = ${l.lineTotal} ج.م`).join("\n");
-        const msg = encodeURIComponent(`طلب توريد VELO (${orderId})\nالمنشأة: ${businessName}\nالمركز: ${zone.name}\n\n${itemsText}\n\nالتوصيل: ${deliveryFee} ج.م\nالإجمالي: ${total} ج.م`);
+        const msg = encodeURIComponent(`طلب توريد (${orderId})\nالمنشأة: ${businessName}\nالمركز: ${zone.name}\n\n${itemsText}\n\nالتوصيل: ${deliveryFee} ج.م\nالإجمالي: ${total} ج.م`);
         window.open(`https://wa.me/201000000000?text=${msg}`, "_blank", "noopener,noreferrer");
       }
     }
 
-    function switchRole(role) {
+    function renderLastOrderBox() {
+      const raw = localStorage.getItem("last_b2b_order");
+      if (!raw) { document.getElementById("lastOrderSummary").textContent = "لا توجد فاتورة سابقة محفوظة على هذا الجهاز بعد."; return; }
+      const last = JSON.parse(raw);
+      document.getElementById("lastOrderSummary").textContent = `آخر فاتورة #${last.orderId} (${last.date}) — ${last.items.length} أصناف`;
+    }
+
+    function quickReorderLast() {
+      const raw = localStorage.getItem("last_b2b_order");
+      if (!raw) return;
+      const last = JSON.parse(raw);
+      selectedZoneId = last.zoneId;
+      document.getElementById("zoneSelect").value = selectedZoneId;
+      updateZoneBanner();
+      cart = last.items;
+      renderProducts();
+      renderCart();
+    }
+
+    async function switchRole(role) {
       const isClient = role === "client";
       document.getElementById("clientView").classList.toggle("hidden", !isClient);
       document.getElementById("adminView").classList.toggle("hidden", isClient);
       document.getElementById("btnRoleClient").className = `role-btn ${isClient ? "active-client" : ""}`;
       document.getElementById("btnRoleAdmin").className = `role-btn ${!isClient ? "active-admin" : ""}`;
+      if (!isClient) await checkAdminSession();
+    }
 
-      if (!isClient) {
-        renderAdminSplitOrders();
-        renderAdminProductsTable();
-        renderAdminZones();
-      }
+    async function signInAdmin() {
+      const email = document.getElementById("adminEmail").value.trim();
+      const password = document.getElementById("adminPassword").value;
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      document.getElementById("adminAuthMsg").textContent = error ? error.message : "";
+      if (!error) await checkAdminSession();
+    }
+
+    async function checkAdminSession() {
+      const { data: { session } } = await sb.auth.getSession();
+      const authed = Boolean(session);
+      document.getElementById("adminLoginBox").classList.toggle("hidden", authed);
+      document.getElementById("adminPanelContent").classList.toggle("hidden", !authed);
+      if (authed) await loadAdminData();
+    }
+
+    async function loadAdminData() {
+      const [{ data: sData }, { data: oData }, { data: iData }, { data: poData }] = await Promise.all([
+        sb.from("suppliers").select("*"),
+        sb.from("customer_orders").select("*").order("created_at", { ascending: false }),
+        sb.from("customer_order_items").select("*"),
+        sb.from("supplier_purchase_orders").select("*").order("created_at", { ascending: false })
+      ]);
+      suppliers = sData || [];
+      orders = oData || [];
+      renderAdminSplit(poData || [], iData || []);
+      renderAdminProducts();
+      renderAdminZones();
     }
 
     function switchAdminTab(tab) {
       document.getElementById("adminSplitSection").classList.toggle("hidden", tab !== "split");
       document.getElementById("adminProductsSection").classList.toggle("hidden", tab !== "products");
       document.getElementById("adminZonesSection").classList.toggle("hidden", tab !== "zones");
-
       ["split", "products", "zones"].forEach(t => {
-        const btn = document.getElementById(`tabAdmin${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        btn.className = `admin-tab ${t === tab ? "active" : ""}`;
+        document.getElementById(`tabAdmin${t.charAt(0).toUpperCase() + t.slice(1)}`).className = `admin-tab ${t === tab ? "active" : ""}`;
       });
     }
 
-    function renderAdminSplitOrders() {
+    function renderAdminSplit(pos, items) {
       const grouped = {};
-      orders.forEach(ord => {
-        ord.items.forEach(it => {
-          const prod = products.find(p => p.id === it.productId);
-          if (!prod) return;
-          if (!grouped[prod.supplierId]) {
-            grouped[prod.supplierId] = {
-              supplier: suppliers.find(s => s.id === prod.supplierId),
-              lines: [],
-              totalCost: 0
-            };
-          }
-          const costLine = (it.unitCost ?? prod.costPrice) * it.qty;
-          const zoneName = zones.find(z => z.id === ord.zoneId)?.name || ord.zoneId;
-          grouped[prod.supplierId].lines.push({
-            orderId: ord.id,
-            businessName: ord.businessName,
-            zoneName,
-            productName: prod.name,
-            qty: it.qty,
-            costLine
-          });
-          grouped[prod.supplierId].totalCost += costLine;
-        });
+      pos.forEach(po => {
+        const sup = suppliers.find(s => s.id === po.supplier_id);
+        const ord = orders.find(o => o.id === po.order_id);
+        const zoneName = zones.find(z => z.id === ord?.zone_id)?.name || "";
+        const poItems = items.filter(it => it.order_id === po.order_id && it.supplier_id === po.supplier_id);
+        if (!grouped[po.supplier_id]) grouped[po.supplier_id] = { sup, entries: [], sum: 0 };
+        grouped[po.supplier_id].entries.push({ po, ord, zoneName, poItems });
+        grouped[po.supplier_id].sum += Number(po.total_cost || 0);
       });
-
-      document.getElementById("adminSplitSection").innerHTML = Object.values(grouped).map(({ supplier, lines, totalCost }) => `
+      document.getElementById("adminSplitSection").innerHTML = Object.values(grouped).map(({ sup, entries, sum }) => `
         <div class="card">
-          <div style="border-bottom:1px solid #F4F4F5; padding-bottom:10px;">
-            <div class="prod-meta">${supplier?.mode}</div>
-            <h3 style="margin:2px 0; font-size:16px;">${supplier?.name}</h3>
-            <div style="font-size:12px; color:var(--muted);">هاتف التواصل: ${supplier?.phone}</div>
-          </div>
-          ${lines.map(ln => `
+          <div class="prod-meta">${sup?.pickup_mode || ""}</div>
+          <h3 style="margin:2px 0;">${sup?.name || "مورد"}</h3>
+          <div style="font-size:12px; color:var(--muted);">${sup?.phone || ""}</div>
+          ${entries.map(({ ord, zoneName, poItems }) => `
             <div class="po-line">
-              <div style="display:flex; justify-content:space-between; font-weight:700;">
-                <span>${ln.productName}</span>
-                <span class="num">× ${ln.qty}</span>
-              </div>
-              <div style="display:flex; justify-content:space-between; color:var(--muted); margin-top:4px;">
-                <span>#${ln.orderId} (${ln.businessName} - ${ln.zoneName})</span>
-                <strong class="num" style="color:var(--ink);">تكلفة: ${ln.costLine} ج.م</strong>
-              </div>
-            </div>
-          `).join("")}
-          <div style="display:flex; justify-content:space-between; border-top:1px solid #F4F4F5; margin-top:12px; padding-top:10px; font-weight:800;">
-            <span>إجمالي مستحقات التاجر</span>
-            <span class="num" style="color:var(--brand-dark);">${totalCost} ج.م</span>
+              <strong>#${ord?.id || ""} — ${ord?.business_name || ""} (${zoneName})</strong>
+              ${poItems.map(it => `<div style="display:flex; justify-content:space-between; margin-top:4px;"><span>${it.product_name}</span><span class="num">× ${it.qty} (${it.unit_cost * it.qty} ج.م)</span></div>`).join("")}
+            </div>`).join("")}
+          <div style="display:flex; justify-content:space-between; border-top:1px solid #F4F4F5; margin-top:12px; padding-top:10px; font-weight:700;">
+            <span>إجمالي مستحقات التاجر</span><span class="num" style="color:var(--accent-dark);">${sum} ج.م</span>
           </div>
-        </div>
-      `).join("");
+        </div>`).join("");
     }
 
-    function addNewProduct(e) {
-      e.preventDefault();
-      const name = document.getElementById("newProdName").value.trim();
-      const unit = document.getElementById("newProdUnit").value.trim();
-      const supplierId = document.getElementById("newProdSupplier").value;
-      const costPrice = Number(document.getElementById("newProdCost").value) || 100;
-      const tier1 = Number(document.getElementById("newProdTier1").value) || 130;
-      const tier4 = Number(document.getElementById("newProdTier4").value) || 115;
-
-      products.unshift({
-        id: `p-${Date.now()}`,
-        name,
-        brand: "VELO Select",
-        category: "cafe_desserts",
-        unit,
-        supplierId,
-        costPrice,
-        servingLabel: "جرعة قياسية",
-        servingsPerUnit: 120,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 3, price: tier1 },
-          { min: 4, max: null, price: tier4 }
-        ]
-      });
-
-      document.getElementById("newProdName").value = "";
-      renderProducts();
-      renderAdminProductsTable();
-    }
-
-    function toggleProdAvailability(id) {
-      const cycle = { available: "limited", limited: "out_of_stock", out_of_stock: "available" };
-      const p = products.find(item => item.id === id);
-      if (p) p.availability = cycle[p.availability];
-      renderProducts();
-      renderAdminProductsTable();
-    }
-
-    function renderAdminProductsTable() {
+    function renderAdminProducts() {
       document.getElementById("adminProductsTable").innerHTML = products.map(p => {
-        const sup = suppliers.find(s => s.id === p.supplierId);
-        const av = AVAILABILITY_META[p.availability];
-        return `
-          <tr>
-            <td>
-              <div style="font-weight:700;">${p.name}</div>
-              <div style="font-size:12px; color:var(--muted);">${CATEGORY_LABELS[p.category]} — ${p.unit}</div>
-            </td>
-            <td style="font-weight:600;">${sup?.name}</td>
-            <td class="num" style="font-weight:700;">${p.costPrice} ج.م</td>
-            <td class="num" style="font-size:12px;">${p.tiers.map(t => `${t.min}${t.max ? `-${t.max}` : "+"}: ${t.price}ج`).join(" | ")}</td>
-            <td>
-              <button class="badge ${av.cls}" style="border:none; cursor:pointer;" onclick="toggleProdAvailability('${p.id}')">${av.label} (تبديل)</button>
-            </td>
-          </tr>
-        `;
+        const sup = suppliers.find(s => s.id === p.supplier_id);
+        const av = AVAILABILITY_META[p.availability] || AVAILABILITY_META.available;
+        return `<tr><td><strong>${p.name}</strong><div style="font-size:12px; color:var(--muted);">${p.unit}</div></td><td>${sup?.name || "-"}</td><td class="num">${p.cost_price} ج.م</td><td class="num" style="font-size:12px;">${(p.tiers || []).map(t => `${t.min}${t.max ? `-${t.max}` : "+"}: ${t.price}ج`).join(" | ")}</td><td><span class="badge ${av.cls}">${av.label}</span></td></tr>`;
       }).join("");
-    }
-
-    function updateZoneSetting(id, field, value) {
-      const z = zones.find(item => item.id === id);
-      if (z) z[field] = Number(value) || 0;
-      const zoneSelect = document.getElementById("zoneSelect");
-      zoneSelect.innerHTML = zones.map(item => `<option value="${item.id}">${item.name} (${item.fee} ج.م)</option>`).join("");
-      zoneSelect.value = selectedZoneId;
-      updateZoneBanner();
-      renderCart();
     }
 
     function renderAdminZones() {
       document.getElementById("adminZonesGrid").innerHTML = zones.map(z => `
-        <div class="card" style="padding:14px;">
-          <div style="font-weight:800; margin-bottom:10px;">${z.name}</div>
-          <label style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:8px;">
-            <span>رسوم التوصيل (ج.م):</span>
-            <input type="number" class="field-input num" style="width:96px; margin:0; padding:6px 8px;" value="${z.fee}" onchange="updateZoneSetting('${z.id}', 'fee', this.value)" />
-          </label>
-          <label style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
-            <span>حد التوصيل المجاني (ج.م):</span>
-            <input type="number" class="field-input num" style="width:96px; margin:0; padding:6px 8px;" value="${z.freeAbove}" onchange="updateZoneSetting('${z.id}', 'freeAbove', this.value)" />
-          </label>
-        </div>
+        <div class="card" style="padding:14px;"><strong>${z.name}</strong><div style="font-size:12px; color:var(--muted); margin-top:6px;">رسوم: ${z.fee} ج.م • مجاني من: ${z.free_above} ج.م</div></div>
       `).join("");
     }
 
-    init();
+    renderLastOrderBox();
+    loadCatalogAndZones();
   </script>
 </body>
 </html>
