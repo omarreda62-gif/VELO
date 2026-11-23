@@ -3,119 +3,228 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>بوابة توريد جملة للصوصات — الدقهلية</title>
+  <title>سوق الجملة للصوصات — بوابة توريد الكافيهات والمطاعم بالدقهلية</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Cairo', sans-serif; background-color: #f7f5f2; color: #1c1917; }
+    body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; color: #111827; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen flex flex-col">
 
-  <header class="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div>
-        <h1 class="text-lg md:text-xl font-extrabold text-stone-900">بوابة توريد جملة للصوصات — الدقهلية</h1>
-        <p class="text-xs text-stone-500">تجميع طلبات الكافيهات والمطاعم بفاتورة موحدة وتقسيم أوامر الاستلام على التجار خلف الكواليس</p>
+  <!-- الشريط العلوي بنمط المتاجر الكبرى (Amazon-style Header) -->
+  <header class="sticky top-0 z-40 bg-stone-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center gap-3">
+      <!-- الشعار -->
+      <div class="flex items-center gap-2 shrink-0 cursor-pointer" onclick="switchTab('client'); filterCategory('all');">
+        <div class="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 font-black flex items-center justify-center text-lg">ص</div>
+        <div>
+          <div class="font-black text-base leading-tight">صوصات<span class="text-amber-400">.جملة</span></div>
+          <div class="text-[10px] text-stone-400">توريد الكافيهات والمطاعم • الدقهلية</div>
+        </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <select id="zoneSelect" onchange="handleZoneChange()" class="bg-stone-100 border border-stone-300 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none"></select>
-        <button onclick="switchTab('client')" id="tabClientBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-stone-900 text-white">واجهة الكافيه / المطعم</button>
-        <button onclick="switchTab('admin')" id="tabAdminBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-stone-100 text-stone-700 hover:bg-stone-200">لوحة إدارة المنصة</button>
+      <!-- مُحدّد المركز في الدقهلية -->
+      <div class="bg-stone-800 hover:bg-stone-750 border border-stone-700 rounded-xl px-3 py-1.5 flex items-center gap-2 shrink-0">
+        <span class="text-amber-400 text-xs">📍</span>
+        <div class="text-right">
+          <div class="text-[10px] text-stone-400 leading-none">التوصيل إلى</div>
+          <select id="zoneSelect" onchange="handleZoneChange()" class="bg-transparent text-white text-xs font-extrabold focus:outline-none cursor-pointer"></select>
+        </div>
+      </div>
+
+      <!-- شريط البحث المركزي -->
+      <div class="flex-1 min-w-[240px] flex items-stretch bg-white rounded-xl overflow-hidden text-stone-900">
+        <select id="searchCatSelect" onchange="filterCategory(this.value)" class="bg-stone-100 border-l border-stone-200 px-3 text-xs font-bold text-stone-700 focus:outline-none hidden sm:block">
+          <option value="all">كل الأقسام</option>
+          <option value="cafe_dessert">كافيه ووافل</option>
+          <option value="restaurant">مطاعم وبرجر</option>
+          <option value="pumps_bottles">بمبات وعبوات</option>
+          <option value="bundles">باقات مجمعة</option>
+        </select>
+        <input id="searchInput" oninput="renderProducts()" type="text" placeholder="ابحث عن صوص كراميل، شوكولاتة، شيدر، بمب صوصات، جركن..."
+          class="w-full px-3.5 py-2 text-sm focus:outline-none" />
+        <button onclick="renderProducts()" class="bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold px-4 text-sm">بحث</button>
+      </div>
+
+      <!-- أزرار لوحة الإدارة والسلة -->
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="toggleAdminView()" id="toggleModeBtn" class="px-3 py-2 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 border border-stone-700 text-stone-200">
+          لوحة الإدارة
+        </button>
+
+        <button onclick="openCartDrawer()" class="relative bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold px-3.5 py-2 rounded-xl flex items-center gap-2 text-sm">
+          <span>🛒 السلة</span>
+          <span id="headerCartCount" class="bg-stone-900 text-white text-xs font-black px-2 py-0.5 rounded-full">0</span>
+        </button>
       </div>
     </div>
+
+    <!-- شريط الأقسام الفرعي -->
+    <nav id="subNavBar" class="bg-stone-800 border-t border-stone-700/80">
+      <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
+        <div class="flex items-center gap-2 shrink-0">
+          <button data-cat="all" onclick="filterCategory('all')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-stone-950">جميع المنتجات</button>
+          <button data-cat="cafe_dessert" onclick="filterCategory('cafe_dessert')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">صوصات الكافيه والوافل</button>
+          <button data-cat="restaurant" onclick="filterCategory('restaurant')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">صوصات المطاعم والفاست فود</button>
+          <button data-cat="pumps_bottles" onclick="filterCategory('pumps_bottles')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">البمبات وعبوات الضغط</button>
+          <button data-cat="bundles" onclick="filterCategory('bundles')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">باقات التوفير المجمعة</button>
+        </div>
+        <div id="zoneScheduleBadge" class="text-[11px] text-amber-300 font-semibold shrink-0"></div>
+      </div>
+    </nav>
   </header>
 
-  <div id="statusBanner" class="max-w-7xl mx-auto px-4 pt-3 hidden">
-    <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl px-4 py-2.5 flex items-center justify-between">
-      <span id="statusBannerText"></span>
-      <button onclick="document.getElementById('statusBanner').classList.add('hidden')" class="font-bold underline">إخفاء</button>
+  <!-- إشعارات النظام -->
+  <div id="statusBanner" class="max-w-7xl w-full mx-auto px-4 pt-3 hidden">
+    <div class="bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs rounded-xl px-4 py-2.5 flex items-center justify-between">
+      <span id="statusBannerText" class="font-bold"></span>
+      <button onclick="document.getElementById('statusBanner').classList.add('hidden')" class="underline font-bold">إغلاق</button>
     </div>
   </div>
 
-  <main id="clientView" class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <section class="lg:col-span-8 space-y-5">
-      <div class="bg-stone-900 text-white rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <!-- ================= واجهة المتجر للعميل ================= -->
+  <main id="clientView" class="max-w-7xl w-full mx-auto px-4 py-5 space-y-5 flex-1">
+
+    <!-- بانر المتجر + شريط إعادة الطلب السريع -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-8 bg-gradient-to-l from-stone-900 via-stone-800 to-amber-950 text-white rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span class="inline-block text-xs bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg font-bold mb-2">توريد جملة للدقهلية</span>
-          <h2 class="text-xl font-extrabold">اطلب صوصات الكافيه والمطعم والبمبات في فاتورة واحدة</h2>
-          <p id="zoneInfoText" class="text-xs text-stone-300 mt-1">اختر مركزك لعرض رسوم التوصيل وحد التوصيل المجاني.</p>
+          <span class="inline-block bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md mb-1.5">فاتورة واحدة • بدون حد أدنى معقد</span>
+          <h1 class="text-lg md:text-2xl font-black">توريد جملة للصوصات ومستلزمات التشغيل في الدقهلية</h1>
+          <p class="text-xs text-stone-300 mt-1">اجمع طلبك من مختلف البراندات في سلة واحدة واستلم بفاتورة موحدة باسم المنصة.</p>
         </div>
-        <button onclick="filterCategory('bundles')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm px-4 py-2.5 rounded-xl shrink-0">الباقات المجمعة</button>
+        <button onclick="filterCategory('bundles')" class="bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs px-4 py-3 rounded-xl shrink-0">تصفح الباقات المجمعة</button>
       </div>
 
-      <div class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="lg:col-span-4 bg-white border border-stone-200 rounded-2xl p-4 flex flex-col justify-between gap-3">
         <div>
-          <div class="text-sm font-extrabold text-amber-700">إعادة طلب سريع (Quick Reorder)</div>
-          <div id="lastOrderSummary" class="text-xs text-stone-500 mt-0.5">لا توجد فاتورة سابقة محفوظة على هذا الجهاز بعد.</div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-amber-700">⚡ إعادة طلب سريع (Quick Reorder)</span>
+            <span class="text-[10px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded-full font-bold">للطلبات الدورية</span>
+          </div>
+          <p id="lastOrderSummary" class="text-xs text-stone-500 mt-1.5">لا توجد فاتورة سابقة محفوظة على هذا الجهاز بعد.</p>
         </div>
-        <button onclick="reorderLastInvoice()" id="reorderBtn" disabled class="bg-stone-900 disabled:bg-stone-300 text-white text-sm font-bold px-4 py-2.5 rounded-xl shrink-0">تحميل آخر فاتورة في السلة</button>
+        <button onclick="reorderLastInvoice()" id="reorderBtn" disabled class="w-full bg-stone-900 disabled:bg-stone-200 disabled:text-stone-400 hover:bg-stone-800 text-white text-xs font-extrabold py-2.5 rounded-xl">
+          إعادة طلب آخر فاتورة بنقرة واحدة
+        </button>
       </div>
+    </div>
 
-      <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
-        <input id="searchInput" oninput="renderProducts()" type="text" placeholder="ابحث باسم الصوص أو البراند أو الاستخدام (كراميل، شوكولاتة، برجر، بمب)..."
-          class="w-full border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-stone-800" />
-        <div id="categoryTabs" class="flex flex-wrap gap-2">
-          <button data-cat="all" onclick="filterCategory('all')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-white">الكل</button>
-          <button data-cat="cafe_dessert" onclick="filterCategory('cafe_dessert')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">صوصات الكافيه والوافل</button>
-          <button data-cat="restaurant" onclick="filterCategory('restaurant')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">صوصات المطاعم</button>
-          <button data-cat="pumps_bottles" onclick="filterCategory('pumps_bottles')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">البمبات وعبوات الضغط</button>
-          <button data-cat="bundles" onclick="filterCategory('bundles')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">باقات مجمعة</button>
-        </div>
-      </div>
+    <!-- هيكل المتجر: فلاتر جانبية + شبكة المنتجات -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-      <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </section>
-
-    <aside class="lg:col-span-4">
-      <div class="bg-white border border-stone-200 rounded-2xl p-5 sticky top-20 space-y-4">
-        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
-          <h2 class="text-base font-extrabold">الفاتورة الموحدة</h2>
-          <span id="cartCountBadge" class="text-xs font-bold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">0 أصناف</span>
+      <!-- عمود الفلاتر الجانبي (Amazon Sidebar) -->
+      <aside class="lg:col-span-3 bg-white border border-stone-200 rounded-2xl p-4 space-y-5 hidden lg:block sticky top-28">
+        <div>
+          <h3 class="text-xs font-black text-stone-900 uppercase tracking-wide mb-2.5">الأقسام</h3>
+          <ul class="space-y-1.5 text-xs font-bold text-stone-600">
+            <li><button onclick="filterCategory('all')" class="hover:text-amber-700">• كل المنتجات والباقات</button></li>
+            <li><button onclick="filterCategory('cafe_dessert')" class="hover:text-amber-700">• صوصات الكافيه والوافل والكريب</button></li>
+            <li><button onclick="filterCategory('restaurant')" class="hover:text-amber-700">• صوصات المطاعم والبرجر</button></li>
+            <li><button onclick="filterCategory('pumps_bottles')" class="hover:text-amber-700">• البمبات وعبوات الضغط</button></li>
+            <li><button onclick="filterCategory('bundles')" class="hover:text-amber-700">• الباقات المجمعة</button></li>
+          </ul>
         </div>
 
-        <div class="space-y-2.5">
-          <input id="venueNameInput" type="text" placeholder="اسم الكافيه أو المطعم" class="w-full border border-stone-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-stone-800" />
-          <input id="phoneInput" type="tel" placeholder="رقم الهاتف / واتساب للتأكيد" class="w-full border border-stone-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-stone-800" />
+        <div class="border-t border-stone-100 pt-4">
+          <h3 class="text-xs font-black text-stone-900 mb-2">حالة التوفر</h3>
+          <label class="flex items-center gap-2 text-xs text-stone-700 cursor-pointer">
+            <input id="onlyAvailableCheck" type="checkbox" onchange="renderProducts()" class="rounded text-amber-600" />
+            <span>عرض المتاح للتوريد الفوري فقط</span>
+          </label>
         </div>
 
-        <div id="cartItemsContainer" class="space-y-2.5 max-h-64 overflow-y-auto text-sm">
-          <p class="text-xs text-stone-400 text-center py-6">السلة فارغة — أضف أصنافاً من الكتالوج لبدء الفاتورة.</p>
+        <div class="border-t border-stone-100 pt-4">
+          <h3 class="text-xs font-black text-stone-900 mb-2">تصفية بالبراند</h3>
+          <div id="brandFiltersList" class="space-y-1.5 text-xs text-stone-700"></div>
+        </div>
+      </aside>
+
+      <!-- شبكة بطاقات المنتجات -->
+      <section class="lg:col-span-9 space-y-3">
+        <div class="bg-white border border-stone-200 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs">
+          <span id="resultsCountText" class="font-bold text-stone-600">عرض جميع الأصناف</span>
+          <select id="sortSelect" onchange="renderProducts()" class="border border-stone-200 rounded-lg px-2.5 py-1 font-bold text-stone-700 focus:outline-none">
+            <option value="default">الترتيب: الأكثر طلباً</option>
+            <option value="price_asc">السعر: من الأقل للأعلى</option>
+            <option value="price_desc">السعر: من الأعلى للأقل</option>
+          </select>
         </div>
 
-        <div class="border-t border-stone-200 pt-3 space-y-2 text-sm">
-          <div class="flex justify-between"><span class="text-stone-600">إجمالي الأصناف</span><span id="subtotalText" class="font-bold">0 ج.م</span></div>
-          <div class="flex justify-between"><span class="text-stone-600">التوصيل</span><span id="deliveryText" class="font-bold">0 ج.م</span></div>
-          <div class="flex justify-between text-base font-extrabold border-t border-stone-100 pt-2"><span>الإجمالي المستحق</span><span id="totalText" class="text-stone-900">0 ج.م</span></div>
-        </div>
-
-        <div class="space-y-2 pt-1">
-          <button onclick="submitOrder(false)" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3 rounded-xl text-sm">إرسال طلب التوريد</button>
-          <button onclick="submitOrder(true)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm">تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)</button>
-        </div>
-      </div>
-    </aside>
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+      </section>
+    </div>
   </main>
 
-  <section id="adminView" class="max-w-7xl mx-auto px-4 py-6 space-y-6 hidden">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي الطلبات المسجلة</div><div id="statOrdersCount" class="text-2xl font-extrabold mt-1">0</div></div>
-      <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي مبيعات الفواتير الموحدة</div><div id="statSalesTotal" class="text-2xl font-extrabold mt-1">0 ج.م</div></div>
-      <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">أوامر الاستلام المقسّمة على التجار</div><div id="statPickupsCount" class="text-2xl font-extrabold mt-1">0</div></div>
-    </div>
-
-    <div class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+  <!-- ================= درج السلة الموحدة (Slide-over Cart Drawer) ================= -->
+  <div id="cartDrawerBackdrop" onclick="closeCartDrawer()" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
+  <aside id="cartDrawer" class="fixed top-0 left-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col">
+    <div class="p-4 bg-stone-900 text-white flex items-center justify-between">
       <div>
-        <h2 class="text-lg font-extrabold">أوامر الاستلام المقسّمة على التجار (Merchant Pickup Orders)</h2>
-        <p class="text-xs text-stone-500">كل طلب عميل يتم تقسيمه تلقائياً حسب التاجر المرتبط بكل صنف لتسهيل التجميع والتسليم باسم المنصة.</p>
+        <h2 class="font-black text-base">الفاتورة الموحدة</h2>
+        <p class="text-[11px] text-stone-300">تجميع أصنافك من عدة موردين في شحنة وفاتورة واحدة</p>
       </div>
-      <div id="pickupOrdersList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-sm text-stone-400">لا توجد طلبات بعد.</p></div>
+      <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-lg bg-stone-800 hover:bg-stone-700 text-white font-bold">✕</button>
+    </div>
+
+    <!-- شريط التقدم للتوصيل المجاني -->
+    <div id="freeDeliveryProgressBox" class="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-xs">
+      <div id="freeDeliveryText" class="font-bold text-amber-900 mb-1.5"></div>
+      <div class="w-full h-2 bg-amber-200 rounded-full overflow-hidden">
+        <div id="freeDeliveryBar" class="h-full bg-emerald-600 transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- عناصر السلة -->
+    <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+
+    <!-- بيانات العميل والإجمالي -->
+    <div class="border-t border-stone-200 p-4 bg-stone-50 space-y-3">
+      <div class="grid grid-cols-1 gap-2">
+        <input id="venueNameInput" type="text" placeholder="اسم الكافيه أو المطعم *" class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-stone-900" />
+        <input id="phoneInput" type="tel" placeholder="رقم الهاتف / واتساب للتأكيد *" class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-stone-900" />
+      </div>
+
+      <div class="space-y-1 text-xs border-t border-stone-200 pt-2.5">
+        <div class="flex justify-between"><span class="text-stone-600">إجمالي الأصناف:</span><span id="subtotalText" class="font-bold">0 ج.م</span></div>
+        <div class="flex justify-between"><span class="text-stone-600">رسوم التوصيل (<span id="drawerZoneName">المنصورة</span>):</span><span id="deliveryText" class="font-bold">0 ج.م</span></div>
+        <div class="flex justify-between text-base font-black text-stone-900 pt-1"><span>الإجمالي المستحق:</span><span id="totalText">0 ج.م</span></div>
+      </div>
+
+      <div class="space-y-2">
+        <button onclick="submitOrder(false)" class="w-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-black py-3 rounded-xl text-xs">تأكيد وإرسال طلب التوريد</button>
+        <button onclick="submitOrder(true)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs">تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= لوحة تحكم الإدارة (Admin Dashboard) ================= -->
+  <section id="adminView" class="max-w-7xl w-full mx-auto px-4 py-6 space-y-6 hidden flex-1">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-black text-stone-900">لوحة تشغيل المنصة وتقسيم أوامر الاستلام</h2>
+        <p class="text-xs text-stone-500">يتم تقسيم كل فاتورة عميل تلقائياً إلى أوامر استلام منفصلة لكل تاجر خلف الكواليس</p>
+      </div>
+      <button onclick="switchTab('client')" class="bg-stone-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl">العودة لواجهة المتجر</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي الطلبات المسجلة</div><div id="statOrdersCount" class="text-2xl font-black mt-1">0</div></div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي مبيعات الفواتير الموحدة</div><div id="statSalesTotal" class="text-2xl font-black mt-1">0 ج.م</div></div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">أوامر الاستلام المقسّمة على التجار</div><div id="statPickupsCount" class="text-2xl font-black mt-1">0</div></div>
     </div>
 
     <div class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
-      <h2 class="text-lg font-extrabold">سجل فواتير العملاء</h2>
-      <div id="adminOrdersList" class="space-y-3"><p class="text-sm text-stone-400">لا توجد فواتير مسجلة حتى الآن.</p></div>
+      <h3 class="text-base font-black">أوامر الاستلام المقسّمة على التجار (Merchant Pickup Orders)</h3>
+      <div id="pickupOrdersList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-xs text-stone-400">لا توجد أوامر استلام بعد.</p></div>
+    </div>
+
+    <div class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+      <h3 class="text-base font-black">سجل فواتير العملاء الموحدة</h3>
+      <div id="adminOrdersList" class="space-y-3"><p class="text-xs text-stone-400">لا توجد فواتير مسجلة حتى الآن.</p></div>
     </div>
   </section>
 
@@ -137,32 +246,44 @@
     const FALLBACK_PRODUCTS = [
       {
         id: 'p1', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
-        category: 'cafe_dessert', brand: 'Gold Topping', name: 'صوص كراميل مملح (جركن / عبوة)',
+        category: 'cafe_dessert', brand: 'Gold Topping', name: 'صوص كراميل مملح فاخر للقهوة والوافل',
         unitLabel: 'عبوة 1.2 كجم', weightG: 1200, doseG: 20, stock: 'available',
+        badgeColor: 'bg-amber-100 text-amber-900', icon: '🍮',
         tiers: [{ minQty: 1, label: '1-5 عبوات', price: 165, cost: 135 }, { minQty: 6, label: 'كرتونة (6+)', price: 148, cost: 120 }]
       },
       {
         id: 'p2', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
-        category: 'cafe_dessert', brand: 'ChocoPro', name: 'صوص شوكولاتة بالحليب للوافل والكريب',
+        category: 'cafe_dessert', brand: 'ChocoPro', name: 'صوص شوكولاتة بالحليب واللوتس للكريب والوافل',
         unitLabel: 'عبوة 1 كجم', weightG: 1000, doseG: 25, stock: 'available',
+        badgeColor: 'bg-stone-200 text-stone-900', icon: '🍫',
         tiers: [{ minQty: 1, label: '1-5 عبوات', price: 180, cost: 148 }, { minQty: 6, label: 'كرتونة (6+)', price: 160, cost: 130 }]
       },
       {
         id: 'p3', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
-        category: 'restaurant', brand: 'ChefLine', name: 'صوص سموكي برجر / جالون مطاعم',
+        category: 'restaurant', brand: 'ChefLine', name: 'صوص سموكي برجر وتكساس جالون للمطاعم',
         unitLabel: 'جركن 3.5 كجم', weightG: 3500, doseG: 30, stock: 'limited',
+        badgeColor: 'bg-orange-100 text-orange-900', icon: '🍔',
         tiers: [{ minQty: 1, label: '1-3 جراكن', price: 420, cost: 355 }, { minQty: 4, label: '4+ جراكن', price: 385, cost: 325 }]
       },
       {
-        id: 'p4', merchantId: 'm3', merchantName: 'مورد مستلزمات الكافيه والبمبات',
-        category: 'pumps_bottles', brand: 'BarEquip', name: 'بمب صوصات ستانلس/بلاستيك عملي + زجاجة ضغط',
+        id: 'p4', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
+        category: 'restaurant', brand: 'ChefLine', name: 'صوص جبنة شيدر كريمي جاهز للبطاطس والبرجر',
+        unitLabel: 'جركن 3 كجم', weightG: 3000, doseG: 35, stock: 'available',
+        badgeColor: 'bg-yellow-100 text-yellow-900', icon: '🧀',
+        tiers: [{ minQty: 1, label: '1-3 جراكن', price: 390, cost: 330 }, { minQty: 4, label: '4+ جراكن', price: 355, cost: 300 }]
+      },
+      {
+        id: 'p5', merchantId: 'm3', merchantName: 'مورد مستلزمات الكافيه والبمبات',
+        category: 'pumps_bottles', brand: 'BarEquip', name: 'طقم بمب صوصات ستانلس عملي + زجاجات ضغط 3 فتحات',
         unitLabel: 'طقم 6 قطع', weightG: null, doseG: null, stock: 'available',
+        badgeColor: 'bg-sky-100 text-sky-900', icon: '🧴',
         tiers: [{ minQty: 1, label: '1-4 أطقم', price: 290, cost: 230 }, { minQty: 5, label: '5+ أطقم', price: 255, cost: 200 }]
       },
       {
-        id: 'p5', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
-        category: 'bundles', brand: 'باقة المنصة', name: 'باقة الكافيه والوافل المتكاملة (كراميل + شوكولاتة + بمب)',
-        unitLabel: 'باقة كاملة', weightG: 2200, doseG: 20, stock: 'available',
+        id: 'p6', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
+        category: 'bundles', brand: 'باقة المنصة', name: 'باقة افتتاح الكافيه والوافل (كراميل + شوكولاتة + طقم بمب)',
+        unitLabel: 'باقة متكاملة', weightG: 2200, doseG: 20, stock: 'available',
+        badgeColor: 'bg-emerald-100 text-emerald-900', icon: '📦',
         tiers: [{ minQty: 1, label: 'باقة', price: 540, cost: 445 }, { minQty: 3, label: '3+ باقات', price: 505, cost: 410 }]
       }
     ];
@@ -172,6 +293,8 @@
     let state = {
       selectedZoneId: FALLBACK_ZONES[0].id,
       category: 'all',
+      selectedBrand: 'all',
+      isAdmin: false,
       cart: [],
       orders: JSON.parse(localStorage.getItem('b2b_sauces_orders') || '[]'),
       lastOrder: JSON.parse(localStorage.getItem('b2b_sauces_last_order') || 'null')
@@ -208,7 +331,7 @@
 
     function initZones() {
       const select = document.getElementById('zoneSelect');
-      select.innerHTML = zones.map(z => `<option value="${z.id}">${z.name_ar}</option>`).join('');
+      select.innerHTML = zones.map(z => `<option value="${z.id}" class="text-stone-900">${z.name_ar}</option>`).join('');
       if (!zones.some(z => z.id === state.selectedZoneId)) state.selectedZoneId = zones[0].id;
       select.value = state.selectedZoneId;
       handleZoneChange();
@@ -217,62 +340,131 @@
     function handleZoneChange() {
       state.selectedZoneId = document.getElementById('zoneSelect').value;
       const zone = getZone();
-      document.getElementById('zoneInfoText').textContent =
-        `التوصيل إلى ${zone.name_ar}: ${zone.delivery_fee} ج.م${zone.free_delivery_threshold ? ` — مجاني للطلبات من ${zone.free_delivery_threshold} ج.م` : ''} (${zone.schedule}).`;
+      document.getElementById('zoneScheduleBadge').textContent =
+        `توصيل ${zone.name_ar}: ${zone.delivery_fee} ج.م • مجاني من ${zone.free_delivery_threshold || '—'} ج.م (${zone.schedule})`;
+      document.getElementById('drawerZoneName').textContent = zone.name_ar;
       renderCart();
+    }
+
+    function renderBrandFilters() {
+      const brands = ['all', ...new Set(products.map(p => p.brand))];
+      document.getElementById('brandFiltersList').innerHTML = brands.map(b => `
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="brandRadio" ${state.selectedBrand === b ? 'checked' : ''} onchange="selectBrand('${b}')" />
+          <span>${b === 'all' ? 'جميع البراندات' : b}</span>
+        </label>
+      `).join('');
+    }
+
+    function selectBrand(brand) {
+      state.selectedBrand = brand;
+      renderProducts();
     }
 
     function filterCategory(cat) {
       state.category = cat;
+      const searchCat = document.getElementById('searchCatSelect');
+      if (searchCat) searchCat.value = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
         const active = btn.dataset.cat === cat;
         btn.className = active
-          ? 'cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-white'
-          : 'cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700';
+          ? 'cat-btn px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-stone-950'
+          : 'cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700';
       });
       renderProducts();
     }
 
     function renderProducts() {
       const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-      const list = products.filter(p => {
+      const onlyAvail = document.getElementById('onlyAvailableCheck')?.checked;
+      const sortBy = document.getElementById('sortSelect')?.value || 'default';
+
+      let list = products.filter(p => {
         const catMatch = state.category === 'all' || p.category === state.category;
+        const brandMatch = state.selectedBrand === 'all' || p.brand === state.selectedBrand;
+        const availMatch = !onlyAvail || p.stock === 'available';
         const text = `${p.brand} ${p.name} ${p.unitLabel}`.toLowerCase();
-        return catMatch && (!q || text.includes(q));
+        return catMatch && brandMatch && availMatch && (!q || text.includes(q));
       });
 
+      if (sortBy === 'price_asc') list.sort((a, b) => a.tiers[0].price - b.tiers[0].price);
+      if (sortBy === 'price_desc') list.sort((a, b) => b.tiers[0].price - a.tiers[0].price);
+
+      document.getElementById('resultsCountText').textContent = `عرض ${list.length} منتج من أصل ${products.length}`;
+
       const stockMap = {
-        available: ['متاح للتوريد', 'bg-emerald-50 text-emerald-700'],
-        limited: ['كمية محدودة', 'bg-amber-50 text-amber-700'],
-        out_of_stock: ['غير متاح حالياً', 'bg-rose-50 text-rose-700']
+        available: ['متاح للتوريد', 'bg-emerald-50 text-emerald-700 border-emerald-200'],
+        limited: ['كمية محدودة', 'bg-amber-50 text-amber-700 border-amber-200'],
+        out_of_stock: ['غير متاح حالياً', 'bg-rose-50 text-rose-700 border-rose-200']
       };
 
       document.getElementById('productsGrid').innerHTML = list.map(p => {
         const existing = state.cart.find(c => c.product.id === p.id);
-        const qty = existing ? existing.qty : 1;
-        const tier = getActiveTier(p, qty);
-        const doseCost = getDoseCost(p, qty);
+        const qty = existing ? existing.qty : 0;
+        const activeTier = getActiveTier(p, qty || 1);
+        const doseCost = getDoseCost(p, qty || 1);
         const [stockText, stockClass] = stockMap[p.stock] || stockMap.available;
 
         return `
-          <div class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-col justify-between gap-3">
+          <article class="bg-white border border-stone-200 hover:border-amber-400 rounded-2xl overflow-hidden flex flex-col justify-between transition shadow-2xs">
             <div>
-              <div class="flex items-center justify-between gap-2 mb-1">
-                <span class="text-xs font-bold text-amber-700">${p.brand}</span>
-                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${stockClass}">${stockText}</span>
+              <!-- منطقة معاينة المنتج (Product Visual Header) -->
+              <div class="relative bg-stone-50 border-b border-stone-100 p-4 flex items-center justify-between">
+                <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-md ${p.badgeColor || 'bg-stone-200 text-stone-800'}">${p.brand}</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full border ${stockClass}">${stockText}</span>
               </div>
-              <h3 class="font-extrabold text-stone-900 text-sm">${p.name}</h3>
-              <p class="text-xs text-stone-500 mt-0.5">${p.unitLabel}</p>
-              <div class="mt-3 flex flex-wrap gap-1.5">
-                ${p.tiers.map(t => `<span class="text-[11px] bg-stone-100 text-stone-700 px-2 py-1 rounded-lg">${t.label}: <b>${t.price} ج.م</b></span>`).join('')}
+
+              <div class="p-4 space-y-2.5">
+                <div class="flex items-start gap-2.5">
+                  <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-2xl shrink-0">${p.icon || '🧴'}</div>
+                  <div>
+                    <h3 class="font-extrabold text-stone-900 text-sm leading-snug">${p.name}</h3>
+                    <div class="text-xs text-stone-500 mt-0.5">العبوة: <b class="text-stone-700">${p.unitLabel}</b></div>
+                  </div>
+                </div>
+
+                <!-- السعر الرئيسي وشرائح الجملة -->
+                <div class="pt-1">
+                  <div class="flex items-baseline gap-1.5">
+                    <span class="text-xl font-black text-stone-900">${activeTier.price}</span>
+                    <span class="text-xs font-bold text-stone-600">ج.م / للوحدة</span>
+                  </div>
+                  <div class="mt-2 flex flex-wrap gap-1.5">
+                    ${p.tiers.map(t => `
+                      <span class="text-[11px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded-md border border-stone-200">
+                        ${t.label}: <b class="text-stone-900">${t.price} ج.م</b>
+                      </span>
+                    `).join('')}
+                  </div>
+                </div>
+
+                ${doseCost ? `
+                  <div class="bg-emerald-50/70 border border-emerald-100 rounded-lg px-2.5 py-1.5 text-[11px] text-emerald-900">
+                    تكلفة البمب/الجرعة (~${p.doseG} جم): <b>${doseCost} ج.م</b> للكوب أو الوجبة
+                  </div>
+                ` : ''}
               </div>
-              ${doseCost ? `<p class="text-[11px] text-stone-500 mt-2">تقدير تكلفة الجرعة/البمب (~${p.doseG} جم): <b>${doseCost} ج.م</b></p>` : ''}
             </div>
-            <div class="flex items-center justify-between border-t border-stone-100 pt-3">
-              <div><span class="text-xs text-stone-400">سعر الوحدة:</span> <span class="text-base font-extrabold text-stone-900">${tier.price} ج.م</span></div>
-              <button ${p.stock === 'out_of_stock' ? 'disabled' : ''} onclick="addToCart('${p.id}')" class="bg-stone-900 disabled:bg-stone-300 hover:bg-stone-800 text-white text-xs font-bold px-4 py-2 rounded-xl">إضافة للفاتورة</button>
+
+            <!-- زر الإضافة أو العدّاد المباشر (Amazon-style Add / Stepper) -->
+            <div class="p-4 pt-0">
+              ${qty > 0 ? `
+                <div class="flex items-center justify-between bg-amber-50 border-2 border-amber-500 rounded-xl px-3 py-1.5">
+                  <button onclick="changeQty('${p.id}', -1)" class="w-8 h-8 rounded-lg bg-white border border-stone-300 font-black text-base hover:bg-stone-100">-</button>
+                  <div class="text-center">
+                    <div class="text-xs font-black text-stone-900">${qty} في السلة</div>
+                    <div class="text-[10px] text-stone-600">الإجمالي: ${activeTier.price * qty} ج.م</div>
+                  </div>
+                  <button onclick="changeQty('${p.id}', 1)" class="w-8 h-8 rounded-lg bg-amber-500 text-stone-950 font-black text-base hover:bg-amber-400">+</button>
+                </div>
+              ` : `
+                <button ${p.stock === 'out_of_stock' ? 'disabled' : ''} onclick="addToCart('${p.id}')"
+                  class="w-full bg-amber-400 hover:bg-amber-500 disabled:bg-stone-200 disabled:text-stone-400 text-stone-950 font-extrabold text-xs py-2.5 rounded-xl transition">
+                  أضف إلى السلة
+                </button>
+              `}
             </div>
-          </div>
+          </article>
         `;
       }).join('');
     }
@@ -283,6 +475,7 @@
       const found = state.cart.find(c => c.product.id === productId);
       if (found) found.qty += 1;
       else state.cart.push({ product, qty: 1 });
+      renderProducts();
       renderCart();
     }
 
@@ -291,29 +484,31 @@
       if (idx === -1) return;
       state.cart[idx].qty += delta;
       if (state.cart[idx].qty <= 0) state.cart.splice(idx, 1);
+      renderProducts();
       renderCart();
     }
 
     function renderCart() {
-      const container = document.getElementById('cartItemsContainer');
       const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
-      document.getElementById('cartCountBadge').textContent = `${totalItems} أصناف`;
+      document.getElementById('headerCartCount').textContent = totalItems;
 
+      const container = document.getElementById('cartItemsContainer');
       if (!state.cart.length) {
-        container.innerHTML = `<p class="text-xs text-stone-400 text-center py-6">السلة فارغة — أضف أصنافاً من الكتالوج لبدء الفاتورة.</p>`;
+        container.innerHTML = `<div class="text-center py-12 text-xs text-stone-400">سلتك فارغة حالياً.<br>أضف أصنافاً من المتجر لبدء الفاتورة الموحدة.</div>`;
       } else {
         container.innerHTML = state.cart.map(item => {
           const tier = getActiveTier(item.product, item.qty);
           return `
-            <div class="border border-stone-200 rounded-xl p-2.5 flex items-center justify-between gap-2">
+            <div class="border border-stone-200 rounded-xl p-3 flex items-center justify-between gap-2 bg-white">
               <div class="min-w-0">
-                <div class="font-bold text-xs truncate">${item.product.name}</div>
-                <div class="text-[11px] text-stone-500">${tier.price} ج.م × ${item.qty} = <b>${tier.price * item.qty} ج.م</b></div>
+                <div class="text-[10px] font-bold text-amber-700">${item.product.brand}</div>
+                <div class="font-extrabold text-xs text-stone-900 truncate">${item.product.name}</div>
+                <div class="text-[11px] text-stone-500 mt-0.5">${tier.price} ج.م × ${item.qty} = <b class="text-stone-900">${tier.price * item.qty} ج.م</b></div>
               </div>
-              <div class="flex items-center gap-1 shrink-0">
-                <button onclick="changeQty('${item.product.id}', -1)" class="w-6 h-6 rounded-lg bg-stone-100 font-bold">-</button>
-                <span class="px-1.5 text-xs font-bold">${item.qty}</span>
-                <button onclick="changeQty('${item.product.id}', 1)" class="w-6 h-6 rounded-lg bg-stone-100 font-bold">+</button>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="changeQty('${item.product.id}', -1)" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 font-black">-</button>
+                <span class="px-1.5 text-xs font-black">${item.qty}</span>
+                <button onclick="changeQty('${item.product.id}', 1)" class="w-7 h-7 rounded-lg bg-amber-400 hover:bg-amber-500 font-black">+</button>
               </div>
             </div>
           `;
@@ -322,9 +517,36 @@
 
       const subtotal = calcSubtotal();
       const delivery = calcDelivery(subtotal);
+      const zone = getZone();
+
       document.getElementById('subtotalText').textContent = `${subtotal} ج.م`;
-      document.getElementById('deliveryText').textContent = delivery === 0 && subtotal > 0 ? 'مجاني' : `${delivery} ج.م`;
+      document.getElementById('deliveryText').textContent = delivery === 0 && subtotal > 0 ? 'مجاني 🎉' : `${delivery} ج.م`;
       document.getElementById('totalText').textContent = `${subtotal + delivery} ج.م`;
+
+      // شريط التقدم للتوصيل المجاني
+      const threshold = zone.free_delivery_threshold || 0;
+      const bar = document.getElementById('freeDeliveryBar');
+      const txt = document.getElementById('freeDeliveryText');
+      if (threshold > 0) {
+        const pct = Math.min(100, Math.round((subtotal / threshold) * 100));
+        bar.style.width = `${pct}%`;
+        txt.textContent = subtotal >= threshold
+          ? `ممتاز! طلبك مؤهل للتوصيل المجاني إلى ${zone.name_ar}.`
+          : `أضف أصنافاً بقيمة ${threshold - subtotal} ج.م للحصول على توصيل مجاني إلى ${zone.name_ar}.`;
+      } else {
+        bar.style.width = '100%';
+        txt.textContent = `رسوم التوصيل الثابتة إلى ${zone.name_ar}: ${zone.delivery_fee} ج.م.`;
+      }
+    }
+
+    function openCartDrawer() {
+      document.getElementById('cartDrawerBackdrop').classList.remove('hidden');
+      document.getElementById('cartDrawer').classList.remove('-translate-x-full');
+    }
+
+    function closeCartDrawer() {
+      document.getElementById('cartDrawerBackdrop').classList.add('hidden');
+      document.getElementById('cartDrawer').classList.add('-translate-x-full');
     }
 
     function buildPickupOrders(items) {
@@ -388,17 +610,17 @@
         }
         return true;
       } catch (e) {
-        console.warn('Supabase order sync note:', e.message);
+        console.warn('Supabase sync:', e.message);
         return false;
       }
     }
 
     async function submitOrder(viaWhatsapp) {
       if (!state.cart.length) {
-        showBanner('أضف صنفاً واحداً على الأقل إلى الفاتورة الموحدة أولاً.');
+        showBanner('أضف صنفاً واحداً على الأقل إلى السلة أولاً.');
         return;
       }
-      const venue = document.getElementById('venueNameInput').value.trim() || 'عميل بدون اسم محدد';
+      const venue = document.getElementById('venueNameInput').value.trim() || 'كافيه / مطعم (غير مسمى)';
       const phone = document.getElementById('phoneInput').value.trim() || 'غير مسجل';
       const zone = getZone();
       const subtotal = calcSubtotal();
@@ -429,10 +651,10 @@
 
       if (viaWhatsapp) {
         const lines = [
-          `طلب توريد جديد (${order.id})`,
+          `طلب توريد جملة جديد (${order.id})`,
           `المنشأة: ${venue} | هاتف: ${phone}`,
           `المركز: ${zone.name_ar}`,
-          `الأصناف:`,
+          `الأصناف المطلوبة:`,
           ...order.items.map(i => `- ${i.name} × ${i.qty} (${i.unitPrice * i.qty} ج.م)`),
           `الإجمالي المستحق: ${total} ج.م`
         ];
@@ -440,12 +662,14 @@
       } else {
         showBanner(
           synced
-            ? `تم حفظ الفاتورة ${order.id} في Supabase وتقسيم أوامر الاستلام على التجار.`
-            : `تم تسجيل الفاتورة ${order.id} محلياً وتقسيم أوامر الاستلام في لوحة الإدارة.`
+            ? `تم تأكيد الفاتورة ${order.id} وحفظها وتقسيم أوامر الاستلام على التجار.`
+            : `تم تسجيل الفاتورة ${order.id} وتقسيم أوامر الاستلام في لوحة الإدارة.`
         );
       }
 
       state.cart = [];
+      closeCartDrawer();
+      renderProducts();
       renderCart();
     }
 
@@ -454,7 +678,7 @@
       const summary = document.getElementById('lastOrderSummary');
       if (state.lastOrder && state.lastOrder.length) {
         btn.disabled = false;
-        summary.textContent = `آخر فاتورة تحتوي على ${state.lastOrder.length} أصناف مختلفة.`;
+        summary.textContent = `آخر فاتورة محفوظة تحتوي على ${state.lastOrder.length} أصناف مختلفة.`;
       } else {
         btn.disabled = true;
         summary.textContent = 'لا توجد فاتورة سابقة محفوظة على هذا الجهاز بعد.';
@@ -468,8 +692,9 @@
         const prod = products.find(p => p.id === saved.productId);
         if (prod) state.cart.push({ product: prod, qty: saved.qty });
       }
+      renderProducts();
       renderCart();
-      showBanner('تم تحميل أصناف آخر فاتورة في السلة مع إمكانية التعديل.');
+      openCartDrawer();
     }
 
     function renderAdmin() {
@@ -493,7 +718,7 @@
             <div class="text-xs font-bold text-stone-900 border-t border-stone-100 pt-2">إجمالي مستحق للتاجر: ${pk.payoutTotal} ج.م</div>
           </div>
         `).join('')
-        : `<p class="text-sm text-stone-400">لا توجد أوامر استلام بعد.</p>`;
+        : `<p class="text-xs text-stone-400">لا توجد أوامر استلام بعد.</p>`;
 
       document.getElementById('adminOrdersList').innerHTML = state.orders.length
         ? state.orders.map(o => `
@@ -503,24 +728,24 @@
               <div class="text-xs text-stone-500">${o.createdAt} • هاتف: ${o.phone}</div>
             </div>
             <div class="text-left">
-              <div class="text-sm font-extrabold">${o.total} ج.م</div>
+              <div class="text-sm font-black">${o.total} ج.م</div>
               <div class="text-[11px] text-stone-500">أصناف: ${o.subtotal} ج.م + توصيل: ${o.delivery} ج.م</div>
             </div>
           </div>
         `).join('')
-        : `<p class="text-sm text-stone-400">لا توجد فواتير مسجلة حتى الآن.</p>`;
+        : `<p class="text-xs text-stone-400">لا توجد فواتير مسجلة حتى الآن.</p>`;
+    }
+
+    function toggleAdminView() {
+      switchTab(state.isAdmin ? 'client' : 'admin');
     }
 
     function switchTab(tab) {
-      const isClient = tab === 'client';
-      document.getElementById('clientView').classList.toggle('hidden', !isClient);
-      document.getElementById('adminView').classList.toggle('hidden', isClient);
-      document.getElementById('tabClientBtn').className = isClient
-        ? 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-900 text-white'
-        : 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-100 text-stone-700 hover:bg-stone-200';
-      document.getElementById('tabAdminBtn').className = !isClient
-        ? 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-900 text-white'
-        : 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-100 text-stone-700 hover:bg-stone-200';
+      state.isAdmin = tab === 'admin';
+      document.getElementById('clientView').classList.toggle('hidden', state.isAdmin);
+      document.getElementById('subNavBar').classList.toggle('hidden', state.isAdmin);
+      document.getElementById('adminView').classList.toggle('hidden', !state.isAdmin);
+      document.getElementById('toggleModeBtn').textContent = state.isAdmin ? 'واجهة المتجر' : 'لوحة الإدارة';
     }
 
     function showBanner(msg) {
@@ -554,6 +779,7 @@
             weightG: p.unit_weight_g !== null ? Number(p.unit_weight_g) : null,
             doseG: p.default_dose_g !== null ? Number(p.default_dose_g) : null,
             stock: p.stock_status || 'available',
+            icon: p.category === 'restaurant' ? '🍔' : p.category === 'pumps_bottles' ? '🧴' : p.category === 'bundles' ? '📦' : '🍮',
             tiers: (p.product_price_tiers || [])
               .sort((a, b) => Number(a.min_qty) - Number(b.min_qty))
               .map(t => ({
@@ -568,11 +794,13 @@
     }
 
     Object.assign(window, {
-      handleZoneChange, filterCategory, addToCart, changeQty,
-      submitOrder, reorderLastInvoice, switchTab
+      handleZoneChange, filterCategory, selectBrand, renderProducts,
+      addToCart, changeQty, openCartDrawer, closeCartDrawer,
+      submitOrder, reorderLastInvoice, toggleAdminView, switchTab
     });
 
     initZones();
+    renderBrandFilters();
     renderProducts();
     renderCart();
     renderLastOrderCard();
@@ -580,6 +808,7 @@
 
     loadFromSupabase().then(() => {
       initZones();
+      renderBrandFilters();
       renderProducts();
       renderCart();
     });
