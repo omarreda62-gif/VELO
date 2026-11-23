@@ -7,187 +7,546 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"IBM Plex Sans Arabic"', 'sans-serif'],
-            display: ['"Plus Jakarta Sans"', '"IBM Plex Sans Arabic"', 'sans-serif'],
-          },
-          colors: {
-            brand: { DEFAULT: '#C7873B', dark: '#A96E2A', light: '#FDF6EE' },
-            ink: '#18181B',
-            surface: '#FAFAF9',
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    body { font-family: 'IBM Plex Sans Arabic', sans-serif; background-color: #FAFAF9; color: #18181B; }
-    .tabular-nums { font-variant-numeric: tabular-nums; }
+    :root {
+      --bg: #F6F7F9;
+      --card: #FFFFFF;
+      --ink: #18181B;
+      --muted: #64748B;
+      --line: #E2E8F0;
+      --brand: #C7873B;
+      --brand-dark: #A96E2A;
+      --brand-soft: #FDF6EE;
+      --ok-bg: #ECFDF5;
+      --ok-fg: #047857;
+      --warn-bg: #FFFBEB;
+      --warn-fg: #B45309;
+      --off-bg: #FEF2F2;
+      --off-fg: #B91C1C;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans Arabic", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .num { font-variant-numeric: tabular-nums; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-main {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+    }
+    .brand-box { display: flex; align-items: center; gap: 12px; }
+    .logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--ink);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      border-bottom: 3px solid var(--brand);
+    }
+    .brand-title-row { display: flex; align-items: center; gap: 8px; }
+    .brand-name {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--brand-soft);
+      color: var(--brand-dark);
+      border: 1px solid #F3D5AE;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .brand-sub { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
+
+    .header-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .zone-picker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F1F5F9;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    .zone-picker select {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: pointer;
+      outline: none;
+    }
+    .role-switch {
+      display: inline-flex;
+      background: #F1F5F9;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .role-btn {
+      border: none;
+      background: transparent;
+      color: #475569;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .role-btn.active-client { background: var(--ink); color: #fff; }
+    .role-btn.active-admin { background: var(--brand); color: #fff; }
+
+    .zone-banner {
+      background: var(--brand-soft);
+      border-top: 1px solid #F3D5AE;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+    .zone-banner-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    /* Layout */
+    main { padding: 22px 0 44px; }
+    .client-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.9fr) minmax(325px, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .client-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .stack { display: flex; flex-direction: column; gap: 16px; }
+
+    /* Quick Reorder */
+    .reorder-box {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(90deg, #FFFFFF 0%, #FDF8F2 100%);
+    }
+    .reorder-kicker { font-size: 12px; font-weight: 700; color: var(--brand-dark); }
+    .reorder-desc { font-size: 14px; font-weight: 600; margin: 2px 0 0; }
+
+    /* Search & Categories */
+    .search-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #CBD5E1;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      background: #F8FAFC;
+    }
+    .search-input:focus { border-color: var(--brand); background: #fff; }
+    .cats-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .cat-pill {
+      border: 1px solid var(--line);
+      background: #F8FAFC;
+      color: #334155;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .cat-pill.active {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: #fff;
+    }
+
+    /* Products Grid */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 640px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+    .prod-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .prod-card:hover { border-color: #CBD5E1; }
+    .prod-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .prod-meta { font-size: 12px; font-weight: 700; color: var(--brand-dark); }
+    .prod-title { font-size: 16px; font-weight: 700; margin: 3px 0 0; }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .badge-available { background: var(--ok-bg); color: var(--ok-fg); }
+    .badge-limited { background: var(--warn-bg); color: var(--warn-fg); }
+    .badge-out_of_stock { background: var(--off-bg); color: var(--off-fg); }
+
+    .tiers-box {
+      background: #F8FAFC;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .tiers-label { font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+    .tiers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
+    .tier-cell {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 6px 4px;
+    }
+    .tier-cell.active-tier {
+      background: #FEF3C7;
+      border-color: var(--brand);
+      font-weight: 700;
+    }
+    .tier-range { font-size: 11px; color: var(--muted); }
+    .tier-val { font-size: 13px; font-weight: 700; margin-top: 2px; }
+
+    .serving-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      background: #F1F5F9;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #334155;
+      margin-top: 10px;
+    }
+
+    .prod-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid #F1F5F9;
+      padding-top: 12px;
+    }
+    .price-now { font-size: 19px; font-weight: 800; }
+
+    /* Buttons & Qty */
+    .btn {
+      border: none;
+      border-radius: 11px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+    .btn-brand { background: var(--brand); color: #fff; }
+    .btn-brand:hover { background: var(--brand-dark); }
+    .btn-dark { background: var(--ink); color: #fff; width: 100%; padding: 12px; font-size: 14px; }
+    .btn-dark:hover { background: #27272A; }
+    .btn-wa { background: #059669; color: #fff; width: 100%; padding: 11px; font-size: 13px; }
+    .btn-wa:hover { background: #047857; }
+
+    .qty-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #F1F5F9;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 4px;
+    }
+    .qty-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Cart */
+    .cart-sticky { position: sticky; top: 96px; }
+    .cart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .cart-title { margin: 0; font-size: 17px; font-weight: 800; }
+    .cart-items { display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      border-bottom: 1px solid #F8FAFC;
+      padding-bottom: 8px;
+      font-size: 13px;
+    }
+    .hint-box {
+      background: #F8FAFC;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      margin: 12px 0;
+    }
+    .field-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 11px;
+      font-family: inherit;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .totals-box {
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .total-row { display: flex; justify-content: space-between; }
+    .grand-total {
+      border-top: 1px solid #F1F5F9;
+      padding-top: 8px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+    .alert-ok {
+      margin-top: 10px;
+      background: var(--ok-bg);
+      color: var(--ok-fg);
+      border: 1px solid #A7F3D0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Admin */
+    .admin-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .admin-tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #334155;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .admin-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .split-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .po-line {
+      background: #F8FAFC;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 12px; text-align: right; border-bottom: 1px solid #F1F5F9; }
+    th { background: #F8FAFC; color: var(--muted); font-size: 12px; }
+    .hidden { display: none !important; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
-  <header class="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-ink text-white flex items-center justify-center font-display font-extrabold text-xl border-b-2 border-brand">
-          V
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="font-display font-extrabold text-lg sm:text-xl text-ink">VELO</span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-brand-light text-brand border border-amber-200">فِيلو • B2B</span>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-main">
+        <div class="brand-box">
+          <div class="logo-badge">V</div>
+          <div>
+            <div class="brand-title-row">
+              <span class="brand-name">VELO</span>
+              <span class="brand-tag">فِيلو • B2B</span>
+            </div>
+            <p class="brand-sub">بوابة توريد جملة للصوصات، البمبات، والباقات للكافيهات والمطاعم في الدقهلية بفاتورة موحدة</p>
           </div>
-          <p class="text-xs text-stone-500">
-            بوابة توريد جملة للصوصات، البمبات، والباقات للكافيهات والمطاعم في الدقهلية بفاتورة موحدة
-          </p>
         </div>
-      </div>
 
-      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-        <label class="flex items-center gap-2 bg-stone-100 px-3 py-1.5 rounded-xl text-sm border border-stone-200">
-          <span class="text-stone-600 font-medium">المركز:</span>
-          <select id="zoneSelect" class="bg-transparent font-bold text-ink focus:outline-none cursor-pointer"></select>
-        </label>
-
-        <div class="inline-flex rounded-xl bg-stone-100 p-1 border border-stone-200">
-          <button id="btnRoleClient" onclick="switchRole('client')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer bg-ink text-white">
-            واجهة الكافيه / المطعم
-          </button>
-          <button id="btnRoleAdmin" onclick="switchRole('admin')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer text-stone-600 hover:text-ink">
-            لوحة إدارة VELO
-          </button>
+        <div class="header-controls">
+          <label class="zone-picker">
+            <span>المركز:</span>
+            <select id="zoneSelect"></select>
+          </label>
+          <div class="role-switch">
+            <button id="btnRoleClient" class="role-btn active-client" onclick="switchRole('client')">واجهة الكافيه / المطعم</button>
+            <button id="btnRoleAdmin" class="role-btn" onclick="switchRole('admin')">لوحة إدارة VELO</button>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="bg-brand-light border-t border-amber-200/80 px-4 py-2 text-xs sm:text-sm">
-      <div id="zoneBanner" class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-stone-800"></div>
+    <div class="zone-banner">
+      <div class="container zone-banner-inner" id="zoneBanner"></div>
     </div>
   </header>
 
-  <main id="clientView" class="max-w-7xl mx-auto w-full px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-    <section class="lg:col-span-8 space-y-5">
-      <div id="quickReorderBox" class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+  <!-- واجهة الكافيه / المطعم -->
+  <main id="clientView" class="container">
+    <div class="client-grid">
+      <div class="stack">
+        <div class="card reorder-box">
+          <div>
+            <div class="reorder-kicker">إعادة طلب سريع (Quick Reorder)</div>
+            <p class="reorder-desc" id="lastOrderSummary"></p>
+          </div>
+          <button class="btn btn-dark" style="width:auto;" onclick="quickReorderLast()">تحميل آخر فاتورة في السلة</button>
+        </div>
+
+        <div class="card">
+          <input id="searchInput" class="search-input" type="text" oninput="renderProducts()" placeholder="ابحث باسم الصوص أو البراند (كراميل، شوكولاتة، شيدر، باربيكيو، بمب، باقة...)" />
+          <div id="categoryTabs" class="cats-row"></div>
+        </div>
+
+        <div id="productsGrid" class="products-grid"></div>
+      </div>
+
+      <aside class="card cart-sticky">
+        <div class="cart-head">
+          <h2 class="cart-title">فاتورة VELO الموحدة</h2>
+          <span class="badge badge-available num" id="cartCountBadge">0 أصناف</span>
+        </div>
+
+        <div id="cartItemsList" class="cart-items"></div>
+        <div id="freeDeliveryHint" class="hint-box"></div>
+
         <div>
-          <span class="text-xs font-bold text-brand block">إعادة طلب سريع (Quick Reorder)</span>
-          <p id="lastOrderSummary" class="text-sm font-medium text-stone-800"></p>
-        </div>
-        <button onclick="quickReorderLast()" class="px-4 py-2 rounded-xl bg-ink hover:bg-stone-800 text-white text-xs sm:text-sm font-bold transition cursor-pointer">
-          تحميل آخر فاتورة في السلة
-        </button>
-      </div>
-
-      <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
-        <input
-          id="searchInput"
-          type="text"
-          oninput="renderProducts()"
-          placeholder="ابحث باسم الصوص أو البراند (كراميل، شوكولاتة، شيدر، باربيكيو، بمب، باقة...)"
-          class="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand"
-        />
-        <div id="categoryTabs" class="flex flex-wrap gap-2"></div>
-      </div>
-
-      <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-    </section>
-
-    <aside class="lg:col-span-4">
-      <div class="bg-white border border-stone-200 rounded-2xl p-5 sticky top-28 space-y-4 shadow-xs">
-        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
-          <h2 class="font-bold text-base text-ink">فاتورة VELO الموحدة</h2>
-          <span id="cartCountBadge" class="text-xs font-bold bg-stone-100 text-stone-700 px-2.5 py-1 rounded-full tabular-nums">0 أصناف</span>
+          <input id="inputBusinessName" class="field-input" type="text" value="كافيه ومخبز شاليمو" placeholder="اسم الكافيه أو المطعم" />
+          <input id="inputCustomerPhone" class="field-input" type="tel" value="01012345678" placeholder="رقم الهاتف / واتساب" />
         </div>
 
-        <div id="cartItemsList" class="space-y-3 max-h-72 overflow-y-auto pe-1"></div>
-
-        <div id="freeDeliveryHint" class="bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-700"></div>
-
-        <div class="space-y-2 pt-1">
-          <input id="inputBusinessName" type="text" value="كافيه ومخبز شاليمو" placeholder="اسم الكافيه أو المطعم" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand" />
-          <input id="inputCustomerPhone" type="tel" value="01012345678" placeholder="رقم الهاتف / واتساب للتأكيد" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand" />
-        </div>
-
-        <div class="space-y-1.5 text-sm border-t border-stone-200 pt-3">
-          <div class="flex justify-between text-stone-600">
+        <div class="totals-box">
+          <div class="total-row">
             <span>إجمالي الأصناف</span>
-            <span id="cartSubtotal" class="font-bold tabular-nums">0 ج.م</span>
+            <strong class="num" id="cartSubtotal">0 ج.م</strong>
           </div>
-          <div class="flex justify-between text-stone-600">
+          <div class="total-row">
             <span id="cartDeliveryLabel">التوصيل</span>
-            <span id="cartDeliveryFee" class="font-bold tabular-nums">0 ج.م</span>
+            <strong class="num" id="cartDeliveryFee">0 ج.م</strong>
           </div>
-          <div class="flex justify-between text-base font-extrabold text-ink pt-2 border-t border-stone-100">
+          <div class="total-row grand-total">
             <span>الإجمالي المستحق</span>
-            <span id="cartTotal" class="tabular-nums">0 ج.م</span>
+            <span class="num" id="cartTotal">0 ج.م</span>
           </div>
         </div>
 
-        <div class="space-y-2 pt-1">
-          <button onclick="placeOrder(false)" class="w-full py-3 rounded-xl bg-ink hover:bg-stone-800 text-white font-bold text-sm transition cursor-pointer">
-            إرسال طلب التوريد عبر VELO
-          </button>
-          <button onclick="placeOrder(true)" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition cursor-pointer">
-            تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)
-          </button>
+        <div class="stack" style="margin-top:14px; gap:8px;">
+          <button class="btn btn-dark" onclick="placeOrder(false)">إرسال طلب التوريد عبر VELO</button>
+          <button class="btn btn-wa" onclick="placeOrder(true)">تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)</button>
         </div>
 
-        <div id="orderSuccessAlert" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900"></div>
-      </div>
-    </aside>
+        <div id="orderSuccessAlert" class="alert-ok hidden"></div>
+      </aside>
+    </div>
   </main>
 
-  <main id="adminView" class="hidden max-w-7xl mx-auto w-full px-4 py-6 space-y-6 flex-1">
-    <div class="flex flex-wrap gap-2">
-      <button id="tabAdminSplit" onclick="switchAdminTab('split')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-ink text-white">
-        أوامر الاستلام المقسّمة للتجار
-      </button>
-      <button id="tabAdminProducts" onclick="switchAdminTab('products')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-white border border-stone-200 text-stone-700">
-        إدارة الصوصات والأسعار والتوفر
-      </button>
-      <button id="tabAdminZones" onclick="switchAdminTab('zones')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-white border border-stone-200 text-stone-700">
-        مناطق ورسوم الدقهلية
-      </button>
+  <!-- لوحة إدارة VELO -->
+  <main id="adminView" class="container hidden">
+    <div class="admin-tabs">
+      <button id="tabAdminSplit" class="admin-tab active" onclick="switchAdminTab('split')">أوامر الاستلام المقسّمة للتجار</button>
+      <button id="tabAdminProducts" class="admin-tab" onclick="switchAdminTab('products')">إدارة الصوصات والأسعار والتوفر</button>
+      <button id="tabAdminZones" class="admin-tab" onclick="switchAdminTab('zones')">مناطق ورسوم الدقهلية</button>
     </div>
 
-    <section id="adminSplitSection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></section>
+    <section id="adminSplitSection" class="split-grid"></section>
 
-    <section id="adminProductsSection" class="hidden space-y-5">
-      <form onsubmit="addNewProduct(event)" class="bg-white border border-stone-200 rounded-2xl p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <input id="newProdName" type="text" required placeholder="اسم الصوص أو الملحق" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-        <input id="newProdUnit" type="text" value="جركن 2.5 كجم" placeholder="وحدة البيع" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-        <select id="newProdSupplier" class="px-3 py-2 rounded-xl border border-stone-300 text-sm bg-white"></select>
-        <input id="newProdCost" type="number" required placeholder="تكلفة الشراء من التاجر" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-        <input id="newProdTier1" type="number" required placeholder="سعر البيع شريحة 1-3" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-        <input id="newProdTier4" type="number" required placeholder="سعر البيع شريحة 4+" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-        <button type="submit" class="bg-brand hover:bg-brand-dark text-white font-bold rounded-xl py-2 px-4 text-sm cursor-pointer lg:col-span-2">
-          + إضافة للكتالوج
-        </button>
+    <section id="adminProductsSection" class="hidden">
+      <form class="card form-grid" onsubmit="addNewProduct(event)">
+        <input id="newProdName" class="field-input" style="margin:0;" type="text" required placeholder="اسم الصوص أو الملحق" />
+        <input id="newProdUnit" class="field-input" style="margin:0;" type="text" value="جركن 2.5 كجم" placeholder="وحدة البيع" />
+        <select id="newProdSupplier" class="field-input" style="margin:0; background:#fff;"></select>
+        <input id="newProdCost" class="field-input" style="margin:0;" type="number" required placeholder="تكلفة الشراء من التاجر" />
+        <input id="newProdTier1" class="field-input" style="margin:0;" type="number" required placeholder="سعر البيع شريحة 1-3" />
+        <input id="newProdTier4" class="field-input" style="margin:0;" type="number" required placeholder="سعر البيع شريحة 4+" />
+        <button type="submit" class="btn btn-brand">+ إضافة للكتالوج</button>
       </form>
 
-      <div class="bg-white border border-stone-200 rounded-2xl overflow-x-auto">
-        <table class="w-full text-right text-sm">
-          <thead class="bg-stone-50 border-b border-stone-200 text-stone-600 text-xs">
+      <div class="card" style="padding:0; overflow-x:auto;">
+        <table>
+          <thead>
             <tr>
-              <th class="p-3">الصنف / القسم</th>
-              <th class="p-3">التاجر المورد</th>
-              <th class="p-3">تكلفة الشراء</th>
-              <th class="p-3">الأسعار المتدرجة</th>
-              <th class="p-3">حالة التوفر</th>
+              <th>الصنف / القسم</th>
+              <th>التاجر المورد</th>
+              <th>تكلفة الشراء</th>
+              <th>الأسعار المتدرجة</th>
+              <th>حالة التوفر</th>
             </tr>
           </thead>
-          <tbody id="adminProductsTable" class="divide-y divide-stone-100"></tbody>
+          <tbody id="adminProductsTable"></tbody>
         </table>
       </div>
     </section>
 
-    <section id="adminZonesSection" class="hidden bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
-      <h3 class="font-bold text-base">إدارة رسوم وحدود التوصيل المجاني لمراكز الدقهلية</h3>
-      <div id="adminZonesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <section id="adminZonesSection" class="card hidden">
+      <h3 style="margin:0 0 14px; font-size:16px;">إدارة رسوم وحدود التوصيل المجاني لمراكز الدقهلية</h3>
+      <div id="adminZonesGrid" class="split-grid"></div>
     </section>
   </main>
 
@@ -320,9 +679,9 @@
     };
 
     const AVAILABILITY_META = {
-      available: { label: "متاح للتوريد", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-      limited: { label: "كمية محدودة", cls: "bg-amber-50 text-amber-800 border-amber-200" },
-      out_of_stock: { label: "غير متاح", cls: "bg-rose-50 text-rose-700 border-rose-200" }
+      available: { label: "متاح للتوريد", cls: "badge-available" },
+      limited: { label: "كمية محدودة", cls: "badge-limited" },
+      out_of_stock: { label: "غير متاح", cls: "badge-out_of_stock" }
     };
 
     let selectedZoneId = "mansoura";
@@ -375,15 +734,15 @@
       const z = zones.find(item => item.id === selectedZoneId) || zones[0];
       document.getElementById("zoneBanner").innerHTML = `
         <span>التوصيل إلى <strong>${z.name}</strong>: رسوم <strong>${z.fee} ج.م</strong> • توصيل مجاني للطلبات من <strong>${z.freeAbove} ج.م</strong> فأكثر</span>
-        <span class="text-stone-600">جدول التوريد: ${z.schedule}</span>
+        <span style="color:#52525B;">جدول التوريد: ${z.schedule}</span>
       `;
     }
 
     function renderCategoryTabs() {
       const container = document.getElementById("categoryTabs");
       container.innerHTML = Object.entries(CATEGORY_LABELS).map(([key, label]) => {
-        const active = activeCategory === key;
-        return `<button onclick="setCategory('${key}')" class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer ${active ? 'bg-brand text-white border-brand' : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'}">${label}</button>`;
+        const active = activeCategory === key ? "active" : "";
+        return `<button class="cat-pill ${active}" onclick="setCategory('${key}')">${label}</button>`;
       }).join("");
     }
 
@@ -394,15 +753,15 @@
     }
 
     function renderLastOrderBox() {
-      if (!orders.length) return;
       const last = orders[0];
+      if (!last) return;
       document.getElementById("lastOrderSummary").textContent =
         `آخر فاتورة #${last.id} (${last.date}) — ${last.items.length} أصناف`;
     }
 
     function quickReorderLast() {
-      if (!orders.length) return;
       const last = orders[0];
+      if (!last) return;
       selectedZoneId = last.zoneId;
       document.getElementById("zoneSelect").value = selectedZoneId;
       updateZoneBanner();
@@ -419,8 +778,7 @@
         return matchCat && matchText;
       });
 
-      const grid = document.getElementById("productsGrid");
-      grid.innerHTML = filtered.map(p => {
+      document.getElementById("productsGrid").innerHTML = filtered.map(p => {
         const inCart = cart.find(c => c.productId === p.id);
         const qty = inCart ? inCart.qty : 0;
         const unitPrice = getTierUnitPrice(p, qty || 1);
@@ -430,49 +788,49 @@
         const tiersHtml = p.tiers.map(t => {
           const isCurrent = qty > 0 && qty >= t.min && (t.max === null || qty <= t.max);
           return `
-            <div class="rounded-lg py-1.5 px-1 border ${isCurrent ? 'bg-amber-100/80 border-brand font-bold text-ink' : 'bg-white border-stone-200 text-stone-700'}">
-              <div class="text-[11px] text-stone-500">${t.max ? `${t.min}-${t.max}` : `${t.min}+`}</div>
-              <div class="tabular-nums font-bold">${t.price} ج</div>
+            <div class="tier-cell ${isCurrent ? "active-tier" : ""}">
+              <div class="tier-range num">${t.max ? `${t.min}-${t.max}` : `${t.min}+`}</div>
+              <div class="tier-val num">${t.price} ج</div>
             </div>
           `;
         }).join("");
 
         const actionHtml = p.availability === "out_of_stock"
-          ? `<span class="text-xs font-bold text-stone-400">غير متاح للطلب</span>`
+          ? `<span style="font-size:12px; font-weight:700; color:#94A3B8;">غير متاح للطلب</span>`
           : qty === 0
-            ? `<button onclick="changeQty('${p.id}', 1)" class="px-4 py-2 rounded-xl bg-brand hover:bg-brand-dark text-white text-sm font-bold transition cursor-pointer">+ إضافة للسلة</button>`
-            : `<div class="flex items-center gap-2 bg-stone-100 rounded-xl p-1 border border-stone-200">
-                <button onclick="changeQty('${p.id}', ${qty - 1})" class="w-8 h-8 rounded-lg bg-white font-bold hover:bg-stone-200 cursor-pointer">-</button>
-                <span class="w-8 text-center font-bold text-sm tabular-nums">${qty}</span>
-                <button onclick="changeQty('${p.id}', ${qty + 1})" class="w-8 h-8 rounded-lg bg-white font-bold hover:bg-stone-200 cursor-pointer">+</button>
+            ? `<button class="btn btn-brand" onclick="changeQty('${p.id}', 1)">+ إضافة للسلة</button>`
+            : `<div class="qty-box">
+                <button class="qty-btn" onclick="changeQty('${p.id}', ${qty - 1})">-</button>
+                <span class="num" style="min-width:24px; text-align:center; font-weight:700;">${qty}</span>
+                <button class="qty-btn" onclick="changeQty('${p.id}', ${qty + 1})">+</button>
               </div>`;
 
         return `
-          <div class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-col justify-between gap-3">
-            <div class="space-y-2.5">
-              <div class="flex items-start justify-between gap-2">
+          <div class="card prod-card">
+            <div>
+              <div class="prod-top">
                 <div>
-                  <span class="text-xs font-bold text-brand">${p.brand} • ${p.unit}</span>
-                  <h2 class="font-bold text-base text-ink leading-snug">${p.name}</h2>
+                  <div class="prod-meta">${p.brand} • ${p.unit}</div>
+                  <h2 class="prod-title">${p.name}</h2>
                 </div>
-                <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 ${avail.cls}">${avail.label}</span>
+                <span class="badge ${avail.cls}">${avail.label}</span>
               </div>
 
-              <div class="bg-stone-50 rounded-xl p-2.5 border border-stone-200/80">
-                <p class="text-[11px] font-semibold text-stone-500 mb-1.5">تسعير متدرج حسب الكمية:</p>
-                <div class="grid grid-cols-3 gap-1.5 text-center text-xs">${tiersHtml}</div>
+              <div class="tiers-box">
+                <div class="tiers-label">تسعير متدرج حسب الكمية:</div>
+                <div class="tiers-grid">${tiersHtml}</div>
               </div>
 
-              <div class="flex items-center justify-between text-xs bg-stone-50 px-3 py-2 rounded-lg text-stone-700">
+              <div class="serving-strip">
                 <span>${p.servingLabel}</span>
-                <span class="font-bold text-ink tabular-nums">≈ ${perServing} ج.م / جرعة</span>
+                <strong class="num">≈ ${perServing} ج.م / جرعة</strong>
               </div>
             </div>
 
-            <div class="pt-2 border-t border-stone-100 flex items-center justify-between gap-2">
+            <div class="prod-foot">
               <div>
-                <span class="text-xs text-stone-500 block">سعر الوحدة الحالي</span>
-                <span class="text-lg font-extrabold text-ink tabular-nums">${unitPrice} <span class="text-xs font-normal">ج.م</span></span>
+                <div style="font-size:11px; color:var(--muted);">سعر الوحدة الحالي</div>
+                <div class="price-now num">${unitPrice} <span style="font-size:12px; font-weight:500;">ج.م</span></div>
               </div>
               ${actionHtml}
             </div>
@@ -517,16 +875,16 @@
       document.getElementById("cartCountBadge").textContent = `${lines.length} أصناف`;
 
       const listEl = document.getElementById("cartItemsList");
-      if (lines.length === 0) {
-        listEl.innerHTML = `<p class="text-sm text-stone-500 py-6 text-center">السلة فارغة — أضف صوصات أو بمبات لبدء الطلب.</p>`;
+      if (!lines.length) {
+        listEl.innerHTML = `<p style="font-size:13px; color:var(--muted); text-align:center; padding:18px 0;">السلة فارغة — أضف صوصات أو بمبات لبدء الطلب.</p>`;
       } else {
         listEl.innerHTML = lines.map(l => `
-          <div class="flex items-start justify-between gap-2 text-sm border-b border-stone-100 pb-2.5">
+          <div class="cart-item">
             <div>
-              <p class="font-bold text-ink leading-snug">${l.prod.name}</p>
-              <p class="text-xs text-stone-500 tabular-nums">${l.qty} × ${l.unitPrice} ج.م (${l.prod.unit})</p>
+              <div style="font-weight:700;">${l.prod.name}</div>
+              <div class="num" style="font-size:12px; color:var(--muted);">${l.qty} × ${l.unitPrice} ج.م (${l.prod.unit})</div>
             </div>
-            <span class="font-bold tabular-nums shrink-0">${l.lineTotal} ج.م</span>
+            <strong class="num">${l.lineTotal} ج.م</strong>
           </div>
         `).join("");
       }
@@ -535,7 +893,7 @@
       if (subtotal === 0) {
         hintEl.innerHTML = `الحد الأدنى للتوصيل المجاني إلى <strong>${zone.name}</strong> هو <strong>${zone.freeAbove} ج.م</strong>.`;
       } else if (isFree) {
-        hintEl.innerHTML = `<span class="text-emerald-700 font-bold">مبروك! طلبك مؤهل للتوصيل المجاني إلى ${zone.name}.</span>`;
+        hintEl.innerHTML = `<span style="color:var(--ok-fg); font-weight:700;">مبروك! طلبك مؤهل للتوصيل المجاني إلى ${zone.name}.</span>`;
       } else {
         hintEl.innerHTML = `أضف بقيمة <strong>${remaining} ج.م</strong> للحصول على <strong>توصيل مجاني</strong> إلى ${zone.name}.`;
       }
@@ -582,9 +940,8 @@
       const isClient = role === "client";
       document.getElementById("clientView").classList.toggle("hidden", !isClient);
       document.getElementById("adminView").classList.toggle("hidden", isClient);
-
-      document.getElementById("btnRoleClient").className = `px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer ${isClient ? 'bg-ink text-white' : 'text-stone-600 hover:text-ink'}`;
-      document.getElementById("btnRoleAdmin").className = `px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer ${!isClient ? 'bg-brand text-white' : 'text-stone-600 hover:text-ink'}`;
+      document.getElementById("btnRoleClient").className = `role-btn ${isClient ? "active-client" : ""}`;
+      document.getElementById("btnRoleAdmin").className = `role-btn ${!isClient ? "active-admin" : ""}`;
 
       if (!isClient) {
         renderAdminSplitOrders();
@@ -600,7 +957,7 @@
 
       ["split", "products", "zones"].forEach(t => {
         const btn = document.getElementById(`tabAdmin${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        btn.className = `px-4 py-2 rounded-xl text-sm font-bold cursor-pointer ${t === tab ? 'bg-ink text-white' : 'bg-white border border-stone-200 text-stone-700'}`;
+        btn.className = `admin-tab ${t === tab ? "active" : ""}`;
       });
     }
 
@@ -632,29 +989,27 @@
       });
 
       document.getElementById("adminSplitSection").innerHTML = Object.values(grouped).map(({ supplier, lines, totalCost }) => `
-        <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
-          <div class="border-b border-stone-100 pb-2.5">
-            <span class="text-[11px] font-bold text-brand block">${supplier?.mode}</span>
-            <h3 class="font-bold text-base text-ink">${supplier?.name}</h3>
-            <p class="text-xs text-stone-500">هاتف التواصل: ${supplier?.phone}</p>
+        <div class="card">
+          <div style="border-bottom:1px solid #F1F5F9; padding-bottom:10px;">
+            <div class="prod-meta">${supplier?.mode}</div>
+            <h3 style="margin:2px 0; font-size:16px;">${supplier?.name}</h3>
+            <div style="font-size:12px; color:var(--muted);">هاتف التواصل: ${supplier?.phone}</div>
           </div>
-          <div class="space-y-2 text-xs">
-            ${lines.map(ln => `
-              <div class="bg-stone-50 rounded-xl p-2.5 border border-stone-200/70 space-y-1">
-                <div class="flex justify-between font-bold text-ink">
-                  <span>${ln.productName}</span>
-                  <span class="tabular-nums">× ${ln.qty}</span>
-                </div>
-                <div class="flex justify-between text-stone-500">
-                  <span>#${ln.orderId} (${ln.businessName} - ${ln.zoneName})</span>
-                  <span class="font-bold text-stone-700 tabular-nums">تكلفة: ${ln.costLine} ج.م</span>
-                </div>
+          ${lines.map(ln => `
+            <div class="po-line">
+              <div style="display:flex; justify-content:space-between; font-weight:700;">
+                <span>${ln.productName}</span>
+                <span class="num">× ${ln.qty}</span>
               </div>
-            `).join("")}
-          </div>
-          <div class="pt-2 border-t border-stone-100 flex justify-between font-extrabold text-sm">
+              <div style="display:flex; justify-content:space-between; color:var(--muted); margin-top:4px;">
+                <span>#${ln.orderId} (${ln.businessName} - ${ln.zoneName})</span>
+                <strong class="num" style="color:var(--ink);">تكلفة: ${ln.costLine} ج.م</strong>
+              </div>
+            </div>
+          `).join("")}
+          <div style="display:flex; justify-content:space-between; border-top:1px solid #F1F5F9; margin-top:12px; padding-top:10px; font-weight:800;">
             <span>إجمالي مستحقات التاجر</span>
-            <span class="text-brand tabular-nums">${totalCost} ج.م</span>
+            <span class="num" style="color:var(--brand-dark);">${totalCost} ج.م</span>
           </div>
         </div>
       `).join("");
@@ -705,15 +1060,15 @@
         const av = AVAILABILITY_META[p.availability];
         return `
           <tr>
-            <td class="p-3">
-              <div class="font-bold text-ink">${p.name}</div>
-              <div class="text-xs text-stone-500">${CATEGORY_LABELS[p.category]} — ${p.unit}</div>
+            <td>
+              <div style="font-weight:700;">${p.name}</div>
+              <div style="font-size:12px; color:var(--muted);">${CATEGORY_LABELS[p.category]} — ${p.unit}</div>
             </td>
-            <td class="p-3 text-xs font-semibold text-stone-700">${sup?.name}</td>
-            <td class="p-3 tabular-nums font-bold">${p.costPrice} ج.م</td>
-            <td class="p-3 text-xs tabular-nums">${p.tiers.map(t => `${t.min}${t.max ? `-${t.max}` : '+'}: ${t.price}ج`).join(" | ")}</td>
-            <td class="p-3">
-              <button onclick="toggleProdAvailability('${p.id}')" class="text-xs font-bold px-2.5 py-1 rounded-full border cursor-pointer ${av.cls}">${av.label} (تبديل)</button>
+            <td style="font-weight:600;">${sup?.name}</td>
+            <td class="num" style="font-weight:700;">${p.costPrice} ج.م</td>
+            <td class="num" style="font-size:12px;">${p.tiers.map(t => `${t.min}${t.max ? `-${t.max}` : "+"}: ${t.price}ج`).join(" | ")}</td>
+            <td>
+              <button class="badge ${av.cls}" style="border:none; cursor:pointer;" onclick="toggleProdAvailability('${p.id}')">${av.label} (تبديل)</button>
             </td>
           </tr>
         `;
@@ -732,15 +1087,15 @@
 
     function renderAdminZones() {
       document.getElementById("adminZonesGrid").innerHTML = zones.map(z => `
-        <div class="border border-stone-200 rounded-xl p-3.5 space-y-2.5 text-sm">
-          <div class="font-bold text-ink">${z.name}</div>
-          <label class="flex items-center justify-between text-xs text-stone-600">
+        <div class="card" style="padding:14px;">
+          <div style="font-weight:800; margin-bottom:10px;">${z.name}</div>
+          <label style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:8px;">
             <span>رسوم التوصيل (ج.م):</span>
-            <input type="number" value="${z.fee}" onchange="updateZoneSetting('${z.id}', 'fee', this.value)" class="w-24 px-2 py-1 border border-stone-300 rounded-lg text-ink font-bold tabular-nums" />
+            <input type="number" class="field-input num" style="width:96px; margin:0; padding:6px 8px;" value="${z.fee}" onchange="updateZoneSetting('${z.id}', 'fee', this.value)" />
           </label>
-          <label class="flex items-center justify-between text-xs text-stone-600">
+          <label style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
             <span>حد التوصيل المجاني (ج.م):</span>
-            <input type="number" value="${z.freeAbove}" onchange="updateZoneSetting('${z.id}', 'freeAbove', this.value)" class="w-24 px-2 py-1 border border-stone-300 rounded-lg text-ink font-bold tabular-nums" />
+            <input type="number" class="field-input num" style="width:96px; margin:0; padding:6px 8px;" value="${z.freeAbove}" onchange="updateZoneSetting('${z.id}', 'freeAbove', this.value)" />
           </label>
         </div>
       `).join("");
