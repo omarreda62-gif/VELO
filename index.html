@@ -17,7 +17,7 @@
   <!-- الشريط العلوي لـ VELO -->
   <header class="sticky top-0 z-40 bg-stone-900 text-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center gap-3">
-      <div class="flex items-center gap-2.5 shrink-0 cursor-pointer" onclick="switchTab('client'); filterCategory('all');">
+      <div class="flex items-center gap-2.5 shrink-0 cursor-pointer" onclick="switchTab('client'); filterCategory('all'); selectBrand('all');">
         <div class="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 font-black flex items-center justify-center text-lg tracking-tight">V</div>
         <div>
           <div class="font-black text-base leading-tight tracking-wide">VELO <span class="text-amber-400 text-xs font-extrabold">B2B</span></div>
@@ -38,12 +38,12 @@
       <div class="flex-1 min-w-[240px] flex items-stretch bg-white rounded-xl overflow-hidden text-stone-900">
         <select id="searchCatSelect" onchange="filterCategory(this.value)" class="bg-stone-100 border-l border-stone-200 px-3 text-xs font-bold text-stone-700 focus:outline-none hidden sm:block">
           <option value="all">كل الأقسام</option>
-          <option value="cafe_dessert">كافيه ووافل</option>
-          <option value="restaurant">مطاعم وبرجر</option>
-          <option value="pumps_bottles">بمبات وعبوات</option>
+          <option value="sauces_flavors">صوصات وفلافر وبيوريه</option>
+          <option value="creams_spreads">كريمات وسبريد وبسكويت</option>
+          <option value="powders_drinks">بودر وبن وشاي وبوبا</option>
           <option value="bundles">باقات مجمعة</option>
         </select>
-        <input id="searchInput" oninput="renderProducts()" type="text" placeholder="ابحث في VELO عن صوص كراميل، شوكولاتة، شيدر، بمب، جركن..."
+        <input id="searchInput" oninput="renderProducts()" type="text" placeholder="ابحث بالاسم، البراند، أو الكود (مثل: LP76NEG، DAV21، SA005، لوتس)..."
           class="w-full px-3.5 py-2 text-sm focus:outline-none" />
         <button onclick="renderProducts()" class="bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold px-4 text-sm">بحث</button>
       </div>
@@ -65,10 +65,10 @@
     <nav id="subNavBar" class="bg-stone-800 border-t border-stone-700/80">
       <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
         <div class="flex items-center gap-2 shrink-0">
-          <button data-cat="all" onclick="filterCategory('all')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-stone-950">جميع المنتجات</button>
-          <button data-cat="cafe_dessert" onclick="filterCategory('cafe_dessert')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">صوصات الكافيه والوافل</button>
-          <button data-cat="restaurant" onclick="filterCategory('restaurant')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">صوصات المطاعم والفاست فود</button>
-          <button data-cat="pumps_bottles" onclick="filterCategory('pumps_bottles')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">البمبات وعبوات الضغط</button>
+          <button data-cat="all" onclick="filterCategory('all')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-stone-950">جميع الأصناف</button>
+          <button data-cat="sauces_flavors" onclick="filterCategory('sauces_flavors')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">صوصات وفلافر وبيوريه</button>
+          <button data-cat="creams_spreads" onclick="filterCategory('creams_spreads')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">كريمات وسبريد وبسكويت</button>
+          <button data-cat="powders_drinks" onclick="filterCategory('powders_drinks')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">بودر وبن وشاي وبوبا</button>
           <button data-cat="bundles" onclick="filterCategory('bundles')" class="cat-btn px-3 py-1 rounded-lg text-xs font-bold text-stone-200 hover:bg-stone-700">باقات التوفير المجمعة</button>
         </div>
         <div id="zoneScheduleBadge" class="text-[11px] text-amber-300 font-semibold shrink-0"></div>
@@ -90,9 +90,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-8 bg-gradient-to-l from-stone-900 via-stone-800 to-amber-950 text-white rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span class="inline-block bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md mb-1.5">VELO • فاتورة موحدة • عروض وخصومات جملة</span>
-          <h1 class="text-lg md:text-2xl font-black">توريد جملة للصوصات ومستلزمات التشغيل في الدقهلية</h1>
-          <p class="text-xs text-stone-300 mt-1">اجمع طلبك من مختلف البراندات في سلة واحدة واستلم بفاتورة موحدة باسم VELO.</p>
+          <span class="inline-block bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md mb-1.5">VELO • كتالوج الكافيهات والحلويات • الدقهلية</span>
+          <h1 class="text-lg md:text-2xl font-black">توريد جملة للصوصات والفلافر والسبريد والمستلزمات</h1>
+          <p class="text-xs text-stone-300 mt-1">اجمع أصنافك من توسكي، دافنشي، صولو، أوستربيرج، د. بيكر، ليلز، بريفا وغيرها في فاتورة موحدة باسم VELO.</p>
         </div>
         <button onclick="filterCategory('bundles')" class="bg-amber-500 hover:bg-amber-400 text-stone-950 font-black text-xs px-4 py-3 rounded-xl shrink-0">تصفح الباقات المجمعة</button>
       </div>
@@ -117,10 +117,10 @@
         <div>
           <h3 class="text-xs font-black text-stone-900 mb-2.5">الأقسام</h3>
           <ul class="space-y-1.5 text-xs font-bold text-stone-600">
-            <li><button onclick="filterCategory('all')" class="hover:text-amber-700">• كل المنتجات والباقات</button></li>
-            <li><button onclick="filterCategory('cafe_dessert')" class="hover:text-amber-700">• صوصات الكافيه والوافل والكريب</button></li>
-            <li><button onclick="filterCategory('restaurant')" class="hover:text-amber-700">• صوصات المطاعم والبرجر</button></li>
-            <li><button onclick="filterCategory('pumps_bottles')" class="hover:text-amber-700">• البمبات وعبوات الضغط</button></li>
+            <li><button onclick="filterCategory('all')" class="hover:text-amber-700">• كل الأصناف والباقات</button></li>
+            <li><button onclick="filterCategory('sauces_flavors')" class="hover:text-amber-700">• صوصات وفلافر وبيوريه</button></li>
+            <li><button onclick="filterCategory('creams_spreads')" class="hover:text-amber-700">• كريمات وسبريد وبسكويت</button></li>
+            <li><button onclick="filterCategory('powders_drinks')" class="hover:text-amber-700">• بودر وبن وشاي وبوبا</button></li>
             <li><button onclick="filterCategory('bundles')" class="hover:text-amber-700">• الباقات المجمعة</button></li>
           </ul>
         </div>
@@ -134,16 +134,19 @@
         </div>
 
         <div class="border-t border-stone-100 pt-4">
-          <h3 class="text-xs font-black text-stone-900 mb-2">تصفية بالبراند</h3>
-          <div id="brandFiltersList" class="space-y-1.5 text-xs text-stone-700"></div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-black text-stone-900">تصفية بالبراند</h3>
+            <button onclick="selectBrand('all')" class="text-[11px] text-amber-700 font-bold hover:underline">الكل</button>
+          </div>
+          <div id="brandFiltersList" class="space-y-1.5 text-xs text-stone-700 max-h-80 overflow-y-auto pr-1"></div>
         </div>
       </aside>
 
       <section class="lg:col-span-9 space-y-3">
-        <div class="bg-white border border-stone-200 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs">
+        <div class="bg-white border border-stone-200 rounded-xl px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
           <span id="resultsCountText" class="font-bold text-stone-600">عرض جميع الأصناف</span>
           <select id="sortSelect" onchange="renderProducts()" class="border border-stone-200 rounded-lg px-2.5 py-1 font-bold text-stone-700 focus:outline-none">
-            <option value="default">الترتيب: الأكثر طلباً</option>
+            <option value="default">الترتيب: ترتيب الكتالوج</option>
             <option value="price_asc">السعر: من الأقل للأعلى</option>
             <option value="price_desc">السعر: من الأعلى للأقل</option>
           </select>
@@ -222,47 +225,52 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
         <div>
           <label class="block font-bold text-stone-700 mb-1">اسم الصنف *</label>
-          <input id="newProdName" required type="text" placeholder="مثال: صوص لوتس بسكويت للوافل" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <input id="newProdName" required type="text" placeholder="مثال: توسكي - صوص كراميل 2 لتر" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">البراند *</label>
-          <input id="newProdBrand" required type="text" placeholder="مثال: LotusPro" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <input id="newProdBrand" required type="text" placeholder="مثال: توسكي" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">كود الصنف (SKU)</label>
+          <input id="newProdCode" type="text" placeholder="مثال: LP76NEG" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">القسم</label>
           <select id="newProdCategory" class="w-full border border-stone-300 rounded-xl px-3 py-2 bg-white focus:outline-none focus:border-stone-900">
-            <option value="cafe_dessert">صوصات الكافيه والوافل</option>
-            <option value="restaurant">صوصات المطاعم والفاست فود</option>
-            <option value="pumps_bottles">البمبات وعبوات الضغط</option>
+            <option value="sauces_flavors">صوصات وفلافر وبيوريه</option>
+            <option value="creams_spreads">كريمات وسبريد وبسكويت</option>
+            <option value="powders_drinks">بودر وبن وشاي وبوبا</option>
             <option value="bundles">باقات التوفير المجمعة</option>
           </select>
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">حجم / وصف العبوة *</label>
-          <input id="newProdUnitLabel" required type="text" placeholder="مثال: عبوة 1 كجم / كرتونة 6" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <input id="newProdUnitLabel" required type="text" placeholder="مثال: 2 لتر / 1 كجم / كرتونة 6" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">سعر البيع الحالي (ج.م) *</label>
-          <input id="newProdPrice" oninput="updateLiveDiscountBadge()" required type="number" step="0.5" min="1" placeholder="190" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <input id="newProdPrice" oninput="updateLiveDiscountBadge()" required type="number" step="0.5" min="1" placeholder="765" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">السعر قبل الخصم (اختياري)</label>
-          <input id="newProdComparePrice" oninput="updateLiveDiscountBadge()" type="number" step="0.5" min="0" placeholder="225" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <input id="newProdComparePrice" oninput="updateLiveDiscountBadge()" type="number" step="0.5" min="0" placeholder="820" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div>
-          <label class="block font-bold text-stone-700 mb-1">سعر الكرتونة / الكميات (ج.م)</label>
-          <input id="newProdBulkPrice" type="number" step="0.5" min="0" placeholder="170 (اختياري)" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <label class="block font-bold text-stone-700 mb-1">سعر الكميات / الكرتونة (ج.م)</label>
+          <input id="newProdBulkPrice" type="number" step="0.5" min="0" placeholder="720 (اختياري)" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 mb-1">تكلفة التاجر للوحدة (ج.م) *</label>
-          <input id="newProdCost" required type="number" step="0.5" min="0" placeholder="150" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <input id="newProdCost" required type="number" step="0.5" min="0" placeholder="690" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div class="sm:col-span-2">
@@ -273,9 +281,9 @@
         <div>
           <label class="block font-bold text-stone-700 mb-1">التاجر المسؤول عن التوريد</label>
           <select id="newProdMerchant" class="w-full border border-stone-300 rounded-xl px-3 py-2 bg-white focus:outline-none focus:border-stone-900">
-            <option value="m1|تاجر جملة صوصات الحلويات - المنصورة">تاجر جملة صوصات الحلويات - المنصورة</option>
-            <option value="m2|موزع صوصات المطاعم والفود سيرفيس">موزع صوصات المطاعم والفود سيرفيس</option>
-            <option value="m3|مورد مستلزمات الكافيه والبمبات">مورد مستلزمات الكافيه والبمبات</option>
+            <option value="m1|موزع صوصات وفلافر الكافيه - الدقهلية">موزع صوصات وفلافر الكافيه - الدقهلية</option>
+            <option value="m2|تاجر جملة السبريد والكريمات والوافل">تاجر جملة السبريد والكريمات والوافل</option>
+            <option value="m3|مورد البودر والبن والشاي والبوبا">مورد البودر والبن والشاي والبوبا</option>
           </select>
         </div>
 
@@ -289,13 +297,13 @@
         </div>
 
         <div>
-          <label class="block font-bold text-stone-700 mb-1">وزن العبوة (جرام - اختياري)</label>
+          <label class="block font-bold text-stone-700 mb-1">وزن/سعة العبوة (جرام أو مل - اختياري)</label>
           <input id="newProdWeight" type="number" min="0" placeholder="1000" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
 
         <div>
-          <label class="block font-bold text-stone-700 mb-1">جرعة البمب/الكوب (جرام - اختياري)</label>
-          <input id="newProdDose" type="number" min="0" placeholder="25" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+          <label class="block font-bold text-stone-700 mb-1">جرعة البمب/الكوب (جرام أو مل - اختياري)</label>
+          <input id="newProdDose" type="number" min="0" placeholder="20" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
         </div>
       </div>
 
@@ -328,67 +336,496 @@
 
     const FALLBACK_ZONES = [
       { id: 'mansoura', name_ar: 'المنصورة', delivery_fee: 50, free_delivery_threshold: 2500, schedule: 'يومياً عدا الجمعة' },
-      { id: 'talkha', name_ar: 'طلخا', delivery_fee: 60, free_delivery_threshold: 2500, schedule: 'يومياً عدا الجمعة' },
       { id: 'senbellawein', name_ar: 'السنبلاوين', delivery_fee: 75, free_delivery_threshold: 3500, schedule: 'الأحد والأربعاء' },
+      { id: 'talkha', name_ar: 'طلخا', delivery_fee: 60, free_delivery_threshold: 2500, schedule: 'يومياً عدا الجمعة' },
       { id: 'mit_ghamr', name_ar: 'ميت غمر', delivery_fee: 85, free_delivery_threshold: 4000, schedule: 'الإثنين والخميس' },
       { id: 'dikernis', name_ar: 'دكرنس', delivery_fee: 85, free_delivery_threshold: 4000, schedule: 'الثلاثاء والسبت' }
     ];
 
-    const FALLBACK_PRODUCTS = [
+    const IMG_SAUCE = 'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?auto=format&fit=crop&w=800&q=80';
+    const IMG_SYRUP = 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80';
+    const IMG_PUREE = 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80';
+    const IMG_CREAM = 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80';
+    const IMG_POWDER = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80';
+    const DEFAULT_IMG_FALLBACK = IMG_POWDER;
+
+    const RAW_BRAND_GROUPS = [
       {
-        id: 'p1', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
-        category: 'cafe_dessert', brand: 'Gold Topping', name: 'صوص كراميل مملح فاخر للقهوة والوافل',
-        unitLabel: 'عبوة 1.2 كجم', weightG: 1200, doseG: 20, stock: 'available',
-        imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80',
-        compareAtPrice: 195,
-        tiers: [{ minQty: 1, label: '1-5 عبوات', price: 165, cost: 135 }, { minQty: 6, label: 'كرتونة (6+)', price: 148, cost: 120 }]
+        id: 'toschi', name: 'توسكي', merchantId: 'm1', merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        defaultCat: 'sauces_flavors', defaultImg: IMG_SYRUP,
+        products: [
+          {code:'BEG01FRA', name:'توسكي - بودر فانليا 1.2 كيلو', price:797, category:'powders_drinks', imageUrl:IMG_POWDER},
+          {code:'BEG04FRA', name:'توسكي - بودر قهوه 1 كيلو', price:825, category:'powders_drinks', imageUrl:IMG_POWDER},
+          {code:'LP76NEG', name:'توسكي - صوص كراميل 2 لتر', price:765, imageUrl:IMG_SAUCE},
+          {code:'LP78NEG', name:'توسكي - صوص شوكليت 2 لتر', price:745, imageUrl:IMG_SAUCE},
+          {code:'LP84NEG', name:'توسكي - صوص وايت شوكليت 2 لتر', price:765, imageUrl:IMG_SAUCE},
+          {code:'P29EG', name:'توسكي - فلفر كشمش اسود مركز 1 لتر', price:435},
+          {code:'P32EG', name:'توسكي - فلفر نعناع اخضر 1 لتر', price:435},
+          {code:'P33EG', name:'توسكي - فلفر ليم 1 لتر', price:435},
+          {code:'P34EG', name:'توسكي - فلفر فراوله 1 لتر', price:435},
+          {code:'P36EG', name:'توسكي - فلفر كريز 1 لتر', price:435},
+          {code:'P37EG', name:'توسكي - فلفر جراندين 1 لتر', price:435},
+          {code:'P38EG', name:'توسكي - فلفر توت احمر 1 لتر', price:435},
+          {code:'P39EG', name:'توسكي - فلفر ليمون 1 لتر', price:435},
+          {code:'P40EG', name:'توسكي - فلفر خوخ 1 لتر', price:435},
+          {code:'P43EG', name:'توسكي - فلفر ليتشي 1 لتر', price:435},
+          {code:'P44EG', name:'توسكي - فلفر اناناس 1 لتر', price:435},
+          {code:'P46EG', name:'توسكي - فلفر بلو كرواسو 1 لتر', price:435},
+          {code:'P47EG', name:'توسكي - فلفر جوز هند 1 لتر', price:435},
+          {code:'P48EG', name:'توسكي - فلفر كيوي 1 لتر', price:435},
+          {code:'P53EG', name:'توسكي - فلفر توت ازرق 1 لتر', price:435},
+          {code:'P58EG', name:'توسكي - فلفر تفاح اخضر 1 لتر', price:435},
+          {code:'P59EG', name:'توسكي - فلفر اجاف 1 لتر', price:435},
+          {code:'P60EG', name:'توسكي - فلفر توت بري 1 لتر', price:435},
+          {code:'P61EG', name:'توسكي - فلفر زنجبيل 1 لتر', price:435},
+          {code:'P63EG', name:'توسكي - فلفر بطيخ 1 لتر', price:435},
+          {code:'P64EG', name:'توسكي - فلفر باشون فروت 1 لتر', price:435},
+          {code:'P65EG', name:'توسكي - فلفر رومان 1 لتر', price:435},
+          {code:'P67EG', name:'توسكي - فلفر موهيتو 1 لتر', price:435},
+          {code:'P68EG', name:'توسكي - فلفر ايلد فلور 1 لتر', price:435},
+          {code:'P70EG', name:'توسكي - فلفر فانليا 1 لتر', price:435},
+          {code:'P72EG', name:'توسكي - فلفر بندق 1 لتر', price:435},
+          {code:'P75EG', name:'توسكي - فلفر كراميل مملح 1 لتر', price:435},
+          {code:'P76EG', name:'توسكي - فلفر كراميل 1 لتر', price:435},
+          {code:'P80EG', name:'توسكي - فلفر ايرش 1 لتر', price:435},
+          {code:'P82EG', name:'توسكي - فلفر قرفه 1 لتر', price:435},
+          {code:'P88EG', name:'توسكي - فلفر الفندر 1 لتر', price:435},
+          {code:'P89EG', name:'توسكي - فلفر تشاي 1 لتر', price:435},
+          {code:'S01EG', name:'توسكي - بيوريه فراولة 1 لتر', price:690, imageUrl:IMG_PUREE},
+          {code:'S02EG', name:'توسكي - بيوريه خوخ 1 لتر', price:595, imageUrl:IMG_PUREE},
+          {code:'S03EG', name:'توسكي - بيوريه باشون فروت 1 لتر', price:690, imageUrl:IMG_PUREE},
+          {code:'S04EG', name:'توسكي - بيوريه جوز هند 1 لتر', price:595, imageUrl:IMG_PUREE},
+          {code:'S07EG', name:'توسكي - بيوريه كيوي 1 لتر', price:690, imageUrl:IMG_PUREE},
+          {code:'S08EG', name:'توسكي - بيوريه موهيتو نعناع 1 لتر', price:595, imageUrl:IMG_PUREE},
+          {code:'S10EG', name:'توسكي - بيوريه شمام 1 لتر', price:595, imageUrl:IMG_PUREE},
+          {code:'S11EG', name:'توسكي - بيوريه توت بري 1 لتر', price:690, imageUrl:IMG_PUREE},
+          {code:'S13EG', name:'توسكي - بيوريه مانجو 1 لتر', price:595, imageUrl:IMG_PUREE},
+          {code:'S38EG', name:'توسكي - بيوريه توت احمر 1 لتر', price:690, imageUrl:IMG_PUREE},
+          {code:'S44EG', name:'توسكي - بيوريه اناناس 1 لتر', price:595, imageUrl:IMG_PUREE},
+          {code:'S53EG', name:'توسكي - بيوريه توت ازرق 1 لتر', price:690, imageUrl:IMG_PUREE},
+          {code:'BEG05FRA', name:'توسكي - بودر شيكولاته 2.2 كيلو', price:1650, category:'powders_drinks', imageUrl:IMG_POWDER},
+          {code:'LP_PIST', name:'توسكي - توبينج فستق 900 جم', price:1210, category:'creams_spreads', imageUrl:IMG_CREAM},
+          {code:'P_Z01', name:'توسكي - فلفر زيرو شوجر كراميل 700 ملي', price:415},
+          {code:'P_Z02', name:'توسكي - فلفر زيرو شوجر بندق 700 ملي', price:415},
+          {code:'P_Z03', name:'توسكي - فلفر زيرو شوجر فانيليا 700 ملي', price:415}
+        ]
       },
       {
-        id: 'p2', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
-        category: 'cafe_dessert', brand: 'ChocoPro', name: 'صوص شوكولاتة بالحليب واللوتس للكريب والوافل',
-        unitLabel: 'عبوة 1 كجم', weightG: 1000, doseG: 25, stock: 'available',
-        imageUrl: 'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?auto=format&fit=crop&w=800&q=80',
-        compareAtPrice: 210,
-        tiers: [{ minQty: 1, label: '1-5 عبوات', price: 180, cost: 148 }, { minQty: 6, label: 'كرتونة (6+)', price: 160, cost: 130 }]
+        id: 'osterberg', name: 'أوستربيرج', merchantId: 'm1', merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        defaultCat: 'sauces_flavors', defaultImg: IMG_PUREE,
+        products: [
+          {code:'OB013', name:'اوستر بيرج فروت كراش اناناس', price:275},
+          {code:'OB004', name:'اوستر بيرج فروت كراش باشون فروت', price:275},
+          {code:'OB008', name:'اوستربيرج فروت كراش كريز', price:275},
+          {code:'OB005', name:'اوستربيرج فروت كراش توت احمر', price:275},
+          {code:'OB001', name:'اوستربيرج فروت كراش توت ازرق', price:285},
+          {code:'OB009', name:'اوستربيرج فروت كراش خوخ', price:275},
+          {code:'OB010', name:'اوستربيرج فروت كراش فراولة', price:250},
+          {code:'OB006', name:'اوستر بيرج فروت كراش كيوي', price:275},
+          {code:'OB012', name:'اوستربيرج فروت كراش مانجو', price:265},
+          {code:'OB011', name:'اوستربيرج فروت كراش ميكس بيري', price:255},
+          {code:'OB014', name:'اوستربيرج فروت كراش سوبيا جوز هند', price:285},
+          {code:'OB002', name:'اوستربيرج صوص شوكليت', price:210, imageUrl:IMG_SAUCE},
+          {code:'OB003', name:'اوستربيرج صوص كراميل', price:210, imageUrl:IMG_SAUCE},
+          {code:'OB020', name:'اوستربيرج فلفر خوخ 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB025', name:'اوستربيرج فلفر فانيليا 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB032', name:'اوستربيرج فلفر بندق', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB028', name:'اوستربيرج فلفر كراميل 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB031', name:'اوستربيرج فلفر شيكولاته 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB030', name:'اوستربيرج فلفر جوز هند 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB035', name:'اوستربيرج فلفر باشون فروت 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB027', name:'اوستربيرج فلفر موهيتو 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB029', name:'اوستربيرج فلفر توت احمر 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB024', name:'اوستربيرج فلفر كيوي 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB022', name:'اوستربيرج فلفر كريز 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB021', name:'اوستربيرج فلفر بلو كرواسو 1 لتر', price:160, imageUrl:IMG_SYRUP},
+          {code:'OB026', name:'اوستربيرج فلفر فراوله 1 لتر', price:160, imageUrl:IMG_SYRUP}
+        ]
       },
       {
-        id: 'p3', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
-        category: 'restaurant', brand: 'ChefLine', name: 'صوص سموكي برجر وتكساس جالون للمطاعم',
-        unitLabel: 'جركن 3.5 كجم', weightG: 3500, doseG: 30, stock: 'limited',
-        imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
-        compareAtPrice: 460,
-        tiers: [{ minQty: 1, label: '1-3 جراكن', price: 420, cost: 355 }, { minQty: 4, label: '4+ جراكن', price: 385, cost: 325 }]
+        id: 'solo', name: 'صولو', merchantId: 'm1', merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        defaultCat: 'sauces_flavors', defaultImg: IMG_SAUCE,
+        products: [
+          {code:'6105', name:'صولو صوص شوكلت 1 لتر', price:175},
+          {code:'6101', name:'صولو صوص كراميل 1 لتر', price:175},
+          {code:'6102', name:'صولو بيوريه توت احمر 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'6106', name:'صولو بيوريه مانجو 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'6108', name:'صولو بيوريه توت ازرق 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'6110', name:'صولو بيوريه فراوله 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'6111', name:'صولو بيوريه اناناس 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'6107', name:'صولو بيوريه خوخ 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'6109', name:'صولو بيوريه جوز هند 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km033', name:'صولو بيوريه كيوي 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km034', name:'صولو بيوريه ميكس بيري 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km035', name:'صولو بيوريه بطيخ 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km036', name:'صولو بيوريه كريز 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km037', name:'صولو بيوريه كولا 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km039', name:'صولو بيوريه ليمون 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km041', name:'صولو بيوريه تفاح اخضر 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'Km045', name:'صولو بيوريه باشون فروت 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'KM032', name:'صولو بيوريه بلو راسبيري 1 لتر', price:170, imageUrl:IMG_PUREE},
+          {code:'KM000', name:'صولو بيوريه كركديه 1 لتر', price:190, imageUrl:IMG_PUREE},
+          {code:'6811', name:'صولو صوصو شوكلت GM 2400', price:350},
+          {code:'6812', name:'صولو صوص كراميل GM 2400', price:350},
+          {code:'6226', name:'صولو صوص وايت شوكلت GM 2400', price:375},
+          {code:'Km042', name:'صولو بودر شوكلت', price:310, category:'powders_drinks', imageUrl:IMG_POWDER},
+          {code:'Km043', name:'صولو بودر فانيليا', price:260, category:'powders_drinks', imageUrl:IMG_POWDER},
+          {code:'Km044', name:'صولو بودر قهوه', price:300, category:'powders_drinks', imageUrl:IMG_POWDER},
+          {code:'Km048', name:'صولو بودر ماتشا', price:350, category:'powders_drinks', imageUrl:IMG_POWDER},
+          {code:'FS001', name:'صولو فلفر موهيتو 1 لتر', price:165, imageUrl:IMG_SYRUP},
+          {code:'FS003', name:'صولو فلفر كراميل 1 لتر', price:165, imageUrl:IMG_SYRUP},
+          {code:'FS005', name:'صولو فلفر بندق 1 لتر', price:165, imageUrl:IMG_SYRUP},
+          {code:'FS006', name:'صولو فلفر فانيليا 1 لتر', price:165, imageUrl:IMG_SYRUP},
+          {code:'Km047', name:'صولو فلفر ريد بول 1 لتر', price:165, imageUrl:IMG_SYRUP},
+          {code:'FS007', name:'صولو فلفر بلو كرواسو 750 ملي', price:165, imageUrl:IMG_SYRUP}
+        ]
       },
       {
-        id: 'p4', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
-        category: 'restaurant', brand: 'ChefLine', name: 'صوص جبنة شيدر كريمي جاهز للبطاطس والبرجر',
-        unitLabel: 'جركن 3 كجم', weightG: 3000, doseG: 35, stock: 'available',
-        imageUrl: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80',
-        compareAtPrice: 390,
-        tiers: [{ minQty: 1, label: '1-3 جراكن', price: 390, cost: 330 }, { minQty: 4, label: '4+ جراكن', price: 355, cost: 300 }]
+        id: 'lavie', name: 'لافي', merchantId: 'm1', merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        defaultCat: 'sauces_flavors', defaultImg: IMG_PUREE,
+        products: [
+          {code:'GB003', name:'لافي اناناس', price:165},
+          {code:'GB004', name:'لافي باشون فروت', price:165},
+          {code:'GB005', name:'لافي بطيخ', price:165},
+          {code:'GB006', name:'لافي تفاح', price:165},
+          {code:'GB007', name:'لافي توت احمر', price:165},
+          {code:'GB008', name:'لافي توت ازرق', price:165},
+          {code:'GB0017', name:'لافي جوز هند', price:165},
+          {code:'GB018', name:'لافي خوخ', price:165},
+          {code:'GB019', name:'لافي فراوله', price:165},
+          {code:'GB071', name:'لافي يوسفي', price:165},
+          {code:'GB022', name:'لافي كيوي', price:165},
+          {code:'GB023', name:'لافي ليمون', price:165},
+          {code:'GB024', name:'لافي مانجو', price:165},
+          {code:'GB026', name:'لافي ميكس بيري', price:165}
+        ]
       },
       {
-        id: 'p5', merchantId: 'm3', merchantName: 'مورد مستلزمات الكافيه والبمبات',
-        category: 'pumps_bottles', brand: 'BarEquip', name: 'طقم بمب صوصات ستانلس عملي + زجاجات ضغط 3 فتحات',
-        unitLabel: 'طقم 6 قطع', weightG: null, doseG: null, stock: 'available',
-        imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80',
-        compareAtPrice: 340,
-        tiers: [{ minQty: 1, label: '1-4 أطقم', price: 290, cost: 230 }, { minQty: 5, label: '5+ أطقم', price: 255, cost: 200 }]
+        id: 'davenci', name: 'دافنشي', merchantId: 'm1', merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        defaultCat: 'sauces_flavors', defaultImg: IMG_SYRUP,
+        products: [
+          {code:'DAV1', name:'فلفر دافنشي كراميل 750 ملي', price:267},
+          {code:'DAV2', name:'فلفر دافنشي فانيليا 750 ملي', price:267},
+          {code:'DAV3', name:'فلفر دافنشي بندق 750 ملي', price:267},
+          {code:'DAV4', name:'فلفر دافنشي كوكيز 750 ملي', price:267},
+          {code:'DAV5', name:'فلفر دافنشي لوز محمص 750 ملي', price:267},
+          {code:'DAV6', name:'فلفر دافنشي تشاي 750 ملي', price:267},
+          {code:'DAV7', name:'فلفر دافنشي بلو اوشن 750 ملي', price:267},
+          {code:'DAV8', name:'فلفر دافنشي نعناع 750 ملي', price:267},
+          {code:'DAV9', name:'فلفر دافنشي مانجا 750 ملي', price:267},
+          {code:'DAV10', name:'فلفر دافنشي فراوله اوروبي 750 ملي', price:267},
+          {code:'DAV11', name:'فلفر دافنشي جراندين الرومان 750 ملي', price:267},
+          {code:'DAV12', name:'فلفر دافنشي خوخ 750 ملي', price:267},
+          {code:'DAV13', name:'فلفر دافنشي باشون فروت 750 ملي', price:267},
+          {code:'DAV14', name:'فلفر دافنشي تفاح اخضر 750 ملي', price:267},
+          {code:'DAV15', name:'فلفر دافنشي توت ازرق 750 ملي', price:267},
+          {code:'DAV16', name:'فلفر دافنشي جوز هند 750 ملي', price:267},
+          {code:'DAV17', name:'فلفر دافنشي بطيخ 750 ملي', price:267},
+          {code:'DAV18', name:'فلفر دافنشي ليمون 750 ملي', price:267},
+          {code:'DAV19', name:'فلفر دافنشي لايم جوس 750 ملي', price:267},
+          {code:'DAV20', name:'فلفر دافنشي خوخ تي 750 ملي', price:267},
+          {code:'DAV21', name:'صوص دافنشي كراميل 2 لتر', price:765, imageUrl:IMG_SAUCE},
+          {code:'DAV22', name:'صوص دافنشي كراميل مملح 2 لتر', price:765, imageUrl:IMG_SAUCE},
+          {code:'DAV23', name:'صوص دافنشي شوكلت 2 لتر', price:765, imageUrl:IMG_SAUCE},
+          {code:'DAV24', name:'صوص دافنشي وايت شوكلت 2 لتر', price:765, imageUrl:IMG_SAUCE},
+          {code:'DAV055', name:'صوص دافنشي بيتر سكوتش 2 لتر', price:1020, imageUrl:IMG_SAUCE}
+        ]
       },
       {
-        id: 'p6', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
-        category: 'bundles', brand: 'VELO Bundle', name: 'باقة افتتاح الكافيه والوافل (كراميل + شوكولاتة + طقم بمب)',
-        unitLabel: 'باقة متكاملة', weightG: 2200, doseG: 20, stock: 'available',
-        imageUrl: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80',
-        compareAtPrice: 635,
-        tiers: [{ minQty: 1, label: 'باقة', price: 540, cost: 445 }, { minQty: 3, label: '3+ باقات', price: 505, cost: 410 }]
+        id: 'lils', name: 'ليلز', merchantId: 'm2', merchantName: 'تاجر جملة السبريد والكريمات والوافل',
+        defaultCat: 'creams_spreads', defaultImg: IMG_CREAM,
+        products: [
+          {code:'Lil01', name:'ليلز كريمه فستق حلبي 1 ك', price:660},
+          {code:'Lil02', name:'ليلز كريمه شوكلاته كرانشي (روشيه) 1 ك', price:750},
+          {code:'Lil03', name:'ليلز كيندر 1 ك', price:370},
+          {code:'Lil04', name:'ليلز كريمه تشيز كيك توت 1 ك', price:305},
+          {code:'Lil05', name:'ليلز كريمه تشيز كيك فراوله 1 ك', price:285},
+          {code:'Lil06', name:'ليلز كريمه شيكولاته بالبندق 1 ك', price:285},
+          {code:'Lil07', name:'ليلز اوريو 1 ك', price:325},
+          {code:'Li15', name:'ليلز كيندر 5 ك', price:1400},
+          {code:'Lil08', name:'ليلز كريمه فستق الحلبي 5 ك', price:3250},
+          {code:'Lil09', name:'ليلز لوتس فرقه بلجيكي 1 ك', price:435},
+          {code:'Li010', name:'ليلز اوريو 5 ك', price:435}
+        ]
+      },
+      {
+        id: 'drbaker', name: 'د. بيكر', merchantId: 'm2', merchantName: 'تاجر جملة السبريد والكريمات والوافل',
+        defaultCat: 'creams_spreads', defaultImg: IMG_CREAM,
+        products: [
+          {code:'DB01', name:'بيكر كريمة شوكولاته بندق 4.5 كجم', price:904},
+          {code:'DB03', name:'بيكر صوص شوكلت 1 كجم', price:148, category:'sauces_flavors', imageUrl:IMG_SAUCE},
+          {code:'DB04', name:'بيكر صوص فراوله 1 لتر', price:185, category:'sauces_flavors', imageUrl:IMG_SAUCE},
+          {code:'DB015', name:'بيكر صوص بندق 1 لتر', price:198, category:'sauces_flavors', imageUrl:IMG_SAUCE},
+          {code:'DB05', name:'بيكر صوص لوتس قرفه 1 لتر', price:140, category:'sauces_flavors', imageUrl:IMG_SAUCE},
+          {code:'DB06', name:'بيكر صوص كراميل 1 كجم', price:115, category:'sauces_flavors', imageUrl:IMG_SAUCE},
+          {code:'DB18', name:'بيكر اسبريد اوريو 3 ك', price:535},
+          {code:'DB07', name:'بيكر اسبريد فستق 3 كجم', price:1700},
+          {code:'DB08', name:'بيكر كريمة شوكولاته كرانشي 4.5 كجم', price:866},
+          {code:'DB09', name:'بيكر اسبريد بوينو كيندر (شانكي) 3 كجم', price:1563},
+          {code:'DB11', name:'بيكر لوتس سبريد بسكويت قرفه 3 كجم (شانكي)', price:408},
+          {code:'DB12', name:'بيكر اسبريد بسكويت كراميل 3 كجم', price:435},
+          {code:'DB13', name:'بيكر كريمة وايت شوكلت 4.5 كجم', price:610},
+          {code:'DB14', name:'بيكر نوتيلا الترا 4.5 كجم', price:1230},
+          {code:'DB22', name:'بيكر صوص اوريو 1 لتر', price:166, category:'sauces_flavors', imageUrl:IMG_SAUCE},
+          {code:'DB15', name:'بيكر كريمه ميلكي 1 لتر', price:130}
+        ]
+      },
+      {
+        id: 'fo', name: 'اف او', merchantId: 'm1', merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        defaultCat: 'sauces_flavors', defaultImg: IMG_SYRUP,
+        products: [
+          {code:'FOF006', name:'اف او باشون فروت 700 ملي', price:255},
+          {code:'FOF007', name:'اف او بطيخ 700 ملي', price:255},
+          {code:'FOF008', name:'اف او بلوكرواسو 700 ملي', price:255},
+          {code:'FOF009', name:'اف او لافندر 700 ملي', price:255},
+          {code:'FOF036', name:'اف او كوكيز 700 ملي', price:255},
+          {code:'FOF037', name:'اف او ليمون 700 ملي', price:255},
+          {code:'FOF009', name:'اف او بندق 700 ملي', price:255},
+          {code:'FOF024', name:'اف او جوز هند 700 ملي', price:255},
+          {code:'FOF025', name:'اف او خوخ 700 ملي', price:255},
+          {code:'FOF018', name:'اف او فانيليا 700 ملي', price:255},
+          {code:'FOF028', name:'اف او فراوله 700 ملي', price:255},
+          {code:'FOF026', name:'اف او قرفه 700 ملي', price:255},
+          {code:'FOF019', name:'اف او كراميل 700 ملي', price:255},
+          {code:'FOF029', name:'اف او موهيتو 700 ملي', price:255},
+          {code:'FOF043', name:'اف او شيكولاتة 700 ملي', price:255},
+          {code:'FOF032', name:'اف او نعناع شفاف', price:255},
+          {code:'FOF017', name:'اف او نعناع اخضر 700 ملي', price:255}
+        ]
+      },
+      {
+        id: 'gsf', name: 'جي اس اف', merchantId: 'm1', merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        defaultCat: 'sauces_flavors', defaultImg: IMG_SAUCE,
+        products: [
+          {code:'GSF001', name:'جي اس اف - صوص شيكولاته 1 كجم', price:230},
+          {code:'GSF002', name:'جي اس اف - صوص فراولة 1 كجم', price:230},
+          {code:'GSF003', name:'جي اس اف - صوص كراميل 1 كجم', price:230},
+          {code:'GSF005', name:'جولد صوص شيكولاته 1 لتر', price:135},
+          {code:'GSF006', name:'جولد صوص كراميل 1 لتر', price:135}
+        ]
+      },
+      {
+        id: 'priva', name: 'بريفا', merchantId: 'm3', merchantName: 'مورد البودر والبن والشاي والبوبا',
+        defaultCat: 'powders_drinks', defaultImg: IMG_POWDER,
+        products: [
+          {code:'P01', name:'بريفا فرابيه شوكلت', price:285},
+          {code:'P02', name:'بريفا فرابيه فانيليا', price:210},
+          {code:'P03', name:'بريفا فرابيه فانيليا قهوه', price:280},
+          {code:'P04', name:'بريفا فرابيه موكا', price:285},
+          {code:'P05', name:'بريفا فرابيه كراميل', price:230},
+          {code:'P06', name:'بريفا فرابيه قهوه', price:280},
+          {code:'P07', name:'بريفا هوت شوكلت', price:295},
+          {code:'P13', name:'بريفا سوفت بلس ايس كريم شيكارة 10 كجم - فانيليا', price:1350},
+          {code:'P14', name:'بريفا سوفت بلس ايس كريم شيكارة 10 كجم - شوكلت', price:1550},
+          {code:'P15', name:'بريفا بانكيك شيكارة 10 ك', price:590, category:'creams_spreads', imageUrl:IMG_CREAM},
+          {code:'P27', name:'بريفا وافل شيكارة 10 كجم توب وافل', price:750, category:'creams_spreads', imageUrl:IMG_CREAM},
+          {code:'P28', name:'بريفا شيكاره 10 كجم كرسبي', price:750, category:'creams_spreads', imageUrl:IMG_CREAM},
+          {code:'P30', name:'بريفا ايس فريسكا شيكارة 10 كجم', price:550}
+        ]
+      },
+      {
+        id: 'diletta', name: 'ديليتا', merchantId: 'm3', merchantName: 'مورد البودر والبن والشاي والبوبا',
+        defaultCat: 'powders_drinks', defaultImg: IMG_POWDER,
+        products: [
+          {code:'FB009', name:'فرانشايز بودر فرابيه شيكولاتة 1 كيلو', price:300},
+          {code:'FB008', name:'فرانشايز بودر فرابيه شيكولاتة بيضاء 1 كيلو', price:250},
+          {code:'FB012', name:'فرانشايز بودر فرابيه فانليا 1 كيلو', price:250}
+        ]
+      },
+      {
+        id: 'buble', name: 'بوبا', merchantId: 'm3', merchantName: 'مورد البودر والبن والشاي والبوبا',
+        defaultCat: 'powders_drinks', defaultImg: IMG_PUREE,
+        products: [
+          {code:'Km67', name:'بابلز كولا', price:290},
+          {code:'Km68', name:'بابلز لبان', price:290},
+          {code:'Km72', name:'بابلز باشون', price:290},
+          {code:'Km73', name:'بابلز توت ازرق', price:290},
+          {code:'KM74', name:'بابلز مانجو', price:290},
+          {code:'Km75', name:'بابلز فراولة', price:290},
+          {code:'Km71', name:'بابلز تفاج', price:290},
+          {code:'Km76', name:'بابلز اناناس', price:290},
+          {code:'Km79', name:'بابلز قهوه', price:340},
+          {code:'KM69', name:'بابلز نعناع موهيتو', price:290},
+          {code:'KM70', name:'بابلز خوخ', price:290},
+          {code:'Km80', name:'تابيوكا ساده 1 ك', price:350},
+          {code:'Tapioca', name:'تابيوكا سوفت بيرلز 1 ك', price:290}
+        ]
+      },
+      {
+        id: 'ahmedtea', name: 'احمد تي', merchantId: 'm3', merchantName: 'مورد البودر والبن والشاي والبوبا',
+        defaultCat: 'powders_drinks', defaultImg: IMG_POWDER,
+        products: [
+          {code:'7944', name:'احمد تي شاي احمر بريك فاست *100', price:165},
+          {code:'7945', name:'احمد تي شاي اخضر *100', price:155},
+          {code:'7946', name:'احمد تي لندن', price:135},
+          {code:'01004', name:'احمد تي تفاح', price:85},
+          {code:'01005', name:'احمد تي خوخ', price:85},
+          {code:'01006', name:'احمد تي فراوله', price:85},
+          {code:'01007', name:'احمد تي مانجو', price:85},
+          {code:'01008', name:'احمد تي توت بري', price:85},
+          {code:'01009', name:'احمد تي ليمون', price:85},
+          {code:'01014', name:'احمد تي ليمون زنجبيل', price:85},
+          {code:'01017', name:'احمد تي ميكس بيري', price:85}
+        ]
+      },
+      {
+        id: 'sama', name: 'سما', merchantId: 'm2', merchantName: 'تاجر جملة السبريد والكريمات والوافل',
+        defaultCat: 'creams_spreads', defaultImg: IMG_CREAM,
+        products: [
+          {code:'SA004', name:'سما سبريد ابيض 1 كيلو', price:170},
+          {code:'SA002', name:'سما سبريد ابيض 10 كيلو', price:1500},
+          {code:'SA001', name:'سما سبريد شوكليت 10 كيلو', price:1460},
+          {code:'SA006', name:'سما سبريد لوتس 1 كيلو', price:130},
+          {code:'SA003', name:'سما شوكلت بالبندق 1 كجم', price:165},
+          {code:'SA005', name:'سما فسدق 1 كيلو', price:485}
+        ]
+      },
+      {
+        id: 'rotus', name: 'روتس', merchantId: 'm2', merchantName: 'تاجر جملة السبريد والكريمات والوافل',
+        defaultCat: 'creams_spreads', defaultImg: IMG_CREAM,
+        products: [
+          {code:'A3001', name:'عجينة بسكوت روتس 1 كجم', price:125},
+          {code:'A3002', name:'عجينة بسكوت روتس 5 كجم', price:560},
+          {code:'A3009', name:'بسكوت اوريو كيلو ونص كامل', price:185},
+          {code:'A30·8', name:'بسكوت اوريو مجروش كيلو ونص', price:185},
+          {code:'A3003', name:'بسكوت روتس 1.5 كيلو بودر', price:180},
+          {code:'A3004', name:'بسكوت روتس 1.5 كيلو كامل', price:180},
+          {code:'A3013', name:'بسكوت لوتس مجروش 500 جم', price:65},
+          {code:'A3012', name:'بسكوت اوريو مجروش 500 جم', price:65},
+          {code:'KM010', name:'بسكوت ريد فيلفت مجروش 500 جرام', price:65}
+        ]
+      },
+      {
+        id: 'bnnajjar', name: 'بن النجار', merchantId: 'm3', merchantName: 'مورد البودر والبن والشاي والبوبا',
+        defaultCat: 'powders_drinks', defaultImg: IMG_POWDER,
+        products: [
+          {code:'CN003', name:'بن النجار محوج فاتح 225 جم كيس', price:172},
+          {code:'CN004', name:'بن النجار محوج غامق 225 جم كيس', price:172},
+          {code:'CN005', name:'بن النجار وسط سادة 450 جم كيس', price:250},
+          {code:'CN008', name:'بن النجار فاتح سادة 500 جم برطمان', price:275},
+          {code:'CN010', name:'بن النجار فاتح سادة 500 جم كيس', price:275},
+          {code:'CN011', name:'بن النجار محوج فاتح 500 جم كيس', price:365},
+          {code:'CN025', name:'بن النجار محوج وسط 225 جم كيس', price:172},
+          {code:'CN027', name:'بن النجار وسط سادة 250 جم كيس', price:135},
+          {code:'CN028', name:'بن النجار فاتح سادة 250 جم كيس', price:135},
+          {code:'CN039', name:'بن النجار وسط سادة 1 ك', price:550},
+          {code:'CN048', name:'بن النجار وسط سادة 225 جم كيس', price:130},
+          {code:'CN050', name:'بن النجار فاتح سادة 1 ك', price:550}
+        ]
+      },
+      {
+        id: 'lavazza', name: 'لافازا', merchantId: 'm3', merchantName: 'مورد البودر والبن والشاي والبوبا',
+        defaultCat: 'powders_drinks', defaultImg: IMG_POWDER,
+        products: [
+          {code:'CL014', name:'لافازا كريما روما 1 كيلو - جديد', price:1000},
+          {code:'CL003', name:'لافازا تيرا 100% 1 كيلو', price:1500},
+          {code:'CL001', name:'لافازا كريما روما 1 كيلو', price:1350},
+          {code:'CL002', name:'لافازا سوبر كريمة 1 كيلو', price:1450},
+          {code:'CL022', name:'لافازا جوستو فورتي 1 كيلو', price:950},
+          {code:'CL023', name:'لافازا كريما اروما جولد 1 كيلو', price:1150}
+        ]
+      },
+      {
+        id: 'jmore', name: 'جي اند مور', merchantId: 'm3', merchantName: 'مورد البودر والبن والشاي والبوبا',
+        defaultCat: 'powders_drinks', defaultImg: IMG_POWDER,
+        products: [
+          {code:'JM002', name:'جي اند مور - بودر فرابيه فانيليا 1 كجم', price:230},
+          {code:'JM003', name:'جي اند مور - بودر فرابيه قهوه 1 كجم', price:250},
+          {code:'JM001', name:'جي اند مور - بودر فرابيه شيكولاته 1 كجم', price:300},
+          {code:'JM004', name:'جي اند مور - بن تركي فاتح 500 جم', price:250},
+          {code:'JM005', name:'جي اند مور - بن تركي وسط 500 جم', price:250},
+          {code:'JM007', name:'جي اند مور - بن تركي محوج 500 جم', price:300},
+          {code:'JM010', name:'جي اند مور - بن تركي فاتح 250 جم', price:130},
+          {code:'JM011', name:'جي اند مور - بن تركي وسط 250 جم', price:130},
+          {code:'JM012', name:'جي اند مور - بن تركي غامق 250 جم', price:130},
+          {code:'JM013', name:'جي اند مور - بن تركي محوج فاتح 250 جم', price:155},
+          {code:'JM014', name:'جي اند مور - محوج وسط 250 جم', price:155},
+          {code:'JM015', name:'جي اند مور - بن تركي محوج غامق 250 جم', price:155}
+        ]
       }
     ];
 
-    const DEFAULT_IMG_FALLBACK = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80';
+    function parseUnitAndWeight(labelName) {
+      const s = String(labelName || '');
+      const kgMatch = s.match(/(\d+(?:\.\d+)?)\s*(?:كجم|كيلو|ك\b)/);
+      if (kgMatch) {
+        const g = Math.round(parseFloat(kgMatch[1]) * 1000);
+        return { unitLabel: `${kgMatch[1]} كجم`, weightG: g, doseG: 20 };
+      }
+      const lMatch = s.match(/(\d+(?:\.\d+)?)\s*لتر/);
+      if (lMatch) {
+        const ml = Math.round(parseFloat(lMatch[1]) * 1000);
+        return { unitLabel: `${lMatch[1]} لتر`, weightG: ml, doseG: 20 };
+      }
+      const mlMatch = s.match(/(\d+)\s*ملي/);
+      if (mlMatch) {
+        return { unitLabel: `${mlMatch[1]} مل`, weightG: parseInt(mlMatch[1], 10), doseG: 15 };
+      }
+      const gMatch = s.match(/(\d+)\s*(?:جم|جرام)/);
+      if (gMatch) {
+        return { unitLabel: `${gMatch[1]} جم`, weightG: parseInt(gMatch[1], 10), doseG: 20 };
+      }
+      return { unitLabel: 'عبوة قياسية', weightG: null, doseG: null };
+    }
+
+    function buildCatalogFromGroups() {
+      const items = [];
+      RAW_BRAND_GROUPS.forEach((grp, gIdx) => {
+        grp.products.forEach((p, pIdx) => {
+          const parsed = parseUnitAndWeight(p.name);
+          const basePrice = Number(p.price) || 0;
+          const bulkPrice = Math.max(1, Math.round(basePrice * 0.93));
+          const costPrice = Math.max(1, Math.round(basePrice * 0.84));
+          const hasPromo = (pIdx % 7 === 0);
+          const compareAtPrice = hasPromo ? Math.round(basePrice * 1.12) : null;
+
+          items.push({
+            id: `cat-${gIdx}-${pIdx}-${p.code}`,
+            code: p.code || '',
+            merchantId: grp.merchantId,
+            merchantName: grp.merchantName,
+            category: p.category || grp.defaultCat,
+            brand: grp.name,
+            name: p.name,
+            unitLabel: parsed.unitLabel,
+            weightG: parsed.weightG,
+            doseG: parsed.doseG,
+            stock: 'available',
+            imageUrl: p.imageUrl || grp.defaultImg || DEFAULT_IMG_FALLBACK,
+            compareAtPrice,
+            tiers: [
+              { minQty: 1, label: '1-5 عبوات', price: basePrice, cost: costPrice },
+              { minQty: 6, label: 'كميات/كرتونة (6+)', price: bulkPrice, cost: Math.max(1, costPrice - 8) }
+            ]
+          });
+        });
+      });
+
+      items.push({
+        id: 'bundle-waffle-cafe',
+        code: 'VELO-BND-01',
+        merchantId: 'm1',
+        merchantName: 'موزع صوصات وفلافر الكافيه - الدقهلية',
+        category: 'bundles',
+        brand: 'VELO Bundle',
+        name: 'باقة صوصات وفلافر الكافيه (توسكي كراميل 2 لتر + توسكي شوكليت 2 لتر + فلفر كراميل 1 لتر)',
+        unitLabel: 'باقة 3 عبوات',
+        weightG: 5000,
+        doseG: 20,
+        stock: 'available',
+        imageUrl: IMG_SAUCE,
+        compareAtPrice: 1945,
+        tiers: [
+          { minQty: 1, label: 'باقة', price: 1740, cost: 1490 },
+          { minQty: 3, label: '3+ باقات', price: 1650, cost: 1410 }
+        ]
+      });
+
+      return items;
+    }
 
     let zones = [...FALLBACK_ZONES];
-    let products = JSON.parse(localStorage.getItem('velo_custom_products') || 'null') || [...FALLBACK_PRODUCTS];
+    let products = JSON.parse(localStorage.getItem('velo_catalog_v2') || 'null') || buildCatalogFromGroups();
     let state = {
       selectedZoneId: FALLBACK_ZONES[0].id,
       category: 'all',
@@ -427,6 +864,7 @@
       e.preventDefault();
       const name = document.getElementById('newProdName').value.trim();
       const brand = document.getElementById('newProdBrand').value.trim();
+      const code = document.getElementById('newProdCode').value.trim();
       const category = document.getElementById('newProdCategory').value;
       const unitLabel = document.getElementById('newProdUnitLabel').value.trim();
       const price = Number(document.getElementById('newProdPrice').value);
@@ -439,13 +877,14 @@
       const weightG = Number(document.getElementById('newProdWeight').value) || null;
       const doseG = Number(document.getElementById('newProdDose').value) || null;
 
-      const tiers = [{ minQty: 1, label: '1-5 وحدات', price, cost }];
+      const tiers = [{ minQty: 1, label: '1-5 عبوات', price, cost }];
       if (bulkPriceRaw > 0) {
         tiers.push({ minQty: 6, label: 'كميات/كرتونة (6+)', price: bulkPriceRaw, cost: Math.max(0, cost - 10) });
       }
 
       const newProd = {
         id: 'p-' + Date.now(),
+        code,
         merchantId,
         merchantName,
         category,
@@ -461,11 +900,12 @@
       };
 
       products.unshift(newProd);
-      localStorage.setItem('velo_custom_products', JSON.stringify(products));
+      localStorage.setItem('velo_catalog_v2', JSON.stringify(products));
 
       try {
         await supabase.from('products').insert({
           id: newProd.id,
+          sku_code: code || null,
           merchant_id: merchantId,
           category,
           brand,
@@ -555,6 +995,7 @@
 
     function selectBrand(brand) {
       state.selectedBrand = brand;
+      renderBrandFilters();
       renderProducts();
     }
 
@@ -580,14 +1021,14 @@
         const catMatch = state.category === 'all' || p.category === state.category;
         const brandMatch = state.selectedBrand === 'all' || p.brand === state.selectedBrand;
         const availMatch = !onlyAvail || p.stock === 'available';
-        const text = `${p.brand} ${p.name} ${p.unitLabel}`.toLowerCase();
+        const text = `${p.code || ''} ${p.brand} ${p.name} ${p.unitLabel}`.toLowerCase();
         return catMatch && brandMatch && availMatch && (!q || text.includes(q));
       });
 
       if (sortBy === 'price_asc') list.sort((a, b) => a.tiers[0].price - b.tiers[0].price);
       if (sortBy === 'price_desc') list.sort((a, b) => b.tiers[0].price - a.tiers[0].price);
 
-      document.getElementById('resultsCountText').textContent = `عرض ${list.length} منتج من أصل ${products.length}`;
+      document.getElementById('resultsCountText').textContent = `عرض ${list.length} صنف من أصل ${products.length}`;
 
       const stockMap = {
         available: ['متاح للتوريد', 'bg-emerald-50 text-emerald-700 border-emerald-200'],
@@ -606,11 +1047,11 @@
         return `
           <article class="bg-white border border-stone-200 hover:border-amber-400 rounded-2xl overflow-hidden flex flex-col justify-between transition shadow-2xs">
             <div>
-              <div class="relative h-44 bg-stone-100 border-b border-stone-100 overflow-hidden">
+              <div class="relative h-40 bg-stone-100 border-b border-stone-100 overflow-hidden">
                 <img src="${p.imageUrl || DEFAULT_IMG_FALLBACK}" alt="${p.name}" loading="lazy"
                   onerror="this.onerror=null;this.src='${DEFAULT_IMG_FALLBACK}';"
                   class="w-full h-full object-cover" />
-                <div class="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                <div class="absolute top-2.5 right-2.5 flex items-center gap-1.5 flex-wrap">
                   <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-md bg-stone-900/85 text-white">${p.brand}</span>
                   ${discountPct > 0 ? `<span class="text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-600 text-white shadow-xs">خصم ${discountPct}%</span>` : ''}
                 </div>
@@ -619,8 +1060,11 @@
 
               <div class="p-4 space-y-2.5">
                 <div>
+                  <div class="flex items-center justify-between gap-2 text-[11px] text-stone-400 font-bold mb-0.5">
+                    <span>كود: <b class="text-stone-600">${p.code || '—'}</b></span>
+                    <span>العبوة: <b class="text-stone-700">${p.unitLabel}</b></span>
+                  </div>
                   <h3 class="font-extrabold text-stone-900 text-sm leading-snug">${p.name}</h3>
-                  <div class="text-xs text-stone-500 mt-0.5">العبوة: <b class="text-stone-700">${p.unitLabel}</b></div>
                 </div>
 
                 <div class="pt-1">
@@ -642,7 +1086,7 @@
 
                 ${doseCost ? `
                   <div class="bg-emerald-50/70 border border-emerald-100 rounded-lg px-2.5 py-1.5 text-[11px] text-emerald-900">
-                    تكلفة البمب/الجرعة (~${p.doseG} جم): <b>${doseCost} ج.م</b> للكوب أو الوجبة
+                    تقدير الجرعة (~${p.doseG} ${p.unitLabel.includes('لتر') || p.unitLabel.includes('مل') ? 'مل' : 'جم'}): <b>${doseCost} ج.م</b>
                   </div>
                 ` : ''}
               </div>
@@ -702,7 +1146,7 @@
           return `
             <div class="border border-stone-200 rounded-xl p-3 flex items-center justify-between gap-2 bg-white">
               <div class="min-w-0">
-                <div class="text-[10px] font-bold text-amber-700">${item.product.brand}</div>
+                <div class="text-[10px] font-bold text-amber-700">${item.product.brand} ${item.product.code ? '• ' + item.product.code : ''}</div>
                 <div class="font-extrabold text-xs text-stone-900 truncate">${item.product.name}</div>
                 <div class="text-[11px] text-stone-500 mt-0.5">${tier.price} ج.م × ${item.qty} = <b class="text-stone-900">${tier.price * item.qty} ج.م</b></div>
               </div>
@@ -972,7 +1416,8 @@
 
         if (!prodsRes.error && prodsRes.data?.length) {
           const remoteProds = prodsRes.data.map(p => ({
-            id: p.id, merchantId: p.merchant_id || p.merchants?.id || 'unassigned',
+            id: p.id, code: p.sku_code || '',
+            merchantId: p.merchant_id || p.merchants?.id || 'unassigned',
             merchantName: p.merchants?.name || 'تاجر غير محدد',
             category: p.category, brand: p.brand, name: p.name_ar,
             unitLabel: p.unit_label,
