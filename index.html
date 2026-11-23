@@ -9,11 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #F6F7F9;
+      --bg: #F5F5F4;
       --card: #FFFFFF;
       --ink: #18181B;
       --muted: #64748B;
-      --line: #E2E8F0;
+      --line: #E4E4E7;
       --brand: #C7873B;
       --brand-dark: #A96E2A;
       --brand-soft: #FDF6EE;
@@ -33,9 +33,9 @@
       line-height: 1.5;
     }
     .num { font-variant-numeric: tabular-nums; }
-    .container { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+    .container { max-width: 1260px; margin: 0 auto; padding: 0 16px; }
 
-    /* Header */
+    /* Top App Header */
     header {
       position: sticky;
       top: 0;
@@ -55,7 +55,7 @@
     .logo-badge {
       width: 42px;
       height: 42px;
-      border-radius: 12px;
+      border-radius: 13px;
       background: var(--ink);
       color: #fff;
       display: flex;
@@ -80,7 +80,7 @@
       color: var(--brand-dark);
       border: 1px solid #F3D5AE;
       padding: 2px 8px;
-      border-radius: 6px;
+      border-radius: 7px;
     }
     .brand-sub { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
 
@@ -89,7 +89,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #F1F5F9;
+      background: #F4F4F5;
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 6px 12px;
@@ -106,7 +106,7 @@
     }
     .role-switch {
       display: inline-flex;
-      background: #F1F5F9;
+      background: #F4F4F5;
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 4px;
@@ -115,7 +115,7 @@
     .role-btn {
       border: none;
       background: transparent;
-      color: #475569;
+      color: #52525B;
       font-family: inherit;
       font-size: 13px;
       font-weight: 700;
@@ -140,12 +140,12 @@
       gap: 8px;
     }
 
-    /* Layout */
-    main { padding: 22px 0 44px; }
+    /* Main Grid */
+    main { padding: 20px 0 44px; }
     .client-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.9fr) minmax(325px, 1fr);
-      gap: 22px;
+      gap: 20px;
       align-items: start;
     }
     @media (max-width: 980px) {
@@ -155,10 +155,38 @@
     .card {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 18px;
     }
     .stack { display: flex; flex-direction: column; gap: 16px; }
+
+    /* Hero Promo Card inspired by Food App UI */
+    .promo-hero {
+      background: linear-gradient(135deg, #18181B 0%, #27272A 65%, #3B2814 100%);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .promo-pill {
+      display: inline-block;
+      background: rgba(199, 135, 59, 0.22);
+      color: #FCD38D;
+      border: 1px solid rgba(199, 135, 59, 0.45);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .promo-title { margin: 0; font-size: 20px; font-weight: 800; line-height: 1.35; }
+    .promo-sub { margin: 6px 0 0; font-size: 13px; color: #D4D4D8; max-width: 520px; }
+    .promo-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 
     /* Quick Reorder */
     .reorder-box {
@@ -167,7 +195,6 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      background: linear-gradient(90deg, #FFFFFF 0%, #FDF8F2 100%);
     }
     .reorder-kicker { font-size: 12px; font-weight: 700; color: var(--brand-dark); }
     .reorder-desc { font-size: 14px; font-weight: 600; margin: 2px 0 0; }
@@ -176,23 +203,23 @@
     .search-input {
       width: 100%;
       padding: 12px 15px;
-      border: 1px solid #CBD5E1;
-      border-radius: 12px;
+      border: 1px solid #D4D4D8;
+      border-radius: 13px;
       font-family: inherit;
       font-size: 14px;
       outline: none;
-      background: #F8FAFC;
+      background: #FAFAF9;
     }
     .search-input:focus { border-color: var(--brand); background: #fff; }
     .cats-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
     .cat-pill {
       border: 1px solid var(--line);
-      background: #F8FAFC;
-      color: #334155;
+      background: #F4F4F5;
+      color: #27272A;
       font-family: inherit;
       font-size: 13px;
-      font-weight: 600;
-      padding: 7px 14px;
+      font-weight: 700;
+      padding: 8px 15px;
       border-radius: 999px;
       cursor: pointer;
     }
@@ -216,9 +243,7 @@
       flex-direction: column;
       justify-content: space-between;
       gap: 14px;
-      transition: border-color 0.15s ease, transform 0.15s ease;
     }
-    .prod-card:hover { border-color: #CBD5E1; }
     .prod-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
     .prod-meta { font-size: 12px; font-weight: 700; color: var(--brand-dark); }
     .prod-title { font-size: 16px; font-weight: 700; margin: 3px 0 0; }
@@ -234,9 +259,9 @@
     .badge-out_of_stock { background: var(--off-bg); color: var(--off-fg); }
 
     .tiers-box {
-      background: #F8FAFC;
+      background: #FAFAF9;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 13px;
       padding: 10px;
       margin-top: 10px;
     }
@@ -245,7 +270,7 @@
     .tier-cell {
       background: #fff;
       border: 1px solid var(--line);
-      border-radius: 9px;
+      border-radius: 10px;
       padding: 6px 4px;
     }
     .tier-cell.active-tier {
@@ -261,11 +286,11 @@
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      background: #F1F5F9;
-      border-radius: 10px;
+      background: #F4F4F5;
+      border-radius: 11px;
       padding: 8px 12px;
       font-size: 12px;
-      color: #334155;
+      color: #3F3F46;
       margin-top: 10px;
     }
 
@@ -274,7 +299,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      border-top: 1px solid #F1F5F9;
+      border-top: 1px solid #F4F4F5;
       padding-top: 12px;
     }
     .price-now { font-size: 19px; font-weight: 800; }
@@ -282,7 +307,7 @@
     /* Buttons & Qty */
     .btn {
       border: none;
-      border-radius: 11px;
+      border-radius: 12px;
       font-family: inherit;
       font-weight: 700;
       cursor: pointer;
@@ -291,6 +316,7 @@
     }
     .btn-brand { background: var(--brand); color: #fff; }
     .btn-brand:hover { background: var(--brand-dark); }
+    .btn-light { background: #FFFFFF; color: var(--ink); }
     .btn-dark { background: var(--ink); color: #fff; width: 100%; padding: 12px; font-size: 14px; }
     .btn-dark:hover { background: #27272A; }
     .btn-wa { background: #059669; color: #fff; width: 100%; padding: 11px; font-size: 13px; }
@@ -300,9 +326,9 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #F1F5F9;
+      background: #F4F4F5;
       border: 1px solid var(--line);
-      border-radius: 11px;
+      border-radius: 12px;
       padding: 4px;
     }
     .qty-btn {
@@ -322,7 +348,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #F1F5F9;
+      border-bottom: 1px solid #F4F4F5;
       padding-bottom: 12px;
       margin-bottom: 12px;
     }
@@ -333,12 +359,12 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 10px;
-      border-bottom: 1px solid #F8FAFC;
+      border-bottom: 1px solid #F4F4F5;
       padding-bottom: 8px;
       font-size: 13px;
     }
     .hint-box {
-      background: #F8FAFC;
+      background: #FAFAF9;
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 10px 12px;
@@ -348,7 +374,7 @@
     .field-input {
       width: 100%;
       padding: 10px 12px;
-      border: 1px solid #CBD5E1;
+      border: 1px solid #D4D4D8;
       border-radius: 11px;
       font-family: inherit;
       font-size: 13px;
@@ -365,7 +391,7 @@
     }
     .total-row { display: flex; justify-content: space-between; }
     .grand-total {
-      border-top: 1px solid #F1F5F9;
+      border-top: 1px solid #F4F4F5;
       padding-top: 8px;
       font-size: 16px;
       font-weight: 800;
@@ -386,7 +412,7 @@
     .admin-tab {
       border: 1px solid var(--line);
       background: #fff;
-      color: #334155;
+      color: #3F3F46;
       font-family: inherit;
       font-size: 13px;
       font-weight: 700;
@@ -397,7 +423,7 @@
     .admin-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
     .split-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
     .po-line {
-      background: #F8FAFC;
+      background: #FAFAF9;
       border: 1px solid var(--line);
       border-radius: 11px;
       padding: 10px;
@@ -411,8 +437,8 @@
       margin-bottom: 16px;
     }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 12px; text-align: right; border-bottom: 1px solid #F1F5F9; }
-    th { background: #F8FAFC; color: var(--muted); font-size: 12px; }
+    th, td { padding: 12px; text-align: right; border-bottom: 1px solid #F4F4F5; }
+    th { background: #FAFAF9; color: var(--muted); font-size: 12px; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -452,6 +478,20 @@
   <main id="clientView" class="container">
     <div class="client-grid">
       <div class="stack">
+        <!-- بانر ترويجي للباقات وتوريد الجملة -->
+        <div class="promo-hero">
+          <div>
+            <span class="promo-pill">توريد جملة • الدقهلية</span>
+            <h2 class="promo-title">اجمع صوصات الكافيه والمطعم والبمبات في فاتورة واحدة باسم VELO</h2>
+            <p class="promo-sub">تسعير متدرج حسب الكمية، توضيح تكلفة الجرعة، توصيل مجاني فوق الحد المحدد لكل مركز، وتقسيم تلقائي لأوامر الاستلام خلف الكواليس.</p>
+          </div>
+          <div class="promo-actions">
+            <button class="btn btn-brand" onclick="setCategory('bundles')">تصفح الباقات المجمعة</button>
+            <button class="btn btn-light" onclick="quickReorderLast()">إعادة طلب آخر فاتورة</button>
+          </div>
+        </div>
+
+        <!-- إعادة الطلب السريع -->
         <div class="card reorder-box">
           <div>
             <div class="reorder-kicker">إعادة طلب سريع (Quick Reorder)</div>
@@ -460,14 +500,17 @@
           <button class="btn btn-dark" style="width:auto;" onclick="quickReorderLast()">تحميل آخر فاتورة في السلة</button>
         </div>
 
+        <!-- البحث والفئات -->
         <div class="card">
           <input id="searchInput" class="search-input" type="text" oninput="renderProducts()" placeholder="ابحث باسم الصوص أو البراند (كراميل، شوكولاتة، شيدر، باربيكيو، بمب، باقة...)" />
           <div id="categoryTabs" class="cats-row"></div>
         </div>
 
+        <!-- شبكة المنتجات -->
         <div id="productsGrid" class="products-grid"></div>
       </div>
 
+      <!-- السلة الموحدة -->
       <aside class="card cart-sticky">
         <div class="cart-head">
           <h2 class="cart-title">فاتورة VELO الموحدة</h2>
@@ -990,7 +1033,7 @@
 
       document.getElementById("adminSplitSection").innerHTML = Object.values(grouped).map(({ supplier, lines, totalCost }) => `
         <div class="card">
-          <div style="border-bottom:1px solid #F1F5F9; padding-bottom:10px;">
+          <div style="border-bottom:1px solid #F4F4F5; padding-bottom:10px;">
             <div class="prod-meta">${supplier?.mode}</div>
             <h3 style="margin:2px 0; font-size:16px;">${supplier?.name}</h3>
             <div style="font-size:12px; color:var(--muted);">هاتف التواصل: ${supplier?.phone}</div>
@@ -1007,7 +1050,7 @@
               </div>
             </div>
           `).join("")}
-          <div style="display:flex; justify-content:space-between; border-top:1px solid #F1F5F9; margin-top:12px; padding-top:10px; font-weight:800;">
+          <div style="display:flex; justify-content:space-between; border-top:1px solid #F4F4F5; margin-top:12px; padding-top:10px; font-weight:800;">
             <span>إجمالي مستحقات التاجر</span>
             <span class="num" style="color:var(--brand-dark);">${totalCost} ج.م</span>
           </div>
