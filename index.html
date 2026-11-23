@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>دلتا سبلاي | بوابة توريد الصوصات ومطبوعات الكافيهات والمطاعم — الدقهلية</title>
+  <title>VELO | فِيلو — بوابة توريد جملة للصوصات في الدقهلية</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -14,13 +14,10 @@
         extend: {
           fontFamily: {
             sans: ['"IBM Plex Sans Arabic"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', '"IBM Plex Sans Arabic"', 'sans-serif'],
           },
           colors: {
-            brand: {
-              DEFAULT: '#C7873B',
-              dark: '#A96E2A',
-              light: '#FDF6EE',
-            },
+            brand: { DEFAULT: '#C7873B', dark: '#A96E2A', light: '#FDF6EE' },
             ink: '#18181B',
             surface: '#FAFAF9',
           }
@@ -34,20 +31,19 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
-
-  <!-- الشريط العلوي -->
   <header class="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center font-bold text-lg shadow-xs">
-          د
+        <div class="w-10 h-10 rounded-xl bg-ink text-white flex items-center justify-center font-display font-extrabold text-xl border-b-2 border-brand">
+          V
         </div>
         <div>
-          <h1 class="font-bold text-base sm:text-lg leading-tight text-ink">
-            دلتا سبلاي — بوابة توريد الصوصات ومطبوعات الكافيهات والمطاعم
-          </h1>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-extrabold text-lg sm:text-xl text-ink">VELO</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-brand-light text-brand border border-amber-200">فِيلو • B2B</span>
+          </div>
           <p class="text-xs text-stone-500">
-            توريد جملة للصوصات، الأكواب الورقية، وعلب الطعام المطبوعة في الدقهلية بفاتورة موحدة
+            بوابة توريد جملة للصوصات، البمبات، والباقات للكافيهات والمطاعم في الدقهلية بفاتورة موحدة
           </p>
         </div>
       </div>
@@ -63,23 +59,19 @@
             واجهة الكافيه / المطعم
           </button>
           <button id="btnRoleAdmin" onclick="switchRole('admin')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer text-stone-600 hover:text-ink">
-            لوحة الإدارة والتوريد
+            لوحة إدارة VELO
           </button>
         </div>
       </div>
     </div>
 
-    <!-- شريط معلومات التوصيل للمركز المختار -->
     <div class="bg-brand-light border-t border-amber-200/80 px-4 py-2 text-xs sm:text-sm">
       <div id="zoneBanner" class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-stone-800"></div>
     </div>
   </header>
 
-  <!-- واجهة العميل (الكافيه / المطعم) -->
   <main id="clientView" class="max-w-7xl mx-auto w-full px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-    <!-- الكتالوج والفلاتر -->
     <section class="lg:col-span-8 space-y-5">
-      <!-- شريط إعادة الطلب السريع -->
       <div id="quickReorderBox" class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <span class="text-xs font-bold text-brand block">إعادة طلب سريع (Quick Reorder)</span>
@@ -90,37 +82,30 @@
         </button>
       </div>
 
-      <!-- البحث والفئات -->
       <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
         <input
           id="searchInput"
           type="text"
           oninput="renderProducts()"
-          placeholder="ابحث باسم الصوص أو البراند أو المطبوعات (كراميل، شيدر، باربيكيو، بمب، أكواب ورقية، علب وافل...)"
+          placeholder="ابحث باسم الصوص أو البراند (كراميل، شوكولاتة، شيدر، باربيكيو، بمب، باقة...)"
           class="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand"
         />
         <div id="categoryTabs" class="flex flex-wrap gap-2"></div>
       </div>
 
-      <!-- شبكة المنتجات -->
       <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </section>
 
-    <!-- السلة الموحدة وإتمام الطلب -->
     <aside class="lg:col-span-4">
       <div class="bg-white border border-stone-200 rounded-2xl p-5 sticky top-28 space-y-4 shadow-xs">
         <div class="flex items-center justify-between border-b border-stone-100 pb-3">
-          <h2 class="font-bold text-base text-ink">فاتورة التوريد الموحدة</h2>
+          <h2 class="font-bold text-base text-ink">فاتورة VELO الموحدة</h2>
           <span id="cartCountBadge" class="text-xs font-bold bg-stone-100 text-stone-700 px-2.5 py-1 rounded-full tabular-nums">0 أصناف</span>
         </div>
 
         <div id="cartItemsList" class="space-y-3 max-h-72 overflow-y-auto pe-1"></div>
 
         <div id="freeDeliveryHint" class="bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-700"></div>
-
-        <div id="packagingNotice" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-[11px] text-amber-900">
-          تحتوي فاتورتك على مطبوعات: تُسلَّم الصوصات خلال 24-48 ساعة، وتُسلَّم الأكواب والعلب المطبوعة بعد اعتماد البروفة (5-8 أيام عمل).
-        </div>
 
         <div class="space-y-2 pt-1">
           <input id="inputBusinessName" type="text" value="كافيه ومخبز شاليمو" placeholder="اسم الكافيه أو المطعم" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand" />
@@ -144,7 +129,7 @@
 
         <div class="space-y-2 pt-1">
           <button onclick="placeOrder(false)" class="w-full py-3 rounded-xl bg-ink hover:bg-stone-800 text-white font-bold text-sm transition cursor-pointer">
-            إرسال طلب التوريد الموحد
+            إرسال طلب التوريد عبر VELO
           </button>
           <button onclick="placeOrder(true)" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition cursor-pointer">
             تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)
@@ -156,37 +141,30 @@
     </aside>
   </main>
 
-  <!-- لوحة تحكم الإدارة -->
   <main id="adminView" class="hidden max-w-7xl mx-auto w-full px-4 py-6 space-y-6 flex-1">
     <div class="flex flex-wrap gap-2">
       <button id="tabAdminSplit" onclick="switchAdminTab('split')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-ink text-white">
-        أوامر الاستلام والتشغيل المقسّمة للتجار والمطابع
+        أوامر الاستلام المقسّمة للتجار
       </button>
       <button id="tabAdminProducts" onclick="switchAdminTab('products')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-white border border-stone-200 text-stone-700">
-        إدارة المنتجات والمطبوعات والأسعار
+        إدارة الصوصات والأسعار والتوفر
       </button>
       <button id="tabAdminZones" onclick="switchAdminTab('zones')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-white border border-stone-200 text-stone-700">
         مناطق ورسوم الدقهلية
       </button>
     </div>
 
-    <!-- تبويب 1: أوامر الاستلام والتشغيل المقسّمة -->
     <section id="adminSplitSection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></section>
 
-    <!-- تبويب 2: إدارة المنتجات -->
     <section id="adminProductsSection" class="hidden space-y-5">
       <form onsubmit="addNewProduct(event)" class="bg-white border border-stone-200 rounded-2xl p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <select id="newProdKind" onchange="onNewProdKindChange()" class="px-3 py-2 rounded-xl border border-stone-300 text-sm bg-white font-bold">
-          <option value="standard">نوع الصنف: صوص / ملحق</option>
-          <option value="packaging">نوع الصنف: أكواب ورقية / علب ومطبوعات</option>
-        </select>
-        <input id="newProdName" type="text" required placeholder="اسم الصنف (مثال: صوص لوتس أو كوب 12 أونص)" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+        <input id="newProdName" type="text" required placeholder="اسم الصوص أو الملحق" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
         <input id="newProdUnit" type="text" value="جركن 2.5 كجم" placeholder="وحدة البيع" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
         <select id="newProdSupplier" class="px-3 py-2 rounded-xl border border-stone-300 text-sm bg-white"></select>
-        <input id="newProdCost" type="number" required placeholder="تكلفة التاجر / المطبعة" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+        <input id="newProdCost" type="number" required placeholder="تكلفة الشراء من التاجر" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
         <input id="newProdTier1" type="number" required placeholder="سعر البيع شريحة 1-3" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
         <input id="newProdTier4" type="number" required placeholder="سعر البيع شريحة 4+" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
-        <button type="submit" class="bg-brand hover:bg-brand-dark text-white font-bold rounded-xl py-2 px-4 text-sm cursor-pointer">
+        <button type="submit" class="bg-brand hover:bg-brand-dark text-white font-bold rounded-xl py-2 px-4 text-sm cursor-pointer lg:col-span-2">
           + إضافة للكتالوج
         </button>
       </form>
@@ -196,8 +174,8 @@
           <thead class="bg-stone-50 border-b border-stone-200 text-stone-600 text-xs">
             <tr>
               <th class="p-3">الصنف / القسم</th>
-              <th class="p-3">التاجر / المطبعة</th>
-              <th class="p-3">التكلفة الأساسية</th>
+              <th class="p-3">التاجر المورد</th>
+              <th class="p-3">تكلفة الشراء</th>
               <th class="p-3">الأسعار المتدرجة</th>
               <th class="p-3">حالة التوفر</th>
             </tr>
@@ -207,7 +185,6 @@
       </div>
     </section>
 
-    <!-- تبويب 3: إدارة المناطق -->
     <section id="adminZonesSection" class="hidden bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
       <h3 class="font-bold text-base">إدارة رسوم وحدود التوصيل المجاني لمراكز الدقهلية</h3>
       <div id="adminZonesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -215,7 +192,6 @@
   </main>
 
   <script>
-    // 1. بيانات مراكز الدقهلية
     const zones = [
       { id: "mansoura", name: "المنصورة", fee: 50, freeAbove: 2500, schedule: "يومياً - خلال 24 ساعة" },
       { id: "talkha", name: "طلخا", fee: 60, freeAbove: 2800, schedule: "يومياً - خلال 24 ساعة" },
@@ -226,19 +202,15 @@
       { id: "belqas", name: "بلقاس", fee: 85, freeAbove: 3500, schedule: "الأحد والأربعاء" }
     ];
 
-    // 2. التجار والمطابع (تظهر في لوحة الإدارة فقط ولا تُكشف للعميل)
     const suppliers = [
-      { id: "sup-1", name: "مؤسسة الدلتا لتوريدات الكافيهات", type: "تاجر صوصات", phone: "01000000011", mode: "Milk-Run (تجميع)" },
-      { id: "sup-2", name: "مجموعة النيل لصوصات المطاعم", type: "تاجر صوصات", phone: "01000000022", mode: "تجميع / تسليم مباشر" },
-      { id: "sup-3", name: "المصرية لعبوات وبمبات التقديم", type: "مورد ملحقات", phone: "01000000033", mode: "تجميع" },
-      { id: "sup-4", name: "مطبعة الدلتا للأكواب الورقية والعلب", type: "مطبعة ومصنع تغليف", phone: "01000000044", mode: "أمر تشغيل طباعة (5-7 أيام)" }
+      { id: "sup-1", name: "مؤسسة الدلتا لتوريدات الكافيهات", phone: "01000000011", mode: "Milk-Run (تجميع)" },
+      { id: "sup-2", name: "مجموعة النيل لصوصات المطاعم", phone: "01000000022", mode: "تجميع / تسليم مباشر" },
+      { id: "sup-3", name: "المصرية لبمبات وعبوات التقديم", phone: "01000000033", mode: "تجميع" }
     ];
 
-    // 3. الكتالوج الموحد (صوصات + ملحقات + باقات + مطبوعات وأكواب وعلب)
     const products = [
       {
         id: "p-1",
-        kind: "standard",
         name: "صوص كراميل مملح (Salted Caramel)",
         brand: "CremaPro",
         category: "cafe_desserts",
@@ -256,7 +228,6 @@
       },
       {
         id: "p-2",
-        kind: "standard",
         name: "صوص شوكولاتة داكنة للوافل والكريب",
         brand: "ChocoLab",
         category: "cafe_desserts",
@@ -274,7 +245,6 @@
       },
       {
         id: "p-3",
-        kind: "standard",
         name: "صوص جبنة شيدر كريمي للبطاطس والبرجر",
         brand: "CheddarCo",
         category: "restaurant_sauces",
@@ -292,7 +262,6 @@
       },
       {
         id: "p-4",
-        kind: "standard",
         name: "صوص سموكي باربيكيو وشيلي للبرجر",
         brand: "GrillMaster",
         category: "restaurant_sauces",
@@ -310,7 +279,6 @@
       },
       {
         id: "p-5",
-        kind: "standard",
         name: "بمب صوص (10 مل / ضغطة) للجراكن",
         brand: "DispenseX",
         category: "pumps_bottles",
@@ -326,64 +294,19 @@
         ]
       },
       {
-        id: "pkg-1",
-        kind: "packaging",
-        name: "أكواب ورقية 8 أونص دبل وول (Double Wall)",
-        brand: "PrintPack Dakahlia",
-        category: "custom_packaging",
-        unit: "ألف كوب (1,000 قطعة)",
-        supplierId: "sup-4",
-        costPrice: 1320,
-        servingLabel: "شامل الأغطية السوداء/البيضاء",
-        servingsPerUnit: 1000,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 2, price: 1580 },
-          { min: 3, max: null, price: 1490 }
-        ],
-        printOptions: [
-          { id: "plain", label: "سادة بدون طباعة", extraPrice: 0, extraCost: 0 },
-          { id: "1_color", label: "طباعة 1 لون (لوجو الكافيه)", extraPrice: 220, extraCost: 150 },
-          { id: "cmyk", label: "طباعة ألوان كاملة CMYK", extraPrice: 380, extraCost: 260 }
-        ]
-      },
-      {
-        id: "pkg-2",
-        kind: "packaging",
-        name: "علب وافل وكريب كرتون دوبلكس (19×19×4 سم)",
-        brand: "PrintPack Dakahlia",
-        category: "custom_packaging",
-        unit: "ألف علبة (1,000 قطعة)",
-        supplierId: "sup-4",
-        costPrice: 1650,
-        servingLabel: "طبقة داخلية مقاومة للصوصات والدهون",
-        servingsPerUnit: 1000,
-        availability: "available",
-        tiers: [
-          { min: 1, max: 2, price: 1980 },
-          { min: 3, max: null, price: 1840 }
-        ],
-        printOptions: [
-          { id: "plain", label: "سادة جاهز للتوريد السريع", extraPrice: 0, extraCost: 0 },
-          { id: "2_colors", label: "طباعة 2 لون + سلوفان داخلي", extraPrice: 290, extraCost: 200 },
-          { id: "cmyk", label: "طباعة ألوان كاملة + سلوفان", extraPrice: 450, extraCost: 320 }
-        ]
-      },
-      {
         id: "p-6",
-        kind: "standard",
-        name: "باقة انطلاق كافيه (4 جراكن صوص + 1000 كوب مطبوع)",
-        brand: "Bundle Dakahlia",
+        name: "باقة الكافيهات المتكاملة (6 جراكن صوص + 2 بمب)",
+        brand: "VELO Bundles",
         category: "bundles",
         unit: "باقة متكاملة",
         supplierId: "sup-1",
-        costPrice: 2450,
-        servingLabel: "توفير فوري عن الطلب المنفصل",
-        servingsPerUnit: 1000,
+        costPrice: 1580,
+        servingLabel: "توفير فوري عن الشراء الفردي",
+        servingsPerUnit: 750,
         availability: "available",
         tiers: [
-          { min: 1, max: 2, price: 2890 },
-          { min: 3, max: null, price: 2750 }
+          { min: 1, max: 2, price: 1850 },
+          { min: 3, max: null, price: 1740 }
         ]
       }
     ];
@@ -392,7 +315,6 @@
       all: "كل الأصناف",
       cafe_desserts: "صوصات كافيهات وحلويات",
       restaurant_sauces: "صوصات مطاعم وفاست فود",
-      custom_packaging: "طباعة أكواب ورقية وعلب طعام",
       pumps_bottles: "بمبات وعبوات ضغط",
       bundles: "باقات مجمعة"
     };
@@ -403,34 +325,27 @@
       out_of_stock: { label: "غير متاح", cls: "bg-rose-50 text-rose-700 border-rose-200" }
     };
 
-    // حالة التطبيق
     let selectedZoneId = "mansoura";
     let activeCategory = "all";
-    const pkgConfigs = {
-      "pkg-1": { printOptionId: "1_color", designNote: "لوجو بني على كوب أبيض", fileName: "" },
-      "pkg-2": { printOptionId: "2_colors", designNote: "مقاس 19×19×4 - سلوفان داخلي", fileName: "" }
-    };
-
     let cart = [
       { productId: "p-1", qty: 4 },
-      { productId: "p-3", qty: 2 },
-      { productId: "pkg-1", qty: 1, printOptionId: "1_color", designNote: "لوجو بني على كوب أبيض", fileName: "" }
+      { productId: "p-3", qty: 2 }
     ];
 
     const orders = [
       {
-        id: "ORD-1042",
-        date: "2026-11-18",
+        id: "VELO-1042",
+        date: "2026-11-23",
         businessName: "كافيه ومخبز شاليمو",
         zoneId: "senbellawein",
         items: [
           { productId: "p-1", qty: 5, unitPrice: 275, unitCost: 245 },
-          { productId: "pkg-2", qty: 1, unitPrice: 2270, unitCost: 1850, printLabel: "طباعة 2 لون + سلوفان داخلي", designNote: "تصميم 19×19×4 معتمد", fileName: "waffle-box-v2.pdf" }
+          { productId: "p-5", qty: 1, unitPrice: 260, unitCost: 210 }
         ]
       }
     ];
 
-    function getTierBasePrice(product, qty) {
+    function getTierUnitPrice(product, qty) {
       const q = Math.max(1, Number(qty) || 1);
       const found = product.tiers.find(t => q >= t.min && (t.max === null || q <= t.max));
       return found ? found.price : product.tiers[product.tiers.length - 1].price;
@@ -447,7 +362,7 @@
       });
 
       const supSelect = document.getElementById("newProdSupplier");
-      supSelect.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.type}: ${s.name}</option>`).join("");
+      supSelect.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
 
       updateZoneBanner();
       renderCategoryTabs();
@@ -460,7 +375,7 @@
       const z = zones.find(item => item.id === selectedZoneId) || zones[0];
       document.getElementById("zoneBanner").innerHTML = `
         <span>التوصيل إلى <strong>${z.name}</strong>: رسوم <strong>${z.fee} ج.م</strong> • توصيل مجاني للطلبات من <strong>${z.freeAbove} ج.م</strong> فأكثر</span>
-        <span class="text-stone-600">جدول الصوصات: ${z.schedule}</span>
+        <span class="text-stone-600">جدول التوريد: ${z.schedule}</span>
       `;
     }
 
@@ -482,7 +397,7 @@
       if (!orders.length) return;
       const last = orders[0];
       document.getElementById("lastOrderSummary").textContent =
-        `آخر فاتورة #${last.id} (${last.date}) — ${last.items.length} أصناف شاملة مواصفات الطباعة`;
+        `آخر فاتورة #${last.id} (${last.date}) — ${last.items.length} أصناف`;
     }
 
     function quickReorderLast() {
@@ -491,18 +406,7 @@
       selectedZoneId = last.zoneId;
       document.getElementById("zoneSelect").value = selectedZoneId;
       updateZoneBanner();
-
-      cart = last.items.map(it => {
-        const prod = products.find(p => p.id === it.productId);
-        const opt = prod?.printOptions?.find(o => o.label === it.printLabel);
-        return {
-          productId: it.productId,
-          qty: it.qty,
-          printOptionId: opt ? opt.id : undefined,
-          designNote: it.designNote || "",
-          fileName: it.fileName || ""
-        };
-      });
+      cart = last.items.map(it => ({ productId: it.productId, qty: it.qty }));
       renderProducts();
       renderCart();
     }
@@ -519,10 +423,7 @@
       grid.innerHTML = filtered.map(p => {
         const inCart = cart.find(c => c.productId === p.id);
         const qty = inCart ? inCart.qty : 0;
-        const isPkg = p.kind === "packaging";
-        const cfg = pkgConfigs[p.id] || { printOptionId: p.printOptions?.[0]?.id, designNote: "", fileName: "" };
-        const selectedOpt = isPkg ? (p.printOptions?.find(o => o.id === cfg.printOptionId) || p.printOptions?.[0]) : null;
-        const unitPrice = getTierBasePrice(p, qty || 1) + (selectedOpt ? selectedOpt.extraPrice : 0);
+        const unitPrice = getTierUnitPrice(p, qty || 1);
         const perServing = (unitPrice / (p.servingsPerUnit || 1)).toFixed(2);
         const avail = AVAILABILITY_META[p.availability];
 
@@ -530,23 +431,11 @@
           const isCurrent = qty > 0 && qty >= t.min && (t.max === null || qty <= t.max);
           return `
             <div class="rounded-lg py-1.5 px-1 border ${isCurrent ? 'bg-amber-100/80 border-brand font-bold text-ink' : 'bg-white border-stone-200 text-stone-700'}">
-              <div class="text-[11px] text-stone-500">${t.max ? `${t.min}-${t.max}` : `${t.min}+`} ${isPkg ? 'ألف' : ''}</div>
+              <div class="text-[11px] text-stone-500">${t.max ? `${t.min}-${t.max}` : `${t.min}+`}</div>
               <div class="tabular-nums font-bold">${t.price} ج</div>
             </div>
           `;
         }).join("");
-
-        const pkgHtml = isPkg && p.printOptions ? `
-          <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-2.5 space-y-2">
-            <select onchange="updatePkgOption('${p.id}', 'printOptionId', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 bg-white text-xs font-bold">
-              ${p.printOptions.map(o => `<option value="${o.id}" ${o.id === cfg.printOptionId ? 'selected' : ''}>${o.label}${o.extraPrice > 0 ? `(+${o.extraPrice} ج)` : '(مشمول)'}</option>`).join("")}
-            </select>
-            <label class="block text-[11px] font-bold text-stone-700">رفع ملف التصميم (PDF / AI / EPS / PNG):</label>
-            <input type="file" accept=".pdf,.ai,.eps,.png,.jpg,.jpeg" onchange="handleDesignFile('${p.id}', this)" class="block w-full text-xs text-stone-700 file:me-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-ink file:text-white cursor-pointer" />
-            ${cfg.fileName ? `<div class="text-[11px] font-bold text-emerald-700">الملف المرفق: ${cfg.fileName}</div>` : ''}
-            <input type="text" value="${cfg.designNote || ''}" oninput="updatePkgOption('${p.id}', 'designNote', this.value)" placeholder="ملاحظات الطباعة أو طلب تصميم" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 bg-white text-xs" />
-          </div>
-        ` : "";
 
         const actionHtml = p.availability === "out_of_stock"
           ? `<span class="text-xs font-bold text-stone-400">غير متاح للطلب</span>`
@@ -559,7 +448,7 @@
               </div>`;
 
         return `
-          <div class="bg-white border ${isPkg ? 'border-amber-300' : 'border-stone-200'} rounded-2xl p-4 flex flex-col justify-between gap-3">
+          <div class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-col justify-between gap-3">
             <div class="space-y-2.5">
               <div class="flex items-start justify-between gap-2">
                 <div>
@@ -574,11 +463,9 @@
                 <div class="grid grid-cols-3 gap-1.5 text-center text-xs">${tiersHtml}</div>
               </div>
 
-              ${pkgHtml}
-
               <div class="flex items-center justify-between text-xs bg-stone-50 px-3 py-2 rounded-lg text-stone-700">
                 <span>${p.servingLabel}</span>
-                <span class="font-bold text-ink tabular-nums">≈ ${perServing} ج.م / ${isPkg ? 'قطعة' : 'جرعة'}</span>
+                <span class="font-bold text-ink tabular-nums">≈ ${perServing} ج.م / جرعة</span>
               </div>
             </div>
 
@@ -591,4 +478,275 @@
             </div>
           </div>
         `;
-      }).
+      }).join("");
+    }
+
+    function changeQty(productId, nextQty) {
+      const qty = Number(nextQty);
+      if (qty <= 0) {
+        cart = cart.filter(c => c.productId !== productId);
+      } else {
+        const exists = cart.find(c => c.productId === productId);
+        if (exists) exists.qty = qty;
+        else cart.push({ productId, qty });
+      }
+      renderProducts();
+      renderCart();
+    }
+
+    function getCartBreakdown() {
+      const zone = zones.find(z => z.id === selectedZoneId) || zones[0];
+      const lines = cart.map(item => {
+        const prod = products.find(p => p.id === item.productId);
+        if (!prod) return null;
+        const unitPrice = getTierUnitPrice(prod, item.qty);
+        return { ...item, prod, unitPrice, lineTotal: unitPrice * item.qty };
+      }).filter(Boolean);
+
+      const subtotal = lines.reduce((sum, l) => sum + l.lineTotal, 0);
+      const isFree = subtotal >= zone.freeAbove && subtotal > 0;
+      const deliveryFee = subtotal === 0 ? 0 : (isFree ? 0 : zone.fee);
+      const total = subtotal + deliveryFee;
+      const remaining = Math.max(0, zone.freeAbove - subtotal);
+
+      return { zone, lines, subtotal, deliveryFee, total, isFree, remaining };
+    }
+
+    function renderCart() {
+      const { zone, lines, subtotal, deliveryFee, total, isFree, remaining } = getCartBreakdown();
+      document.getElementById("cartCountBadge").textContent = `${lines.length} أصناف`;
+
+      const listEl = document.getElementById("cartItemsList");
+      if (lines.length === 0) {
+        listEl.innerHTML = `<p class="text-sm text-stone-500 py-6 text-center">السلة فارغة — أضف صوصات أو بمبات لبدء الطلب.</p>`;
+      } else {
+        listEl.innerHTML = lines.map(l => `
+          <div class="flex items-start justify-between gap-2 text-sm border-b border-stone-100 pb-2.5">
+            <div>
+              <p class="font-bold text-ink leading-snug">${l.prod.name}</p>
+              <p class="text-xs text-stone-500 tabular-nums">${l.qty} × ${l.unitPrice} ج.م (${l.prod.unit})</p>
+            </div>
+            <span class="font-bold tabular-nums shrink-0">${l.lineTotal} ج.م</span>
+          </div>
+        `).join("");
+      }
+
+      const hintEl = document.getElementById("freeDeliveryHint");
+      if (subtotal === 0) {
+        hintEl.innerHTML = `الحد الأدنى للتوصيل المجاني إلى <strong>${zone.name}</strong> هو <strong>${zone.freeAbove} ج.م</strong>.`;
+      } else if (isFree) {
+        hintEl.innerHTML = `<span class="text-emerald-700 font-bold">مبروك! طلبك مؤهل للتوصيل المجاني إلى ${zone.name}.</span>`;
+      } else {
+        hintEl.innerHTML = `أضف بقيمة <strong>${remaining} ج.م</strong> للحصول على <strong>توصيل مجاني</strong> إلى ${zone.name}.`;
+      }
+
+      document.getElementById("cartDeliveryLabel").textContent = `توصيل (${zone.name})`;
+      document.getElementById("cartDeliveryFee").textContent = deliveryFee === 0 ? "مجاني" : `${deliveryFee} ج.م`;
+      document.getElementById("cartSubtotal").textContent = `${subtotal} ج.م`;
+      document.getElementById("cartTotal").textContent = `${total} ج.م`;
+    }
+
+    function placeOrder(viaWhatsApp) {
+      const { zone, lines, deliveryFee, total } = getCartBreakdown();
+      if (!lines.length) return;
+
+      const businessName = document.getElementById("inputBusinessName").value.trim() || "عميل جملة - الدقهلية";
+      const orderId = `VELO-${Math.floor(1050 + Math.random() * 8900)}`;
+
+      orders.unshift({
+        id: orderId,
+        date: new Date().toISOString().slice(0, 10),
+        businessName,
+        zoneId: zone.id,
+        items: lines.map(l => ({
+          productId: l.prod.id,
+          qty: l.qty,
+          unitPrice: l.unitPrice,
+          unitCost: l.prod.costPrice
+        }))
+      });
+
+      renderLastOrderBox();
+      const alertBox = document.getElementById("orderSuccessAlert");
+      alertBox.classList.remove("hidden");
+      alertBox.innerHTML = `تم تسجيل طلب VELO الموحد <strong>#${orderId}</strong> وتقسيم أوامر الاستلام على التجار تلقائياً في لوحة الإدارة.`;
+
+      if (viaWhatsApp) {
+        const itemsText = lines.map(l => `• ${l.prod.name} × ${l.qty} = ${l.lineTotal} ج.م`).join("\n");
+        const msg = encodeURIComponent(`طلب توريد VELO (${orderId})\nالمنشأة: ${businessName}\nالمركز: ${zone.name}\n\n${itemsText}\n\nالتوصيل: ${deliveryFee} ج.م\nالإجمالي: ${total} ج.م`);
+        window.open(`https://wa.me/201000000000?text=${msg}`, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    function switchRole(role) {
+      const isClient = role === "client";
+      document.getElementById("clientView").classList.toggle("hidden", !isClient);
+      document.getElementById("adminView").classList.toggle("hidden", isClient);
+
+      document.getElementById("btnRoleClient").className = `px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer ${isClient ? 'bg-ink text-white' : 'text-stone-600 hover:text-ink'}`;
+      document.getElementById("btnRoleAdmin").className = `px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer ${!isClient ? 'bg-brand text-white' : 'text-stone-600 hover:text-ink'}`;
+
+      if (!isClient) {
+        renderAdminSplitOrders();
+        renderAdminProductsTable();
+        renderAdminZones();
+      }
+    }
+
+    function switchAdminTab(tab) {
+      document.getElementById("adminSplitSection").classList.toggle("hidden", tab !== "split");
+      document.getElementById("adminProductsSection").classList.toggle("hidden", tab !== "products");
+      document.getElementById("adminZonesSection").classList.toggle("hidden", tab !== "zones");
+
+      ["split", "products", "zones"].forEach(t => {
+        const btn = document.getElementById(`tabAdmin${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        btn.className = `px-4 py-2 rounded-xl text-sm font-bold cursor-pointer ${t === tab ? 'bg-ink text-white' : 'bg-white border border-stone-200 text-stone-700'}`;
+      });
+    }
+
+    function renderAdminSplitOrders() {
+      const grouped = {};
+      orders.forEach(ord => {
+        ord.items.forEach(it => {
+          const prod = products.find(p => p.id === it.productId);
+          if (!prod) return;
+          if (!grouped[prod.supplierId]) {
+            grouped[prod.supplierId] = {
+              supplier: suppliers.find(s => s.id === prod.supplierId),
+              lines: [],
+              totalCost: 0
+            };
+          }
+          const costLine = (it.unitCost ?? prod.costPrice) * it.qty;
+          const zoneName = zones.find(z => z.id === ord.zoneId)?.name || ord.zoneId;
+          grouped[prod.supplierId].lines.push({
+            orderId: ord.id,
+            businessName: ord.businessName,
+            zoneName,
+            productName: prod.name,
+            qty: it.qty,
+            costLine
+          });
+          grouped[prod.supplierId].totalCost += costLine;
+        });
+      });
+
+      document.getElementById("adminSplitSection").innerHTML = Object.values(grouped).map(({ supplier, lines, totalCost }) => `
+        <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
+          <div class="border-b border-stone-100 pb-2.5">
+            <span class="text-[11px] font-bold text-brand block">${supplier?.mode}</span>
+            <h3 class="font-bold text-base text-ink">${supplier?.name}</h3>
+            <p class="text-xs text-stone-500">هاتف التواصل: ${supplier?.phone}</p>
+          </div>
+          <div class="space-y-2 text-xs">
+            ${lines.map(ln => `
+              <div class="bg-stone-50 rounded-xl p-2.5 border border-stone-200/70 space-y-1">
+                <div class="flex justify-between font-bold text-ink">
+                  <span>${ln.productName}</span>
+                  <span class="tabular-nums">× ${ln.qty}</span>
+                </div>
+                <div class="flex justify-between text-stone-500">
+                  <span>#${ln.orderId} (${ln.businessName} - ${ln.zoneName})</span>
+                  <span class="font-bold text-stone-700 tabular-nums">تكلفة: ${ln.costLine} ج.م</span>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+          <div class="pt-2 border-t border-stone-100 flex justify-between font-extrabold text-sm">
+            <span>إجمالي مستحقات التاجر</span>
+            <span class="text-brand tabular-nums">${totalCost} ج.م</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function addNewProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById("newProdName").value.trim();
+      const unit = document.getElementById("newProdUnit").value.trim();
+      const supplierId = document.getElementById("newProdSupplier").value;
+      const costPrice = Number(document.getElementById("newProdCost").value) || 100;
+      const tier1 = Number(document.getElementById("newProdTier1").value) || 130;
+      const tier4 = Number(document.getElementById("newProdTier4").value) || 115;
+
+      products.unshift({
+        id: `p-${Date.now()}`,
+        name,
+        brand: "VELO Select",
+        category: "cafe_desserts",
+        unit,
+        supplierId,
+        costPrice,
+        servingLabel: "جرعة قياسية",
+        servingsPerUnit: 120,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 3, price: tier1 },
+          { min: 4, max: null, price: tier4 }
+        ]
+      });
+
+      document.getElementById("newProdName").value = "";
+      renderProducts();
+      renderAdminProductsTable();
+    }
+
+    function toggleProdAvailability(id) {
+      const cycle = { available: "limited", limited: "out_of_stock", out_of_stock: "available" };
+      const p = products.find(item => item.id === id);
+      if (p) p.availability = cycle[p.availability];
+      renderProducts();
+      renderAdminProductsTable();
+    }
+
+    function renderAdminProductsTable() {
+      document.getElementById("adminProductsTable").innerHTML = products.map(p => {
+        const sup = suppliers.find(s => s.id === p.supplierId);
+        const av = AVAILABILITY_META[p.availability];
+        return `
+          <tr>
+            <td class="p-3">
+              <div class="font-bold text-ink">${p.name}</div>
+              <div class="text-xs text-stone-500">${CATEGORY_LABELS[p.category]} — ${p.unit}</div>
+            </td>
+            <td class="p-3 text-xs font-semibold text-stone-700">${sup?.name}</td>
+            <td class="p-3 tabular-nums font-bold">${p.costPrice} ج.م</td>
+            <td class="p-3 text-xs tabular-nums">${p.tiers.map(t => `${t.min}${t.max ? `-${t.max}` : '+'}: ${t.price}ج`).join(" | ")}</td>
+            <td class="p-3">
+              <button onclick="toggleProdAvailability('${p.id}')" class="text-xs font-bold px-2.5 py-1 rounded-full border cursor-pointer ${av.cls}">${av.label} (تبديل)</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function updateZoneSetting(id, field, value) {
+      const z = zones.find(item => item.id === id);
+      if (z) z[field] = Number(value) || 0;
+      const zoneSelect = document.getElementById("zoneSelect");
+      zoneSelect.innerHTML = zones.map(item => `<option value="${item.id}">${item.name} (${item.fee} ج.م)</option>`).join("");
+      zoneSelect.value = selectedZoneId;
+      updateZoneBanner();
+      renderCart();
+    }
+
+    function renderAdminZones() {
+      document.getElementById("adminZonesGrid").innerHTML = zones.map(z => `
+        <div class="border border-stone-200 rounded-xl p-3.5 space-y-2.5 text-sm">
+          <div class="font-bold text-ink">${z.name}</div>
+          <label class="flex items-center justify-between text-xs text-stone-600">
+            <span>رسوم التوصيل (ج.م):</span>
+            <input type="number" value="${z.fee}" onchange="updateZoneSetting('${z.id}', 'fee', this.value)" class="w-24 px-2 py-1 border border-stone-300 rounded-lg text-ink font-bold tabular-nums" />
+          </label>
+          <label class="flex items-center justify-between text-xs text-stone-600">
+            <span>حد التوصيل المجاني (ج.م):</span>
+            <input type="number" value="${z.freeAbove}" onchange="updateZoneSetting('${z.id}', 'freeAbove', this.value)" class="w-24 px-2 py-1 border border-stone-300 rounded-lg text-ink font-bold tabular-nums" />
+          </label>
+        </div>
+      `).join("");
+    }
+
+    init();
+  </script>
+</body>
+</html>
