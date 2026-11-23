@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دلتا سبلاي | بوابة توريد الصوصات ومطبوعات الكافيهات والمطاعم — الدقهلية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans Arabic"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              DEFAULT: '#C7873B',
+              dark: '#A96E2A',
+              light: '#FDF6EE',
+            },
+            ink: '#18181B',
+            surface: '#FAFAF9',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'IBM Plex Sans Arabic', sans-serif; background-color: #FAFAF9; color: #18181B; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- الشريط العلوي -->
+  <header class="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brand text-white flex items-center justify-center font-bold text-lg shadow-xs">
+          د
+        </div>
+        <div>
+          <h1 class="font-bold text-base sm:text-lg leading-tight text-ink">
+            دلتا سبلاي — بوابة توريد الصوصات ومطبوعات الكافيهات والمطاعم
+          </h1>
+          <p class="text-xs text-stone-500">
+            توريد جملة للصوصات، الأكواب الورقية، وعلب الطعام المطبوعة في الدقهلية بفاتورة موحدة
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+        <label class="flex items-center gap-2 bg-stone-100 px-3 py-1.5 rounded-xl text-sm border border-stone-200">
+          <span class="text-stone-600 font-medium">المركز:</span>
+          <select id="zoneSelect" class="bg-transparent font-bold text-ink focus:outline-none cursor-pointer"></select>
+        </label>
+
+        <div class="inline-flex rounded-xl bg-stone-100 p-1 border border-stone-200">
+          <button id="btnRoleClient" onclick="switchRole('client')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer bg-ink text-white">
+            واجهة الكافيه / المطعم
+          </button>
+          <button id="btnRoleAdmin" onclick="switchRole('admin')" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition cursor-pointer text-stone-600 hover:text-ink">
+            لوحة الإدارة والتوريد
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- شريط معلومات التوصيل للمركز المختار -->
+    <div class="bg-brand-light border-t border-amber-200/80 px-4 py-2 text-xs sm:text-sm">
+      <div id="zoneBanner" class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-stone-800"></div>
+    </div>
+  </header>
+
+  <!-- واجهة العميل (الكافيه / المطعم) -->
+  <main id="clientView" class="max-w-7xl mx-auto w-full px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+    <!-- الكتالوج والفلاتر -->
+    <section class="lg:col-span-8 space-y-5">
+      <!-- شريط إعادة الطلب السريع -->
+      <div id="quickReorderBox" class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="text-xs font-bold text-brand block">إعادة طلب سريع (Quick Reorder)</span>
+          <p id="lastOrderSummary" class="text-sm font-medium text-stone-800"></p>
+        </div>
+        <button onclick="quickReorderLast()" class="px-4 py-2 rounded-xl bg-ink hover:bg-stone-800 text-white text-xs sm:text-sm font-bold transition cursor-pointer">
+          تحميل آخر فاتورة في السلة
+        </button>
+      </div>
+
+      <!-- البحث والفئات -->
+      <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
+        <input
+          id="searchInput"
+          type="text"
+          oninput="renderProducts()"
+          placeholder="ابحث باسم الصوص أو البراند أو المطبوعات (كراميل، شيدر، باربيكيو، بمب، أكواب ورقية، علب وافل...)"
+          class="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand"
+        />
+        <div id="categoryTabs" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- شبكة المنتجات -->
+      <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <!-- السلة الموحدة وإتمام الطلب -->
+    <aside class="lg:col-span-4">
+      <div class="bg-white border border-stone-200 rounded-2xl p-5 sticky top-28 space-y-4 shadow-xs">
+        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+          <h2 class="font-bold text-base text-ink">فاتورة التوريد الموحدة</h2>
+          <span id="cartCountBadge" class="text-xs font-bold bg-stone-100 text-stone-700 px-2.5 py-1 rounded-full tabular-nums">0 أصناف</span>
+        </div>
+
+        <div id="cartItemsList" class="space-y-3 max-h-72 overflow-y-auto pe-1"></div>
+
+        <div id="freeDeliveryHint" class="bg-stone-50 border border-stone-200 rounded-xl p-3 text-xs text-stone-700"></div>
+
+        <div id="packagingNotice" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-[11px] text-amber-900">
+          تحتوي فاتورتك على مطبوعات: تُسلَّم الصوصات خلال 24-48 ساعة، وتُسلَّم الأكواب والعلب المطبوعة بعد اعتماد البروفة (5-8 أيام عمل).
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <input id="inputBusinessName" type="text" value="كافيه ومخبز شاليمو" placeholder="اسم الكافيه أو المطعم" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand" />
+          <input id="inputCustomerPhone" type="tel" value="01012345678" placeholder="رقم الهاتف / واتساب للتأكيد" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-brand" />
+        </div>
+
+        <div class="space-y-1.5 text-sm border-t border-stone-200 pt-3">
+          <div class="flex justify-between text-stone-600">
+            <span>إجمالي الأصناف</span>
+            <span id="cartSubtotal" class="font-bold tabular-nums">0 ج.م</span>
+          </div>
+          <div class="flex justify-between text-stone-600">
+            <span id="cartDeliveryLabel">التوصيل</span>
+            <span id="cartDeliveryFee" class="font-bold tabular-nums">0 ج.م</span>
+          </div>
+          <div class="flex justify-between text-base font-extrabold text-ink pt-2 border-t border-stone-100">
+            <span>الإجمالي المستحق</span>
+            <span id="cartTotal" class="tabular-nums">0 ج.م</span>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <button onclick="placeOrder(false)" class="w-full py-3 rounded-xl bg-ink hover:bg-stone-800 text-white font-bold text-sm transition cursor-pointer">
+            إرسال طلب التوريد الموحد
+          </button>
+          <button onclick="placeOrder(true)" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition cursor-pointer">
+            تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)
+          </button>
+        </div>
+
+        <div id="orderSuccessAlert" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs text-emerald-900"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- لوحة تحكم الإدارة -->
+  <main id="adminView" class="hidden max-w-7xl mx-auto w-full px-4 py-6 space-y-6 flex-1">
+    <div class="flex flex-wrap gap-2">
+      <button id="tabAdminSplit" onclick="switchAdminTab('split')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-ink text-white">
+        أوامر الاستلام والتشغيل المقسّمة للتجار والمطابع
+      </button>
+      <button id="tabAdminProducts" onclick="switchAdminTab('products')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-white border border-stone-200 text-stone-700">
+        إدارة المنتجات والمطبوعات والأسعار
+      </button>
+      <button id="tabAdminZones" onclick="switchAdminTab('zones')" class="px-4 py-2 rounded-xl text-sm font-bold cursor-pointer bg-white border border-stone-200 text-stone-700">
+        مناطق ورسوم الدقهلية
+      </button>
+    </div>
+
+    <!-- تبويب 1: أوامر الاستلام والتشغيل المقسّمة -->
+    <section id="adminSplitSection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></section>
+
+    <!-- تبويب 2: إدارة المنتجات -->
+    <section id="adminProductsSection" class="hidden space-y-5">
+      <form onsubmit="addNewProduct(event)" class="bg-white border border-stone-200 rounded-2xl p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <select id="newProdKind" onchange="onNewProdKindChange()" class="px-3 py-2 rounded-xl border border-stone-300 text-sm bg-white font-bold">
+          <option value="standard">نوع الصنف: صوص / ملحق</option>
+          <option value="packaging">نوع الصنف: أكواب ورقية / علب ومطبوعات</option>
+        </select>
+        <input id="newProdName" type="text" required placeholder="اسم الصنف (مثال: صوص لوتس أو كوب 12 أونص)" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+        <input id="newProdUnit" type="text" value="جركن 2.5 كجم" placeholder="وحدة البيع" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+        <select id="newProdSupplier" class="px-3 py-2 rounded-xl border border-stone-300 text-sm bg-white"></select>
+        <input id="newProdCost" type="number" required placeholder="تكلفة التاجر / المطبعة" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+        <input id="newProdTier1" type="number" required placeholder="سعر البيع شريحة 1-3" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+        <input id="newProdTier4" type="number" required placeholder="سعر البيع شريحة 4+" class="px-3 py-2 rounded-xl border border-stone-300 text-sm" />
+        <button type="submit" class="bg-brand hover:bg-brand-dark text-white font-bold rounded-xl py-2 px-4 text-sm cursor-pointer">
+          + إضافة للكتالوج
+        </button>
+      </form>
+
+      <div class="bg-white border border-stone-200 rounded-2xl overflow-x-auto">
+        <table class="w-full text-right text-sm">
+          <thead class="bg-stone-50 border-b border-stone-200 text-stone-600 text-xs">
+            <tr>
+              <th class="p-3">الصنف / القسم</th>
+              <th class="p-3">التاجر / المطبعة</th>
+              <th class="p-3">التكلفة الأساسية</th>
+              <th class="p-3">الأسعار المتدرجة</th>
+              <th class="p-3">حالة التوفر</th>
+            </tr>
+          </thead>
+          <tbody id="adminProductsTable" class="divide-y divide-stone-100"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- تبويب 3: إدارة المناطق -->
+    <section id="adminZonesSection" class="hidden bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+      <h3 class="font-bold text-base">إدارة رسوم وحدود التوصيل المجاني لمراكز الدقهلية</h3>
+      <div id="adminZonesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+  </main>
+
+  <script>
+    // 1. بيانات مراكز الدقهلية
+    const zones = [
+      { id: "mansoura", name: "المنصورة", fee: 50, freeAbove: 2500, schedule: "يومياً - خلال 24 ساعة" },
+      { id: "talkha", name: "طلخا", fee: 60, freeAbove: 2800, schedule: "يومياً - خلال 24 ساعة" },
+      { id: "senbellawein", name: "السنبلاوين", fee: 75, freeAbove: 3200, schedule: "السبت، الاثنين، الأربعاء" },
+      { id: "mit_ghamr", name: "ميت غمر", fee: 90, freeAbove: 3800, schedule: "الأحد والثلاثاء" },
+      { id: "dekrnes", name: "دكرنس", fee: 85, freeAbove: 3500, schedule: "الأحد والخميس" },
+      { id: "aga", name: "أجا", fee: 80, freeAbove: 3400, schedule: "الاثنين والخميس" },
+      { id: "belqas", name: "بلقاس", fee: 85, freeAbove: 3500, schedule: "الأحد والأربعاء" }
+    ];
+
+    // 2. التجار والمطابع (تظهر في لوحة الإدارة فقط ولا تُكشف للعميل)
+    const suppliers = [
+      { id: "sup-1", name: "مؤسسة الدلتا لتوريدات الكافيهات", type: "تاجر صوصات", phone: "01000000011", mode: "Milk-Run (تجميع)" },
+      { id: "sup-2", name: "مجموعة النيل لصوصات المطاعم", type: "تاجر صوصات", phone: "01000000022", mode: "تجميع / تسليم مباشر" },
+      { id: "sup-3", name: "المصرية لعبوات وبمبات التقديم", type: "مورد ملحقات", phone: "01000000033", mode: "تجميع" },
+      { id: "sup-4", name: "مطبعة الدلتا للأكواب الورقية والعلب", type: "مطبعة ومصنع تغليف", phone: "01000000044", mode: "أمر تشغيل طباعة (5-7 أيام)" }
+    ];
+
+    // 3. الكتالوج الموحد (صوصات + ملحقات + باقات + مطبوعات وأكواب وعلب)
+    const products = [
+      {
+        id: "p-1",
+        kind: "standard",
+        name: "صوص كراميل مملح (Salted Caramel)",
+        brand: "CremaPro",
+        category: "cafe_desserts",
+        unit: "جركن 2.5 كجم",
+        supplierId: "sup-1",
+        costPrice: 245,
+        servingLabel: "بمب 15 جم للكوب",
+        servingsPerUnit: 166,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 3, price: 295 },
+          { min: 4, max: 9, price: 275 },
+          { min: 10, max: null, price: 258 }
+        ]
+      },
+      {
+        id: "p-2",
+        kind: "standard",
+        name: "صوص شوكولاتة داكنة للوافل والكريب",
+        brand: "ChocoLab",
+        category: "cafe_desserts",
+        unit: "جركن 2.5 كجم",
+        supplierId: "sup-1",
+        costPrice: 260,
+        servingLabel: "جرعة 25 جم للوافل",
+        servingsPerUnit: 100,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 3, price: 315 },
+          { min: 4, max: 9, price: 292 },
+          { min: 10, max: null, price: 274 }
+        ]
+      },
+      {
+        id: "p-3",
+        kind: "standard",
+        name: "صوص جبنة شيدر كريمي للبطاطس والبرجر",
+        brand: "CheddarCo",
+        category: "restaurant_sauces",
+        unit: "جركن 3 كجم",
+        supplierId: "sup-2",
+        costPrice: 310,
+        servingLabel: "جرعة 25 جم للوجبة",
+        servingsPerUnit: 120,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 2, price: 375 },
+          { min: 3, max: 7, price: 348 },
+          { min: 8, max: null, price: 328 }
+        ]
+      },
+      {
+        id: "p-4",
+        kind: "standard",
+        name: "صوص سموكي باربيكيو وشيلي للبرجر",
+        brand: "GrillMaster",
+        category: "restaurant_sauces",
+        unit: "جركن 4 كجم",
+        supplierId: "sup-2",
+        costPrice: 290,
+        servingLabel: "جرعة 30 جم للوجبة",
+        servingsPerUnit: 133,
+        availability: "limited",
+        tiers: [
+          { min: 1, max: 2, price: 350 },
+          { min: 3, max: 7, price: 325 },
+          { min: 8, max: null, price: 305 }
+        ]
+      },
+      {
+        id: "p-5",
+        kind: "standard",
+        name: "بمب صوص (10 مل / ضغطة) للجراكن",
+        brand: "DispenseX",
+        category: "pumps_bottles",
+        unit: "كرتونة 12 بمب",
+        supplierId: "sup-3",
+        costPrice: 210,
+        servingLabel: "ضغطة ثابتة 10 مل",
+        servingsPerUnit: 12,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 2, price: 260 },
+          { min: 3, max: null, price: 235 }
+        ]
+      },
+      {
+        id: "pkg-1",
+        kind: "packaging",
+        name: "أكواب ورقية 8 أونص دبل وول (Double Wall)",
+        brand: "PrintPack Dakahlia",
+        category: "custom_packaging",
+        unit: "ألف كوب (1,000 قطعة)",
+        supplierId: "sup-4",
+        costPrice: 1320,
+        servingLabel: "شامل الأغطية السوداء/البيضاء",
+        servingsPerUnit: 1000,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 2, price: 1580 },
+          { min: 3, max: null, price: 1490 }
+        ],
+        printOptions: [
+          { id: "plain", label: "سادة بدون طباعة", extraPrice: 0, extraCost: 0 },
+          { id: "1_color", label: "طباعة 1 لون (لوجو الكافيه)", extraPrice: 220, extraCost: 150 },
+          { id: "cmyk", label: "طباعة ألوان كاملة CMYK", extraPrice: 380, extraCost: 260 }
+        ]
+      },
+      {
+        id: "pkg-2",
+        kind: "packaging",
+        name: "علب وافل وكريب كرتون دوبلكس (19×19×4 سم)",
+        brand: "PrintPack Dakahlia",
+        category: "custom_packaging",
+        unit: "ألف علبة (1,000 قطعة)",
+        supplierId: "sup-4",
+        costPrice: 1650,
+        servingLabel: "طبقة داخلية مقاومة للصوصات والدهون",
+        servingsPerUnit: 1000,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 2, price: 1980 },
+          { min: 3, max: null, price: 1840 }
+        ],
+        printOptions: [
+          { id: "plain", label: "سادة جاهز للتوريد السريع", extraPrice: 0, extraCost: 0 },
+          { id: "2_colors", label: "طباعة 2 لون + سلوفان داخلي", extraPrice: 290, extraCost: 200 },
+          { id: "cmyk", label: "طباعة ألوان كاملة + سلوفان", extraPrice: 450, extraCost: 320 }
+        ]
+      },
+      {
+        id: "p-6",
+        kind: "standard",
+        name: "باقة انطلاق كافيه (4 جراكن صوص + 1000 كوب مطبوع)",
+        brand: "Bundle Dakahlia",
+        category: "bundles",
+        unit: "باقة متكاملة",
+        supplierId: "sup-1",
+        costPrice: 2450,
+        servingLabel: "توفير فوري عن الطلب المنفصل",
+        servingsPerUnit: 1000,
+        availability: "available",
+        tiers: [
+          { min: 1, max: 2, price: 2890 },
+          { min: 3, max: null, price: 2750 }
+        ]
+      }
+    ];
+
+    const CATEGORY_LABELS = {
+      all: "كل الأصناف",
+      cafe_desserts: "صوصات كافيهات وحلويات",
+      restaurant_sauces: "صوصات مطاعم وفاست فود",
+      custom_packaging: "طباعة أكواب ورقية وعلب طعام",
+      pumps_bottles: "بمبات وعبوات ضغط",
+      bundles: "باقات مجمعة"
+    };
+
+    const AVAILABILITY_META = {
+      available: { label: "متاح للتوريد", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+      limited: { label: "كمية محدودة", cls: "bg-amber-50 text-amber-800 border-amber-200" },
+      out_of_stock: { label: "غير متاح", cls: "bg-rose-50 text-rose-700 border-rose-200" }
+    };
+
+    // حالة التطبيق
+    let selectedZoneId = "mansoura";
+    let activeCategory = "all";
+    const pkgConfigs = {
+      "pkg-1": { printOptionId: "1_color", designNote: "لوجو بني على كوب أبيض", fileName: "" },
+      "pkg-2": { printOptionId: "2_colors", designNote: "مقاس 19×19×4 - سلوفان داخلي", fileName: "" }
+    };
+
+    let cart = [
+      { productId: "p-1", qty: 4 },
+      { productId: "p-3", qty: 2 },
+      { productId: "pkg-1", qty: 1, printOptionId: "1_color", designNote: "لوجو بني على كوب أبيض", fileName: "" }
+    ];
+
+    const orders = [
+      {
+        id: "ORD-1042",
+        date: "2026-11-18",
+        businessName: "كافيه ومخبز شاليمو",
+        zoneId: "senbellawein",
+        items: [
+          { productId: "p-1", qty: 5, unitPrice: 275, unitCost: 245 },
+          { productId: "pkg-2", qty: 1, unitPrice: 2270, unitCost: 1850, printLabel: "طباعة 2 لون + سلوفان داخلي", designNote: "تصميم 19×19×4 معتمد", fileName: "waffle-box-v2.pdf" }
+        ]
+      }
+    ];
+
+    function getTierBasePrice(product, qty) {
+      const q = Math.max(1, Number(qty) || 1);
+      const found = product.tiers.find(t => q >= t.min && (t.max === null || q <= t.max));
+      return found ? found.price : product.tiers[product.tiers.length - 1].price;
+    }
+
+    function init() {
+      const zoneSelect = document.getElementById("zoneSelect");
+      zoneSelect.innerHTML = zones.map(z => `<option value="${z.id}">${z.name} (${z.fee} ج.م)</option>`).join("");
+      zoneSelect.value = selectedZoneId;
+      zoneSelect.addEventListener("change", (e) => {
+        selectedZoneId = e.target.value;
+        updateZoneBanner();
+        renderCart();
+      });
+
+      const supSelect = document.getElementById("newProdSupplier");
+      supSelect.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.type}: ${s.name}</option>`).join("");
+
+      updateZoneBanner();
+      renderCategoryTabs();
+      renderLastOrderBox();
+      renderProducts();
+      renderCart();
+    }
+
+    function updateZoneBanner() {
+      const z = zones.find(item => item.id === selectedZoneId) || zones[0];
+      document.getElementById("zoneBanner").innerHTML = `
+        <span>التوصيل إلى <strong>${z.name}</strong>: رسوم <strong>${z.fee} ج.م</strong> • توصيل مجاني للطلبات من <strong>${z.freeAbove} ج.م</strong> فأكثر</span>
+        <span class="text-stone-600">جدول الصوصات: ${z.schedule}</span>
+      `;
+    }
+
+    function renderCategoryTabs() {
+      const container = document.getElementById("categoryTabs");
+      container.innerHTML = Object.entries(CATEGORY_LABELS).map(([key, label]) => {
+        const active = activeCategory === key;
+        return `<button onclick="setCategory('${key}')" class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold border transition cursor-pointer ${active ? 'bg-brand text-white border-brand' : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'}">${label}</button>`;
+      }).join("");
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      renderCategoryTabs();
+      renderProducts();
+    }
+
+    function renderLastOrderBox() {
+      if (!orders.length) return;
+      const last = orders[0];
+      document.getElementById("lastOrderSummary").textContent =
+        `آخر فاتورة #${last.id} (${last.date}) — ${last.items.length} أصناف شاملة مواصفات الطباعة`;
+    }
+
+    function quickReorderLast() {
+      if (!orders.length) return;
+      const last = orders[0];
+      selectedZoneId = last.zoneId;
+      document.getElementById("zoneSelect").value = selectedZoneId;
+      updateZoneBanner();
+
+      cart = last.items.map(it => {
+        const prod = products.find(p => p.id === it.productId);
+        const opt = prod?.printOptions?.find(o => o.label === it.printLabel);
+        return {
+          productId: it.productId,
+          qty: it.qty,
+          printOptionId: opt ? opt.id : undefined,
+          designNote: it.designNote || "",
+          fileName: it.fileName || ""
+        };
+      });
+      renderProducts();
+      renderCart();
+    }
+
+    function renderProducts() {
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      const filtered = products.filter(p => {
+        const matchCat = activeCategory === "all" || p.category === activeCategory;
+        const matchText = !query || p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query);
+        return matchCat && matchText;
+      });
+
+      const grid = document.getElementById("productsGrid");
+      grid.innerHTML = filtered.map(p => {
+        const inCart = cart.find(c => c.productId === p.id);
+        const qty = inCart ? inCart.qty : 0;
+        const isPkg = p.kind === "packaging";
+        const cfg = pkgConfigs[p.id] || { printOptionId: p.printOptions?.[0]?.id, designNote: "", fileName: "" };
+        const selectedOpt = isPkg ? (p.printOptions?.find(o => o.id === cfg.printOptionId) || p.printOptions?.[0]) : null;
+        const unitPrice = getTierBasePrice(p, qty || 1) + (selectedOpt ? selectedOpt.extraPrice : 0);
+        const perServing = (unitPrice / (p.servingsPerUnit || 1)).toFixed(2);
+        const avail = AVAILABILITY_META[p.availability];
+
+        const tiersHtml = p.tiers.map(t => {
+          const isCurrent = qty > 0 && qty >= t.min && (t.max === null || qty <= t.max);
+          return `
+            <div class="rounded-lg py-1.5 px-1 border ${isCurrent ? 'bg-amber-100/80 border-brand font-bold text-ink' : 'bg-white border-stone-200 text-stone-700'}">
+              <div class="text-[11px] text-stone-500">${t.max ? `${t.min}-${t.max}` : `${t.min}+`} ${isPkg ? 'ألف' : ''}</div>
+              <div class="tabular-nums font-bold">${t.price} ج</div>
+            </div>
+          `;
+        }).join("");
+
+        const pkgHtml = isPkg && p.printOptions ? `
+          <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-2.5 space-y-2">
+            <select onchange="updatePkgOption('${p.id}', 'printOptionId', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 bg-white text-xs font-bold">
+              ${p.printOptions.map(o => `<option value="${o.id}" ${o.id === cfg.printOptionId ? 'selected' : ''}>${o.label}${o.extraPrice > 0 ? `(+${o.extraPrice} ج)` : '(مشمول)'}</option>`).join("")}
+            </select>
+            <label class="block text-[11px] font-bold text-stone-700">رفع ملف التصميم (PDF / AI / EPS / PNG):</label>
+            <input type="file" accept=".pdf,.ai,.eps,.png,.jpg,.jpeg" onchange="handleDesignFile('${p.id}', this)" class="block w-full text-xs text-stone-700 file:me-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-ink file:text-white cursor-pointer" />
+            ${cfg.fileName ? `<div class="text-[11px] font-bold text-emerald-700">الملف المرفق: ${cfg.fileName}</div>` : ''}
+            <input type="text" value="${cfg.designNote || ''}" oninput="updatePkgOption('${p.id}', 'designNote', this.value)" placeholder="ملاحظات الطباعة أو طلب تصميم" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 bg-white text-xs" />
+          </div>
+        ` : "";
+
+        const actionHtml = p.availability === "out_of_stock"
+          ? `<span class="text-xs font-bold text-stone-400">غير متاح للطلب</span>`
+          : qty === 0
+            ? `<button onclick="changeQty('${p.id}', 1)" class="px-4 py-2 rounded-xl bg-brand hover:bg-brand-dark text-white text-sm font-bold transition cursor-pointer">+ إضافة للسلة</button>`
+            : `<div class="flex items-center gap-2 bg-stone-100 rounded-xl p-1 border border-stone-200">
+                <button onclick="changeQty('${p.id}', ${qty - 1})" class="w-8 h-8 rounded-lg bg-white font-bold hover:bg-stone-200 cursor-pointer">-</button>
+                <span class="w-8 text-center font-bold text-sm tabular-nums">${qty}</span>
+                <button onclick="changeQty('${p.id}', ${qty + 1})" class="w-8 h-8 rounded-lg bg-white font-bold hover:bg-stone-200 cursor-pointer">+</button>
+              </div>`;
+
+        return `
+          <div class="bg-white border ${isPkg ? 'border-amber-300' : 'border-stone-200'} rounded-2xl p-4 flex flex-col justify-between gap-3">
+            <div class="space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="text-xs font-bold text-brand">${p.brand} • ${p.unit}</span>
+                  <h2 class="font-bold text-base text-ink leading-snug">${p.name}</h2>
+                </div>
+                <span class="text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 ${avail.cls}">${avail.label}</span>
+              </div>
+
+              <div class="bg-stone-50 rounded-xl p-2.5 border border-stone-200/80">
+                <p class="text-[11px] font-semibold text-stone-500 mb-1.5">تسعير متدرج حسب الكمية:</p>
+                <div class="grid grid-cols-3 gap-1.5 text-center text-xs">${tiersHtml}</div>
+              </div>
+
+              ${pkgHtml}
+
+              <div class="flex items-center justify-between text-xs bg-stone-50 px-3 py-2 rounded-lg text-stone-700">
+                <span>${p.servingLabel}</span>
+                <span class="font-bold text-ink tabular-nums">≈ ${perServing} ج.م / ${isPkg ? 'قطعة' : 'جرعة'}</span>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-stone-100 flex items-center justify-between gap-2">
+              <div>
+                <span class="text-xs text-stone-500 block">سعر الوحدة الحالي</span>
+                <span class="text-lg font-extrabold text-ink tabular-nums">${unitPrice} <span class="text-xs font-normal">ج.م</span></span>
+              </div>
+              ${actionHtml}
+            </div>
+          </div>
+        `;
+      }).
