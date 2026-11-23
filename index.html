@@ -1,105 +1,567 @@
-export type StockStatus = 'available' | 'limited' | 'out_of_stock';
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بوابة توريد جملة للصوصات — الدقهلية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #f7f5f2; color: #1c1917; }
+  </style>
+</head>
+<body class="min-h-screen">
 
-export interface PriceTier {
-  minQty: number;
-  label: string;       // مثال: "1 - 5 عبوات" أو "كرتونة (6+)"
-  unitPrice: number;   // سعر البيع للعميل
-  merchantCost: number;// تكلفة الشراء من التاجر
-}
+  <!-- الشريط العلوي -->
+  <header class="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 class="text-lg md:text-xl font-extrabold text-stone-900">بوابة توريد جملة للصوصات — الدقهلية</h1>
+        <p class="text-xs text-stone-500">تجميع طلبات الكافيهات والمطاعم بفاتورة موحدة وتقسيم أوامر الاستلام على التجار خلف الكواليس</p>
+      </div>
 
-export interface Product {
-  id: string;
-  merchantId: string;
-  merchantName: string; // يُستخدم داخلياً في لوحة الإدارة فقط
-  category: 'cafe_dessert' | 'restaurant' | 'pumps_bottles' | 'bundles';
-  brand: string;
-  nameAr: string;
-  unitLabel: string;
-  unitWeightGrams?: number; // وزن العبوة بالجرام لحساب تكلفة الجرعة
-  defaultDoseGrams?: number;// وزن البمب أو الجرعة التقريبية
-  stockStatus: StockStatus;
-  tiers: PriceTier[];
-}
+      <div class="flex items-center gap-2">
+        <select id="zoneSelect" onchange="handleZoneChange()" class="bg-stone-100 border border-stone-300 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none">
+        </select>
 
-export interface CartItem {
-  product: Product;
-  qty: number;
-}
+        <button onclick="switchTab('client')" id="tabClientBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-stone-900 text-white">
+          واجهة الكافيه / المطعم
+        </button>
+        <button onclick="switchTab('admin')" id="tabAdminBtn" class="px-4 py-2 rounded-xl text-sm font-bold bg-stone-100 text-stone-700 hover:bg-stone-200">
+          لوحة إدارة المنصة
+        </button>
+      </div>
+    </div>
+  </header>
 
-export interface Zone {
-  id: string;
-  nameAr: string;
-  deliveryFee: number;
-  freeDeliveryThreshold: number | null;
-}
+  <!-- شريط تنبيه الحالة -->
+  <div id="statusBanner" class="max-w-7xl mx-auto px-4 pt-3 hidden">
+    <div class="bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-xl px-4 py-2.5 flex items-center justify-between">
+      <span id="statusBannerText"></span>
+      <button onclick="document.getElementById('statusBanner').classList.add('hidden')" class="font-bold underline">إخفاء</button>
+    </div>
+  </div>
 
-// 1. اختيار شريحة السعر المناسبة للكمية
-export function getActiveTier(product: Product, qty: number): PriceTier {
-  const sorted = [...product.tiers].sort((a, b) => b.minQty - a.minQty);
-  return sorted.find((t) => qty >= t.minQty) || product.tiers[0];
-}
+  <!-- واجهة العميل -->
+  <main id="clientView" class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- العمود الأيمن: الكتالوج والباقات -->
+    <section class="lg:col-span-8 space-y-5">
+      <!-- بطاقة التوصيل والباقات -->
+      <div class="bg-stone-900 text-white rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="inline-block text-xs bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg font-bold mb-2">توريد جملة للدقهلية</span>
+          <h2 class="text-xl font-extrabold">اطلب صوصات الكافيه والمطعم والبمبات في فاتورة واحدة</h2>
+          <p id="zoneInfoText" class="text-xs text-stone-300 mt-1">اختر مركزك لعرض رسوم التوصيل وحد التوصيل المجاني.</p>
+        </div>
+        <button onclick="filterCategory('bundles')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm px-4 py-2.5 rounded-xl shrink-0">
+          الباقات المجمعة
+        </button>
+      </div>
 
-// 2. تقدير تكلفة الجرعة / البمب على الكوب أو الوجبة
-export function estimateDoseCost(product: Product, qty: number): number | null {
-  if (!product.unitWeightGrams || !product.defaultDoseGrams) return null;
-  const tier = getActiveTier(product, qty);
-  const totalGrams = product.unitWeightGrams * qty;
-  const dosesCount = totalGrams / product.defaultDoseGrams;
-  if (dosesCount <= 0) return null;
-  return Number(((tier.unitPrice * qty) / dosesCount).toFixed(2));
-}
+      <!-- إعادة الطلب السريع -->
+      <div class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="text-sm font-extrabold text-amber-700">إعادة طلب سريع (Quick Reorder)</div>
+          <div id="lastOrderSummary" class="text-xs text-stone-500 mt-0.5">لا توجد فاتورة سابقة محفوظة على هذا الجهاز بعد.</div>
+        </div>
+        <button onclick="reorderLastInvoice()" id="reorderBtn" disabled class="bg-stone-900 disabled:bg-stone-300 text-white text-sm font-bold px-4 py-2.5 rounded-xl shrink-0">
+          تحميل آخر فاتورة في السلة
+        </button>
+      </div>
 
-// 3. حساب رسوم التوصيل حسب المركز وقيمة الطلب
-export function calculateDeliveryFee(zone: Zone | null, subtotal: number): number {
-  if (!zone || subtotal <= 0) return 0;
-  if (zone.freeDeliveryThreshold !== null && subtotal >= zone.freeDeliveryThreshold) {
-    return 0;
-  }
-  return zone.deliveryFee;
-}
+      <!-- البحث والفئات -->
+      <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3">
+        <input id="searchInput" oninput="renderProducts()" type="text" placeholder="ابحث باسم الصوص أو البراند أو الاستخدام (كراميل، شوكولاتة، برجر، بمب)..."
+          class="w-full border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-stone-800" />
 
-// 4. تقسيم السلة تلقائياً إلى "أوامر استلام" منفصلة لكل تاجر للإدارة
-export interface MerchantPickupOrder {
-  merchantId: string;
-  merchantName: string;
-  merchantPayoutTotal: number;
-  items: {
-    productId: string;
-    nameAr: string;
-    brand: string;
-    qty: number;
-    merchantCost: number;
-    lineCost: number;
-  }[];
-}
+        <div id="categoryTabs" class="flex flex-wrap gap-2">
+          <button data-cat="all" onclick="filterCategory('all')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-white">الكل</button>
+          <button data-cat="cafe_dessert" onclick="filterCategory('cafe_dessert')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">صوصات الكافيه والوافل</button>
+          <button data-cat="restaurant" onclick="filterCategory('restaurant')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">صوصات المطاعم</button>
+          <button data-cat="pumps_bottles" onclick="filterCategory('pumps_bottles')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">البمبات وعبوات الضغط</button>
+          <button data-cat="bundles" onclick="filterCategory('bundles')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700">باقات مجمعة</button>
+        </div>
+      </div>
 
-export function buildMerchantPickupOrders(cart: CartItem[]): MerchantPickupOrder[] {
-  const grouped = new Map<string, MerchantPickupOrder>();
+      <!-- قائمة المنتجات -->
+      <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
 
-  for (const item of cart) {
-    const tier = getActiveTier(item.product, item.qty);
-    const lineCost = tier.merchantCost * item.qty;
+    <!-- العمود الأيسر: الفاتورة الموحدة -->
+    <aside class="lg:col-span-4">
+      <div class="bg-white border border-stone-200 rounded-2xl p-5 sticky top-20 space-y-4">
+        <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+          <h2 class="text-base font-extrabold">الفاتورة الموحدة</h2>
+          <span id="cartCountBadge" class="text-xs font-bold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">0 أصناف</span>
+        </div>
 
-    if (!grouped.has(item.product.merchantId)) {
-      grouped.set(item.product.merchantId, {
-        merchantId: item.product.merchantId,
-        merchantName: item.product.merchantName,
-        merchantPayoutTotal: 0,
-        items: [],
-      });
+        <div class="space-y-2.5">
+          <input id="venueNameInput" type="text" placeholder="اسم الكافيه أو المطعم"
+            class="w-full border border-stone-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-stone-800" />
+          <input id="phoneInput" type="tel" placeholder="رقم الهاتف / واتساب للتأكيد"
+            class="w-full border border-stone-300 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-stone-800" />
+        </div>
+
+        <div id="cartItemsContainer" class="space-y-2.5 max-h-64 overflow-y-auto text-sm">
+          <p class="text-xs text-stone-400 text-center py-6">السلة فارغة — أضف أصنافاً من الكتالوج لبدء الفاتورة.</p>
+        </div>
+
+        <div class="border-t border-stone-200 pt-3 space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-stone-600">إجمالي الأصناف</span>
+            <span id="subtotalText" class="font-bold">0 ج.م</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-stone-600">التوصيل</span>
+            <span id="deliveryText" class="font-bold">0 ج.م</span>
+          </div>
+          <div class="flex justify-between text-base font-extrabold border-t border-stone-100 pt-2">
+            <span>الإجمالي المستحق</span>
+            <span id="totalText" class="text-stone-900">0 ج.م</span>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <button onclick="submitOrder(false)" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3 rounded-xl text-sm">
+            إرسال طلب التوريد
+          </button>
+          <button onclick="submitOrder(true)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm">
+            تأكيد سريع عبر واتساب (للطلبات الخاصة/الكبيرة)
+          </button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- لوحة تحكم الإدارة -->
+  <section id="adminView" class="max-w-7xl mx-auto px-4 py-6 space-y-6 hidden">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white border border-stone-200 rounded-2xl p-4">
+        <div class="text-xs text-stone-500">إجمالي الطلبات المسجلة</div>
+        <div id="statOrdersCount" class="text-2xl font-extrabold mt-1">0</div>
+      </div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-4">
+        <div class="text-xs text-stone-500">إجمالي مبيعات الفواتير الموحدة</div>
+        <div id="statSalesTotal" class="text-2xl font-extrabold mt-1">0 ج.م</div>
+      </div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-4">
+        <div class="text-xs text-stone-500">أوامر الاستلام المقسّمة على التجار</div>
+        <div id="statPickupsCount" class="text-2xl font-extrabold mt-1">0</div>
+      </div>
+    </div>
+
+    <!-- أوامر الاستلام المقسّمة تلقائياً حسب التاجر -->
+    <div class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+      <div>
+        <h2 class="text-lg font-extrabold">أوامر الاستلام المقسّمة على التجار (Merchant Pickup Orders)</h2>
+        <p class="text-xs text-stone-500">كل طلب عميل يتم تقسيمه تلقائياً حسب التاجر المرتبط بكل صنف لتسهيل التجميع والتسليم باسم المنصة.</p>
+      </div>
+      <div id="pickupOrdersList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <p class="text-sm text-stone-400">لا توجد طلبات بعد. جرّب إرسال طلب من واجهة الكافيه / المطعم.</p>
+      </div>
+    </div>
+
+    <!-- سجل الطلبات الموحدة -->
+    <div class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+      <h2 class="text-lg font-extrabold">سجل فواتير العملاء</h2>
+      <div id="adminOrdersList" class="space-y-3">
+        <p class="text-sm text-stone-400">لا توجد فواتير مسجلة حتى الآن.</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // بيانات أولية مضمّنة لضمان عمل الواجهة فوراً حتى لو لم يتصل Supabase بعد
+    const ZONES = [
+      { id: 'mansoura', name_ar: 'المنصورة', delivery_fee: 50, free_delivery_threshold: 2500, schedule: 'يومياً عدا الجمعة' },
+      { id: 'talkha', name_ar: 'طلخا', delivery_fee: 60, free_delivery_threshold: 2500, schedule: 'يومياً عدا الجمعة' },
+      { id: 'senbellawein', name_ar: 'السنبلاوين', delivery_fee: 75, free_delivery_threshold: 3500, schedule: 'الأحد والأربعاء' },
+      { id: 'mit_ghamr', name_ar: 'ميت غمر', delivery_fee: 85, free_delivery_threshold: 4000, schedule: 'الإثنين والخميس' },
+      { id: 'dikernis', name_ar: 'دكرنس', delivery_fee: 85, free_delivery_threshold: 4000, schedule: 'الثلاثاء والسبت' }
+    ];
+
+    const PRODUCTS = [
+      {
+        id: 'p1', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
+        category: 'cafe_dessert', brand: 'Gold Topping', name: 'صوص كراميل مملح (جركن / عبوة)',
+        unitLabel: 'عبوة 1.2 كجم', weightG: 1200, doseG: 20, stock: 'available',
+        tiers: [
+          { minQty: 1, label: '1-5 عبوات', price: 165, cost: 135 },
+          { minQty: 6, label: 'كرتونة (6+)', price: 148, cost: 120 }
+        ]
+      },
+      {
+        id: 'p2', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
+        category: 'cafe_dessert', brand: 'ChocoPro', name: 'صوص شوكولاتة بالحليب للوافل والكريب',
+        unitLabel: 'عبوة 1 كجم', weightG: 1000, doseG: 25, stock: 'available',
+        tiers: [
+          { minQty: 1, label: '1-5 عبوات', price: 180, cost: 148 },
+          { minQty: 6, label: 'كرتونة (6+)', price: 160, cost: 130 }
+        ]
+      },
+      {
+        id: 'p3', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
+        category: 'restaurant', brand: 'ChefLine', name: 'صوص سموكي برجر / جالون مطاعم',
+        unitLabel: 'جركن 3.5 كجم', weightG: 3500, doseG: 30, stock: 'limited',
+        tiers: [
+          { minQty: 1, label: '1-3 جراكن', price: 420, cost: 355 },
+          { minQty: 4, label: '4+ جراكن', price: 385, cost: 325 }
+        ]
+      },
+      {
+        id: 'p4', merchantId: 'm3', merchantName: 'مورد مستلزمات الكافيه والبمبات',
+        category: 'pumps_bottles', brand: 'BarEquip', name: 'بمب صوصات ستانلس/بلاستيك عملي + زجاجة ضغط',
+        unitLabel: 'طقم 6 قطع', weightG: null, doseG: null, stock: 'available',
+        tiers: [
+          { minQty: 1, label: '1-4 أطقم', price: 290, cost: 230 },
+          { minQty: 5, label: '5+ أطقم', price: 255, cost: 200 }
+        ]
+      },
+      {
+        id: 'p5', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
+        category: 'bundles', brand: 'باقة المنصة', name: 'باقة الكافيه والوافل المتكاملة (كراميل + شوكولاتة + بمب)',
+        unitLabel: 'باقة كاملة', weightG: 2200, doseG: 20, stock: 'available',
+        tiers: [
+          { minQty: 1, label: 'باقة', price: 540, cost: 445 },
+          { minQty: 3, label: '3+ باقات', price: 505, cost: 410 }
+        ]
+      }
+    ];
+
+    let state = {
+      selectedZoneId: ZONES[0].id,
+      category: 'all',
+      cart: [],
+      orders: JSON.parse(localStorage.getItem('b2b_sauces_orders') || '[]'),
+      lastOrder: JSON.parse(localStorage.getItem('b2b_sauces_last_order') || 'null')
+    };
+
+    function getActiveTier(product, qty) {
+      const sorted = [...product.tiers].sort((a, b) => b.minQty - a.minQty);
+      return sorted.find(t => qty >= t.minQty) || product.tiers[0];
     }
 
-    const pickup = grouped.get(item.product.merchantId)!;
-    pickup.items.push({
-      productId: item.product.id,
-      nameAr: item.product.nameAr,
-      brand: item.product.brand,
-      qty: item.qty,
-      merchantCost: tier.merchantCost,
-      lineCost,
-    });
-    pickup.merchantPayoutTotal += lineCost;
-  }
+    function getDoseCost(product, qty) {
+      if (!product.weightG || !product.doseG) return null;
+      const tier = getActiveTier(product, qty);
+      const doses = (product.weightG * qty) / product.doseG;
+      return doses > 0 ? ((tier.price * qty) / doses).toFixed(2) : null;
+    }
 
-  return Array.from(grouped.values());
-}
+    function getZone() {
+      return ZONES.find(z => z.id === state.selectedZoneId) || ZONES[0];
+    }
+
+    function calcSubtotal() {
+      return state.cart.reduce((sum, item) => {
+        const tier = getActiveTier(item.product, item.qty);
+        return sum + tier.price * item.qty;
+      }, 0);
+    }
+
+    function calcDelivery(subtotal) {
+      const zone = getZone();
+      if (subtotal <= 0) return 0;
+      if (zone.free_delivery_threshold && subtotal >= zone.free_delivery_threshold) return 0;
+      return zone.delivery_fee;
+    }
+
+    function initZones() {
+      const select = document.getElementById('zoneSelect');
+      select.innerHTML = ZONES.map(z => `<option value="${z.id}">${z.name_ar}</option>`).join('');
+      select.value = state.selectedZoneId;
+      handleZoneChange();
+    }
+
+    function handleZoneChange() {
+      state.selectedZoneId = document.getElementById('zoneSelect').value;
+      const zone = getZone();
+      document.getElementById('zoneInfoText').textContent =
+        `التوصيل إلى ${zone.name_ar}: ${zone.delivery_fee} ج.م — مجاني للطلبات من ${zone.free_delivery_threshold} ج.م (${zone.schedule}).`;
+      renderCart();
+    }
+
+    function filterCategory(cat) {
+      state.category = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        const active = btn.dataset.cat === cat;
+        btn.className = active
+          ? 'cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-white'
+          : 'cat-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-700';
+      });
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const list = PRODUCTS.filter(p => {
+        const catMatch = state.category === 'all' || p.category === state.category;
+        const text = `${p.brand} ${p.name} ${p.unitLabel}`.toLowerCase();
+        const searchMatch = !q || text.includes(q);
+        return catMatch && searchMatch;
+      });
+
+      const stockMap = {
+        available: ['متاح للتوريد', 'bg-emerald-50 text-emerald-700'],
+        limited: ['كمية محدودة', 'bg-amber-50 text-amber-700'],
+        out_of_stock: ['غير متاح حالياً', 'bg-rose-50 text-rose-700']
+      };
+
+      document.getElementById('productsGrid').innerHTML = list.map(p => {
+        const existing = state.cart.find(c => c.product.id === p.id);
+        const qty = existing ? existing.qty : 1;
+        const tier = getActiveTier(p, qty);
+        const doseCost = getDoseCost(p, qty);
+        const [stockText, stockClass] = stockMap[p.stock] || stockMap.available;
+
+        return `
+          <div class="bg-white border border-stone-200 rounded-2xl p-4 flex flex-col justify-between gap-3">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <span class="text-xs font-bold text-amber-700">${p.brand}</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${stockClass}">${stockText}</span>
+              </div>
+              <h3 class="font-extrabold text-stone-900 text-sm">${p.name}</h3>
+              <p class="text-xs text-stone-500 mt-0.5">${p.unitLabel}</p>
+
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                ${p.tiers.map(t => `<span class="text-[11px] bg-stone-100 text-stone-700 px-2 py-1 rounded-lg">${t.label}: <b>${t.price} ج.م</b></span>`).join('')}
+              </div>
+
+              ${doseCost ? `<p class="text-[11px] text-stone-500 mt-2">تقدير تكلفة الجرعة/البمب (~${p.doseG} جم): <b>${doseCost} ج.م</b></p>` : ''}
+            </div>
+
+            <div class="flex items-center justify-between border-t border-stone-100 pt-3">
+              <div>
+                <span class="text-xs text-stone-400">سعر الوحدة:</span>
+                <span class="text-base font-extrabold text-stone-900">${tier.price} ج.م</span>
+              </div>
+              <button ${p.stock === 'out_of_stock' ? 'disabled' : ''} onclick="addToCart('${p.id}')"
+                class="bg-stone-900 disabled:bg-stone-300 hover:bg-stone-800 text-white text-xs font-bold px-4 py-2 rounded-xl">
+                إضافة للفاتورة
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addToCart(productId) {
+      const product = PRODUCTS.find(p => p.id === productId);
+      if (!product) return;
+      const found = state.cart.find(c => c.product.id === productId);
+      if (found) found.qty += 1;
+      else state.cart.push({ product, qty: 1 });
+      renderCart();
+    }
+
+    function changeQty(productId, delta) {
+      const idx = state.cart.findIndex(c => c.product.id === productId);
+      if (idx === -1) return;
+      state.cart[idx].qty += delta;
+      if (state.cart[idx].qty <= 0) state.cart.splice(idx, 1);
+      renderCart();
+    }
+
+    function renderCart() {
+      const container = document.getElementById('cartItemsContainer');
+      const totalItems = state.cart.reduce((s, i) => s + i.qty, 0);
+      document.getElementById('cartCountBadge').textContent = `${totalItems} أصناف`;
+
+      if (!state.cart.length) {
+        container.innerHTML = `<p class="text-xs text-stone-400 text-center py-6">السلة فارغة — أضف أصنافاً من الكتالوج لبدء الفاتورة.</p>`;
+      } else {
+        container.innerHTML = state.cart.map(item => {
+          const tier = getActiveTier(item.product, item.qty);
+          const lineTotal = tier.price * item.qty;
+          return `
+            <div class="border border-stone-200 rounded-xl p-2.5 flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="font-bold text-xs truncate">${item.product.name}</div>
+                <div class="text-[11px] text-stone-500">${tier.price} ج.م × ${item.qty} = <b>${lineTotal} ج.م</b></div>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button onclick="changeQty('${item.product.id}', -1)" class="w-6 h-6 rounded-lg bg-stone-100 font-bold">-</button>
+                <span class="px-1.5 text-xs font-bold">${item.qty}</span>
+                <button onclick="changeQty('${item.product.id}', 1)" class="w-6 h-6 rounded-lg bg-stone-100 font-bold">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const subtotal = calcSubtotal();
+      const delivery = calcDelivery(subtotal);
+      const total = subtotal + delivery;
+
+      document.getElementById('subtotalText').textContent = `${subtotal} ج.م`;
+      document.getElementById('deliveryText').textContent = delivery === 0 && subtotal > 0 ? 'مجاني' : `${delivery} ج.م`;
+      document.getElementById('totalText').textContent = `${total} ج.م`;
+    }
+
+    function buildPickupOrders(items) {
+      const map = new Map();
+      for (const item of items) {
+        const tier = getActiveTier(item.product, item.qty);
+        const lineCost = tier.cost * item.qty;
+        if (!map.has(item.product.merchantId)) {
+          map.set(item.product.merchantId, {
+            merchantId: item.product.merchantId,
+            merchantName: item.product.merchantName,
+            payoutTotal: 0,
+            items: []
+          });
+        }
+        const entry = map.get(item.product.merchantId);
+        entry.items.push({ name: item.product.name, qty: item.qty, cost: tier.cost, lineCost });
+        entry.payoutTotal += lineCost;
+      }
+      return Array.from(map.values());
+    }
+
+    function submitOrder(viaWhatsapp) {
+      if (!state.cart.length) {
+        showBanner('أضف صنفاً واحداً على الأقل إلى الفاتورة الموحدة أولاً.');
+        return;
+      }
+      const venue = document.getElementById('venueNameInput').value.trim() || 'عميل بدون اسم محدد';
+      const phone = document.getElementById('phoneInput').value.trim() || 'غير مسجل';
+      const zone = getZone();
+      const subtotal = calcSubtotal();
+      const delivery = calcDelivery(subtotal);
+      const total = subtotal + delivery;
+      const pickups = buildPickupOrders(state.cart);
+
+      const order = {
+        id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+        createdAt: new Date().toLocaleString('ar-EG'),
+        venue,
+        phone,
+        zoneName: zone.name_ar,
+        subtotal,
+        delivery,
+        total,
+        items: state.cart.map(c => ({
+          productId: c.product.id,
+          name: c.product.name,
+          qty: c.qty,
+          unitPrice: getActiveTier(c.product, c.qty).price
+        })),
+        pickups
+      };
+
+      state.orders.unshift(order);
+      state.lastOrder = order.items;
+      localStorage.setItem('b2b_sauces_orders', JSON.stringify(state.orders));
+      localStorage.setItem('b2b_sauces_last_order', JSON.stringify(state.lastOrder));
+
+      renderLastOrderCard();
+      renderAdmin();
+
+      if (viaWhatsapp) {
+        const lines = [
+          `طلب توريد جديد (${order.id})`,
+          `المنشأة: ${venue} | هاتف: ${phone}`,
+          `المركز: ${zone.name_ar}`,
+          `الأصناف:`,
+          ...order.items.map(i => `- ${i.name} × ${i.qty} (${i.unitPrice * i.qty} ج.م)`),
+          `الإجمالي المستحق: ${total} ج.م`
+        ];
+        const url = `https://wa.me/?text=${encodeURIComponent(lines.join('\n'))}`;
+        window.open(url, '_blank');
+      } else {
+        showBanner(`تم تسجيل الفاتورة الموحدة رقم ${order.id} وتقسيم أوامر الاستلام على التجار في لوحة الإدارة.`);
+      }
+
+      state.cart = [];
+      renderCart();
+    }
+
+    function renderLastOrderCard() {
+      const btn = document.getElementById('reorderBtn');
+      const summary = document.getElementById('lastOrderSummary');
+      if (state.lastOrder && state.lastOrder.length) {
+        btn.disabled = false;
+        summary.textContent = `آخر فاتورة تحتوي على ${state.lastOrder.length} أصناف مختلفة.`;
+      } else {
+        btn.disabled = true;
+        summary.textContent = 'لا توجد فاتورة سابقة محفوظة على هذا الجهاز بعد.';
+      }
+    }
+
+    function reorderLastInvoice() {
+      if (!state.lastOrder || !state.lastOrder.length) return;
+      state.cart = [];
+      for (const saved of state.lastOrder) {
+        const prod = PRODUCTS.find(p => p.id === saved.productId);
+        if (prod) state.cart.push({ product: prod, qty: saved.qty });
+      }
+      renderCart();
+      showBanner('تم تحميل أصناف آخر فاتورة في السلة مع إمكانية التعديل.');
+    }
+
+    function renderAdmin() {
+      const totalSales = state.orders.reduce((s, o) => s + o.total, 0);
+      const totalPickups = state.orders.reduce((s, o) => s + o.pickups.length, 0);
+      document.getElementById('statOrdersCount').textContent = state.orders.length;
+      document.getElementById('statSalesTotal').textContent = `${totalSales} ج.م`;
+      document.getElementById('statPickupsCount').textContent = totalPickups;
+
+      const allPickups = state.orders.flatMap(o => o.pickups.map(p => ({ ...p, orderId: o.id, zoneName: o.zoneName })));
+      document.getElementById('pickupOrdersList').innerHTML = allPickups.length
+        ? allPickups.map(pk => `
+          <div class="border border-stone-200 rounded-xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-sm text-stone-900">${pk.merchantName}</span>
+              <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg font-bold">طلب ${pk.orderId} • ${pk.zoneName}</span>
+            </div>
+            <ul class="text-xs text-stone-700 space-y-1">
+              ${pk.items.map(i => `<li>• ${i.name} — كمية: <b>${i.qty}</b> (تكلفة التاجر: ${i.lineCost} ج.م)</li>`).join('')}
+            </ul>
+            <div class="text-xs font-bold text-stone-900 border-t border-stone-100 pt-2">إجمالي مستحق للتاجر: ${pk.payoutTotal} ج.م</div>
+          </div>
+        `).join('')
+        : `<p class="text-sm text-stone-400">لا توجد أوامر استلام بعد.</p>`;
+
+      document.getElementById('adminOrdersList').innerHTML = state.orders.length
+        ? state.orders.map(o => `
+          <div class="border border-stone-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div class="font-extrabold text-sm">${o.id} — ${o.venue} (${o.zoneName})</div>
+              <div class="text-xs text-stone-500">${o.createdAt} • هاتف: ${o.phone}</div>
+            </div>
+            <div class="text-left">
+              <div class="text-sm font-extrabold">${o.total} ج.م</div>
+              <div class="text-[11px] text-stone-500">أصناف: ${o.subtotal} ج.م + توصيل: ${o.delivery} ج.م</div>
+            </div>
+          </div>
+        `).join('')
+        : `<p class="text-sm text-stone-400">لا توجد فواتير مسجلة حتى الآن.</p>`;
+    }
+
+    function switchTab(tab) {
+      const isClient = tab === 'client';
+      document.getElementById('clientView').classList.toggle('hidden', !isClient);
+      document.getElementById('adminView').classList.toggle('hidden', isClient);
+      document.getElementById('tabClientBtn').className = isClient
+        ? 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-900 text-white'
+        : 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-100 text-stone-700 hover:bg-stone-200';
+      document.getElementById('tabAdminBtn').className = !isClient
+        ? 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-900 text-white'
+        : 'px-4 py-2 rounded-xl text-sm font-bold bg-stone-100 text-stone-700 hover:bg-stone-200';
+    }
+
+    function showBanner(msg) {
+      const banner = document.getElementById('statusBanner');
+      document.getElementById('statusBannerText').textContent = msg;
+      banner.classList.remove('hidden');
+    }
+
+    initZones();
+    renderProducts();
+    renderCart();
+    renderLastOrderCard();
+    renderAdmin();
+  </script>
+</body>
+</html>
