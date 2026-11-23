@@ -14,10 +14,9 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- الشريط العلوي بنمط المتاجر الكبرى (Amazon-style Header) -->
+  <!-- الشريط العلوي -->
   <header class="sticky top-0 z-40 bg-stone-900 text-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-wrap items-center gap-3">
-      <!-- الشعار -->
       <div class="flex items-center gap-2 shrink-0 cursor-pointer" onclick="switchTab('client'); filterCategory('all');">
         <div class="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 font-black flex items-center justify-center text-lg">ص</div>
         <div>
@@ -27,7 +26,7 @@
       </div>
 
       <!-- مُحدّد المركز في الدقهلية -->
-      <div class="bg-stone-800 hover:bg-stone-750 border border-stone-700 rounded-xl px-3 py-1.5 flex items-center gap-2 shrink-0">
+      <div class="bg-stone-800 border border-stone-700 rounded-xl px-3 py-1.5 flex items-center gap-2 shrink-0">
         <span class="text-amber-400 text-xs">📍</span>
         <div class="text-right">
           <div class="text-[10px] text-stone-400 leading-none">التوصيل إلى</div>
@@ -92,7 +91,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-8 bg-gradient-to-l from-stone-900 via-stone-800 to-amber-950 text-white rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span class="inline-block bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md mb-1.5">فاتورة واحدة • بدون حد أدنى معقد</span>
+          <span class="inline-block bg-amber-500/20 text-amber-300 text-[11px] font-extrabold px-2.5 py-0.5 rounded-md mb-1.5">فاتورة واحدة • عروض وخصومات جملة</span>
           <h1 class="text-lg md:text-2xl font-black">توريد جملة للصوصات ومستلزمات التشغيل في الدقهلية</h1>
           <p class="text-xs text-stone-300 mt-1">اجمع طلبك من مختلف البراندات في سلة واحدة واستلم بفاتورة موحدة باسم المنصة.</p>
         </div>
@@ -116,10 +115,9 @@
     <!-- هيكل المتجر: فلاتر جانبية + شبكة المنتجات -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-      <!-- عمود الفلاتر الجانبي (Amazon Sidebar) -->
       <aside class="lg:col-span-3 bg-white border border-stone-200 rounded-2xl p-4 space-y-5 hidden lg:block sticky top-28">
         <div>
-          <h3 class="text-xs font-black text-stone-900 uppercase tracking-wide mb-2.5">الأقسام</h3>
+          <h3 class="text-xs font-black text-stone-900 mb-2.5">الأقسام</h3>
           <ul class="space-y-1.5 text-xs font-bold text-stone-600">
             <li><button onclick="filterCategory('all')" class="hover:text-amber-700">• كل المنتجات والباقات</button></li>
             <li><button onclick="filterCategory('cafe_dessert')" class="hover:text-amber-700">• صوصات الكافيه والوافل والكريب</button></li>
@@ -143,7 +141,6 @@
         </div>
       </aside>
 
-      <!-- شبكة بطاقات المنتجات -->
       <section class="lg:col-span-9 space-y-3">
         <div class="bg-white border border-stone-200 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs">
           <span id="resultsCountText" class="font-bold text-stone-600">عرض جميع الأصناف</span>
@@ -159,7 +156,7 @@
     </div>
   </main>
 
-  <!-- ================= درج السلة الموحدة (Slide-over Cart Drawer) ================= -->
+  <!-- ================= درج السلة الموحدة ================= -->
   <div id="cartDrawerBackdrop" onclick="closeCartDrawer()" class="fixed inset-0 bg-black/50 z-50 hidden"></div>
   <aside id="cartDrawer" class="fixed top-0 left-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform -translate-x-full transition-transform duration-200 flex flex-col">
     <div class="p-4 bg-stone-900 text-white flex items-center justify-between">
@@ -170,7 +167,6 @@
       <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-lg bg-stone-800 hover:bg-stone-700 text-white font-bold">✕</button>
     </div>
 
-    <!-- شريط التقدم للتوصيل المجاني -->
     <div id="freeDeliveryProgressBox" class="bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-xs">
       <div id="freeDeliveryText" class="font-bold text-amber-900 mb-1.5"></div>
       <div class="w-full h-2 bg-amber-200 rounded-full overflow-hidden">
@@ -178,10 +174,8 @@
       </div>
     </div>
 
-    <!-- عناصر السلة -->
     <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
 
-    <!-- بيانات العميل والإجمالي -->
     <div class="border-t border-stone-200 p-4 bg-stone-50 space-y-3">
       <div class="grid grid-cols-1 gap-2">
         <input id="venueNameInput" type="text" placeholder="اسم الكافيه أو المطعم *" class="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-stone-900" />
@@ -201,27 +195,127 @@
     </div>
   </aside>
 
-  <!-- ================= لوحة تحكم الإدارة (Admin Dashboard) ================= -->
+  <!-- ================= لوحة تحكم الإدارة ================= -->
   <section id="adminView" class="max-w-7xl w-full mx-auto px-4 py-6 space-y-6 hidden flex-1">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h2 class="text-xl font-black text-stone-900">لوحة تشغيل المنصة وتقسيم أوامر الاستلام</h2>
-        <p class="text-xs text-stone-500">يتم تقسيم كل فاتورة عميل تلقائياً إلى أوامر استلام منفصلة لكل تاجر خلف الكواليس</p>
+        <h2 class="text-xl font-black text-stone-900">لوحة تشغيل المنصة وإدارة الكتالوج وأوامر الاستلام</h2>
+        <p class="text-xs text-stone-500">أضف منتجات بالصور ونسب الخصم وتدرج الأسعار، وتابع أوامر الاستلام المقسّمة على التجار</p>
       </div>
       <button onclick="switchTab('client')" class="bg-stone-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl">العودة لواجهة المتجر</button>
     </div>
 
+    <!-- مؤشرات الأداء -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي الطلبات المسجلة</div><div id="statOrdersCount" class="text-2xl font-black mt-1">0</div></div>
       <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">إجمالي مبيعات الفواتير الموحدة</div><div id="statSalesTotal" class="text-2xl font-black mt-1">0 ج.م</div></div>
       <div class="bg-white border border-stone-200 rounded-2xl p-4"><div class="text-xs text-stone-500">أوامر الاستلام المقسّمة على التجار</div><div id="statPickupsCount" class="text-2xl font-black mt-1">0</div></div>
     </div>
 
+    <!-- نموذج إضافة منتج جديد للكتالوج -->
+    <form id="addProductForm" onsubmit="handleAddProduct(event)" class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+        <div>
+          <h3 class="text-base font-black text-stone-900">➕ إضافة منتج جديد للكتالوج</h3>
+          <p class="text-xs text-stone-500">تُحسب نسبة الخصم تلقائياً عند إدخال "السعر قبل الخصم" أعلى من "سعر الوحدة الحالي"</p>
+        </div>
+        <span id="liveDiscountPreview" class="text-xs font-black px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 hidden"></span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">اسم الصنف *</label>
+          <input id="newProdName" required type="text" placeholder="مثال: صوص لوتس بسكويت للوافل" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">البراند *</label>
+          <input id="newProdBrand" required type="text" placeholder="مثال: LotusPro" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">القسم</label>
+          <select id="newProdCategory" class="w-full border border-stone-300 rounded-xl px-3 py-2 bg-white focus:outline-none focus:border-stone-900">
+            <option value="cafe_dessert">صوصات الكافيه والوافل</option>
+            <option value="restaurant">صوصات المطاعم والفاست فود</option>
+            <option value="pumps_bottles">البمبات وعبوات الضغط</option>
+            <option value="bundles">باقات التوفير المجمعة</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">حجم / وصف العبوة *</label>
+          <input id="newProdUnitLabel" required type="text" placeholder="مثال: عبوة 1 كجم / كرتونة 6" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">سعر البيع الحالي (ج.م) *</label>
+          <input id="newProdPrice" oninput="updateLiveDiscountBadge()" required type="number" step="0.5" min="1" placeholder="190" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">السعر قبل الخصم (اختياري)</label>
+          <input id="newProdComparePrice" oninput="updateLiveDiscountBadge()" type="number" step="0.5" min="0" placeholder="225" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">سعر الكرتونة / الكميات (ج.م)</label>
+          <input id="newProdBulkPrice" type="number" step="0.5" min="0" placeholder="170 (اختياري)" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">تكلفة التاجر للوحدة (ج.م) *</label>
+          <input id="newProdCost" required type="number" step="0.5" min="0" placeholder="150" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label class="block font-bold text-stone-700 mb-1">رابط صورة حقيقية للمنتج (URL)</label>
+          <input id="newProdImage" type="url" placeholder="https://images.unsplash.com/..." class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">التاجر المسؤول عن التوريد</label>
+          <select id="newProdMerchant" class="w-full border border-stone-300 rounded-xl px-3 py-2 bg-white focus:outline-none focus:border-stone-900">
+            <option value="m1|تاجر جملة صوصات الحلويات - المنصورة">تاجر جملة صوصات الحلويات - المنصورة</option>
+            <option value="m2|موزع صوصات المطاعم والفود سيرفيس">موزع صوصات المطاعم والفود سيرفيس</option>
+            <option value="m3|مورد مستلزمات الكافيه والبمبات">مورد مستلزمات الكافيه والبمبات</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">حالة التوفر</label>
+          <select id="newProdStock" class="w-full border border-stone-300 rounded-xl px-3 py-2 bg-white focus:outline-none focus:border-stone-900">
+            <option value="available">متاح للتوريد</option>
+            <option value="limited">كمية محدودة</option>
+            <option value="out_of_stock">غير متاح حالياً</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">وزن العبوة (جرام - اختياري)</label>
+          <input id="newProdWeight" type="number" min="0" placeholder="1000" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 mb-1">جرعة البمب/الكوب (جرام - اختياري)</label>
+          <input id="newProdDose" type="number" min="0" placeholder="25" class="w-full border border-stone-300 rounded-xl px-3 py-2 focus:outline-none focus:border-stone-900" />
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-1">
+        <button type="submit" class="bg-stone-900 hover:bg-stone-800 text-white font-black text-xs px-6 py-3 rounded-xl">
+          حفظ وإضافة المنتج للمتجر
+        </button>
+      </div>
+    </form>
+
+    <!-- أوامر الاستلام المقسّمة على التجار -->
     <div class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
       <h3 class="text-base font-black">أوامر الاستلام المقسّمة على التجار (Merchant Pickup Orders)</h3>
       <div id="pickupOrdersList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-xs text-stone-400">لا توجد أوامر استلام بعد.</p></div>
     </div>
 
+    <!-- سجل فواتير العملاء -->
     <div class="bg-white border border-stone-200 rounded-2xl p-5 space-y-4">
       <h3 class="text-base font-black">سجل فواتير العملاء الموحدة</h3>
       <div id="adminOrdersList" class="space-y-3"><p class="text-xs text-stone-400">لا توجد فواتير مسجلة حتى الآن.</p></div>
@@ -248,48 +342,56 @@
         id: 'p1', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
         category: 'cafe_dessert', brand: 'Gold Topping', name: 'صوص كراميل مملح فاخر للقهوة والوافل',
         unitLabel: 'عبوة 1.2 كجم', weightG: 1200, doseG: 20, stock: 'available',
-        badgeColor: 'bg-amber-100 text-amber-900', icon: '🍮',
+        imageUrl: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80',
+        compareAtPrice: 195,
         tiers: [{ minQty: 1, label: '1-5 عبوات', price: 165, cost: 135 }, { minQty: 6, label: 'كرتونة (6+)', price: 148, cost: 120 }]
       },
       {
         id: 'p2', merchantId: 'm1', merchantName: 'تاجر جملة صوصات الحلويات - المنصورة',
         category: 'cafe_dessert', brand: 'ChocoPro', name: 'صوص شوكولاتة بالحليب واللوتس للكريب والوافل',
         unitLabel: 'عبوة 1 كجم', weightG: 1000, doseG: 25, stock: 'available',
-        badgeColor: 'bg-stone-200 text-stone-900', icon: '🍫',
+        imageUrl: 'https://images.unsplash.com/photo-1606312619070-d48b4c652a52?auto=format&fit=crop&w=800&q=80',
+        compareAtPrice: 210,
         tiers: [{ minQty: 1, label: '1-5 عبوات', price: 180, cost: 148 }, { minQty: 6, label: 'كرتونة (6+)', price: 160, cost: 130 }]
       },
       {
         id: 'p3', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
         category: 'restaurant', brand: 'ChefLine', name: 'صوص سموكي برجر وتكساس جالون للمطاعم',
         unitLabel: 'جركن 3.5 كجم', weightG: 3500, doseG: 30, stock: 'limited',
-        badgeColor: 'bg-orange-100 text-orange-900', icon: '🍔',
+        imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
+        compareAtPrice: 460,
         tiers: [{ minQty: 1, label: '1-3 جراكن', price: 420, cost: 355 }, { minQty: 4, label: '4+ جراكن', price: 385, cost: 325 }]
       },
       {
         id: 'p4', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
         category: 'restaurant', brand: 'ChefLine', name: 'صوص جبنة شيدر كريمي جاهز للبطاطس والبرجر',
         unitLabel: 'جركن 3 كجم', weightG: 3000, doseG: 35, stock: 'available',
-        badgeColor: 'bg-yellow-100 text-yellow-900', icon: '🧀',
+        imageUrl: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80',
+        compareAtPrice: 390,
         tiers: [{ minQty: 1, label: '1-3 جراكن', price: 390, cost: 330 }, { minQty: 4, label: '4+ جراكن', price: 355, cost: 300 }]
       },
       {
         id: 'p5', merchantId: 'm3', merchantName: 'مورد مستلزمات الكافيه والبمبات',
         category: 'pumps_bottles', brand: 'BarEquip', name: 'طقم بمب صوصات ستانلس عملي + زجاجات ضغط 3 فتحات',
         unitLabel: 'طقم 6 قطع', weightG: null, doseG: null, stock: 'available',
-        badgeColor: 'bg-sky-100 text-sky-900', icon: '🧴',
+        imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80',
+        compareAtPrice: 340,
         tiers: [{ minQty: 1, label: '1-4 أطقم', price: 290, cost: 230 }, { minQty: 5, label: '5+ أطقم', price: 255, cost: 200 }]
       },
       {
         id: 'p6', merchantId: 'm2', merchantName: 'موزع صوصات المطاعم والفود سيرفيس',
         category: 'bundles', brand: 'باقة المنصة', name: 'باقة افتتاح الكافيه والوافل (كراميل + شوكولاتة + طقم بمب)',
         unitLabel: 'باقة متكاملة', weightG: 2200, doseG: 20, stock: 'available',
-        badgeColor: 'bg-emerald-100 text-emerald-900', icon: '📦',
+        imageUrl: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80',
+        compareAtPrice: 635,
         tiers: [{ minQty: 1, label: 'باقة', price: 540, cost: 445 }, { minQty: 3, label: '3+ باقات', price: 505, cost: 410 }]
       }
     ];
 
+    const DEFAULT_IMG_FALLBACK = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80';
+
     let zones = [...FALLBACK_ZONES];
-    let products = [...FALLBACK_PRODUCTS];
+    let products = JSON.parse(localStorage.getItem('b2b_sauces_custom_products') || 'null') || [...FALLBACK_PRODUCTS];
     let state = {
       selectedZoneId: FALLBACK_ZONES[0].id,
       category: 'all',
@@ -301,6 +403,104 @@
     };
 
     const isUuid = (val) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(val || ''));
+
+    function getDiscountPercent(currentPrice, compareAtPrice) {
+      const curr = Number(currentPrice) || 0;
+      const oldP = Number(compareAtPrice) || 0;
+      if (oldP > curr && curr > 0) {
+        return Math.round(((oldP - curr) / oldP) * 100);
+      }
+      return 0;
+    }
+
+    function updateLiveDiscountBadge() {
+      const price = Number(document.getElementById('newProdPrice').value) || 0;
+      const compareAt = Number(document.getElementById('newProdComparePrice').value) || 0;
+      const badge = document.getElementById('liveDiscountPreview');
+      const pct = getDiscountPercent(price, compareAt);
+      if (pct > 0) {
+        badge.textContent = `خصم تلقائي: ${pct}% (وفر ${compareAt - price} ج.م)`;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    async function handleAddProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById('newProdName').value.trim();
+      const brand = document.getElementById('newProdBrand').value.trim();
+      const category = document.getElementById('newProdCategory').value;
+      const unitLabel = document.getElementById('newProdUnitLabel').value.trim();
+      const price = Number(document.getElementById('newProdPrice').value);
+      const compareAtRaw = Number(document.getElementById('newProdComparePrice').value);
+      const bulkPriceRaw = Number(document.getElementById('newProdBulkPrice').value);
+      const cost = Number(document.getElementById('newProdCost').value);
+      const imageUrl = document.getElementById('newProdImage').value.trim() || DEFAULT_IMG_FALLBACK;
+      const [merchantId, merchantName] = document.getElementById('newProdMerchant').value.split('|');
+      const stock = document.getElementById('newProdStock').value;
+      const weightG = Number(document.getElementById('newProdWeight').value) || null;
+      const doseG = Number(document.getElementById('newProdDose').value) || null;
+
+      const tiers = [{ minQty: 1, label: '1-5 وحدات', price, cost }];
+      if (bulkPriceRaw > 0) {
+        tiers.push({ minQty: 6, label: 'كميات/كرتونة (6+)', price: bulkPriceRaw, cost: Math.max(0, cost - 10) });
+      }
+
+      const newProd = {
+        id: 'p-' + Date.now(),
+        merchantId,
+        merchantName,
+        category,
+        brand,
+        name,
+        unitLabel,
+        weightG,
+        doseG,
+        stock,
+        imageUrl,
+        compareAtPrice: compareAtRaw > price ? compareAtRaw : null,
+        tiers
+      };
+
+      products.unshift(newProd);
+      localStorage.setItem('b2b_sauces_custom_products', JSON.stringify(products));
+
+      try {
+        await supabase.from('products').insert({
+          id: newProd.id,
+          merchant_id: merchantId,
+          category,
+          brand,
+          name_ar: name,
+          unit_label: unitLabel,
+          image_url: imageUrl,
+          compare_at_price: newProd.compareAtPrice,
+          unit_weight_g: weightG,
+          default_dose_g: doseG,
+          stock_status: stock,
+          is_active: true
+        });
+        await supabase.from('product_price_tiers').insert(
+          tiers.map((t, idx) => ({
+            id: `${newProd.id}-t${idx + 1}`,
+            product_id: newProd.id,
+            min_qty: t.minQty,
+            tier_label: t.label,
+            unit_price: t.price,
+            merchant_cost: t.cost
+          }))
+        );
+      } catch (err) {
+        console.warn('Supabase product sync note:', err.message);
+      }
+
+      e.target.reset();
+      document.getElementById('liveDiscountPreview').classList.add('hidden');
+      renderBrandFilters();
+      renderProducts();
+      showBanner(`تمت إضافة المنتج "${name}" إلى المتجر بنجاح.`);
+    }
 
     function getActiveTier(product, qty) {
       const sorted = [...product.tiers].sort((a, b) => b.minQty - a.minQty);
@@ -404,30 +604,37 @@
         const activeTier = getActiveTier(p, qty || 1);
         const doseCost = getDoseCost(p, qty || 1);
         const [stockText, stockClass] = stockMap[p.stock] || stockMap.available;
+        const discountPct = getDiscountPercent(activeTier.price, p.compareAtPrice);
 
         return `
           <article class="bg-white border border-stone-200 hover:border-amber-400 rounded-2xl overflow-hidden flex flex-col justify-between transition shadow-2xs">
             <div>
-              <!-- منطقة معاينة المنتج (Product Visual Header) -->
-              <div class="relative bg-stone-50 border-b border-stone-100 p-4 flex items-center justify-between">
-                <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-md ${p.badgeColor || 'bg-stone-200 text-stone-800'}">${p.brand}</span>
-                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full border ${stockClass}">${stockText}</span>
+              <!-- صورة المنتج مع شارة الخصم وحالة التوفر -->
+              <div class="relative h-44 bg-stone-100 border-b border-stone-100 overflow-hidden">
+                <img src="${p.imageUrl || DEFAULT_IMG_FALLBACK}" alt="${p.name}" loading="lazy"
+                  onerror="this.onerror=null;this.src='${DEFAULT_IMG_FALLBACK}';"
+                  class="w-full h-full object-cover" />
+                <div class="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                  <span class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-md bg-stone-900/85 text-white">${p.brand}</span>
+                  ${discountPct > 0 ? `<span class="text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-600 text-white shadow-xs">خصم ${discountPct}%</span>` : ''}
+                </div>
+                <span class="absolute bottom-2.5 left-2.5 text-[11px] font-bold px-2 py-0.5 rounded-full border bg-white/95 ${stockClass}">${stockText}</span>
               </div>
 
               <div class="p-4 space-y-2.5">
-                <div class="flex items-start gap-2.5">
-                  <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-2xl shrink-0">${p.icon || '🧴'}</div>
-                  <div>
-                    <h3 class="font-extrabold text-stone-900 text-sm leading-snug">${p.name}</h3>
-                    <div class="text-xs text-stone-500 mt-0.5">العبوة: <b class="text-stone-700">${p.unitLabel}</b></div>
-                  </div>
+                <div>
+                  <h3 class="font-extrabold text-stone-900 text-sm leading-snug">${p.name}</h3>
+                  <div class="text-xs text-stone-500 mt-0.5">العبوة: <b class="text-stone-700">${p.unitLabel}</b></div>
                 </div>
 
-                <!-- السعر الرئيسي وشرائح الجملة -->
+                <!-- السعر الحالي + السعر قبل الخصم + شرائح الجملة -->
                 <div class="pt-1">
-                  <div class="flex items-baseline gap-1.5">
+                  <div class="flex items-baseline gap-2">
                     <span class="text-xl font-black text-stone-900">${activeTier.price}</span>
-                    <span class="text-xs font-bold text-stone-600">ج.م / للوحدة</span>
+                    <span class="text-xs font-bold text-stone-600">ج.م</span>
+                    ${p.compareAtPrice && Number(p.compareAtPrice) > activeTier.price ? `
+                      <span class="text-xs font-bold text-stone-400 line-through">${p.compareAtPrice} ج.م</span>
+                    ` : ''}
                   </div>
                   <div class="mt-2 flex flex-wrap gap-1.5">
                     ${p.tiers.map(t => `
@@ -446,7 +653,7 @@
               </div>
             </div>
 
-            <!-- زر الإضافة أو العدّاد المباشر (Amazon-style Add / Stepper) -->
+            <!-- زر الإضافة أو العدّاد المباشر -->
             <div class="p-4 pt-0">
               ${qty > 0 ? `
                 <div class="flex items-center justify-between bg-amber-50 border-2 border-amber-500 rounded-xl px-3 py-1.5">
@@ -523,7 +730,6 @@
       document.getElementById('deliveryText').textContent = delivery === 0 && subtotal > 0 ? 'مجاني 🎉' : `${delivery} ج.م`;
       document.getElementById('totalText').textContent = `${subtotal + delivery} ج.م`;
 
-      // شريط التقدم للتوصيل المجاني
       const threshold = zone.free_delivery_threshold || 0;
       const bar = document.getElementById('freeDeliveryBar');
       const txt = document.getElementById('freeDeliveryText');
@@ -771,15 +977,16 @@
         }
 
         if (!prodsRes.error && prodsRes.data?.length) {
-          products = prodsRes.data.map(p => ({
+          const remoteProds = prodsRes.data.map(p => ({
             id: p.id, merchantId: p.merchant_id || p.merchants?.id || 'unassigned',
             merchantName: p.merchants?.name || 'تاجر غير محدد',
             category: p.category, brand: p.brand, name: p.name_ar,
             unitLabel: p.unit_label,
+            imageUrl: p.image_url || DEFAULT_IMG_FALLBACK,
+            compareAtPrice: p.compare_at_price !== null ? Number(p.compare_at_price) : null,
             weightG: p.unit_weight_g !== null ? Number(p.unit_weight_g) : null,
             doseG: p.default_dose_g !== null ? Number(p.default_dose_g) : null,
             stock: p.stock_status || 'available',
-            icon: p.category === 'restaurant' ? '🍔' : p.category === 'pumps_bottles' ? '🧴' : p.category === 'bundles' ? '📦' : '🍮',
             tiers: (p.product_price_tiers || [])
               .sort((a, b) => Number(a.min_qty) - Number(b.min_qty))
               .map(t => ({
@@ -787,6 +994,9 @@
                 price: Number(t.unit_price) || 0, cost: Number(t.merchant_cost) || 0
               }))
           }));
+          if (remoteProds.length) {
+            products = remoteProds;
+          }
         }
       } catch (err) {
         console.warn('Fallback active:', err.message);
@@ -796,7 +1006,8 @@
     Object.assign(window, {
       handleZoneChange, filterCategory, selectBrand, renderProducts,
       addToCart, changeQty, openCartDrawer, closeCartDrawer,
-      submitOrder, reorderLastInvoice, toggleAdminView, switchTab
+      submitOrder, reorderLastInvoice, toggleAdminView, switchTab,
+      updateLiveDiscountBadge, handleAddProduct
     });
 
     initZones();
