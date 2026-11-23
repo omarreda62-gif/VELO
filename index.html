@@ -229,94 +229,6 @@
     const SUPABASE_ANON_KEY = "sb_publishable_UbPBIQ3oZReiJA3ON8xyew_56AmPao6";
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // عدّل هذه القوائم لتطابق مورديك وأسعارك الفعلية في الدقهلية
-    const SEED_SUPPLIERS = [
-      { id: "sup-1", name: "موزع كافيهات الدلتا", phone: "01000000011", pickup_mode: "Milk-Run (تجميع)" },
-      { id: "sup-2", name: "موزع صوصات المطاعم", phone: "01000000022", pickup_mode: "تجميع / تسليم مباشر" },
-      { id: "sup-3", name: "مورد البمبات والعبوات", phone: "01000000033", pickup_mode: "تجميع" }
-    ];
-
-    const SEED_PRODUCTS = [
-      {
-        id: "p-1",
-        name: "صوص كراميل مملح (Salted Caramel)",
-        brand: "CremaPro",
-        category: "cafe_desserts",
-        unit: "جركن 2.5 كجم",
-        supplier_id: "sup-1",
-        cost_price: 245,
-        serving_label: "بمب 15 جم للكوب",
-        servings_per_unit: 166,
-        availability: "available",
-        tiers: [{ min: 1, max: 3, price: 295 }, { min: 4, max: 9, price: 275 }, { min: 10, max: null, price: 258 }]
-      },
-      {
-        id: "p-2",
-        name: "صوص شوكولاتة داكنة للوافل والكريب",
-        brand: "ChocoLab",
-        category: "cafe_desserts",
-        unit: "جركن 2.5 كجم",
-        supplier_id: "sup-1",
-        cost_price: 260,
-        serving_label: "جرعة 25 جم للوافل",
-        servings_per_unit: 100,
-        availability: "available",
-        tiers: [{ min: 1, max: 3, price: 315 }, { min: 4, max: 9, price: 292 }, { min: 10, max: null, price: 274 }]
-      },
-      {
-        id: "p-3",
-        name: "صوص جبنة شيدر كريمي للبطاطس والبرجر",
-        brand: "CheddarCo",
-        category: "restaurant_sauces",
-        unit: "جركن 3 كجم",
-        supplier_id: "sup-2",
-        cost_price: 310,
-        serving_label: "جرعة 25 جم للوجبة",
-        servings_per_unit: 120,
-        availability: "available",
-        tiers: [{ min: 1, max: 2, price: 375 }, { min: 3, max: 7, price: 348 }, { min: 8, max: null, price: 328 }]
-      },
-      {
-        id: "p-4",
-        name: "صوص سموكي باربيكيو وشيلي للبرجر",
-        brand: "GrillMaster",
-        category: "restaurant_sauces",
-        unit: "جركن 4 كجم",
-        supplier_id: "sup-2",
-        cost_price: 290,
-        serving_label: "جرعة 30 جم للوجبة",
-        servings_per_unit: 133,
-        availability: "limited",
-        tiers: [{ min: 1, max: 2, price: 350 }, { min: 3, max: 7, price: 325 }, { min: 8, max: null, price: 305 }]
-      },
-      {
-        id: "p-5",
-        name: "بمب صوص (10 مل / ضغطة) للجراكن",
-        brand: "DispenseX",
-        category: "pumps_bottles",
-        unit: "كرتونة 12 بمب",
-        supplier_id: "sup-3",
-        cost_price: 210,
-        serving_label: "ضغطة ثابتة 10 مل",
-        servings_per_unit: 12,
-        availability: "available",
-        tiers: [{ min: 1, max: 2, price: 260 }, { min: 3, max: null, price: 235 }]
-      },
-      {
-        id: "p-6",
-        name: "باقة الكافيهات المتكاملة (6 جراكن صوص + 2 بمب)",
-        brand: "باقات الجملة",
-        category: "bundles",
-        unit: "باقة متكاملة",
-        supplier_id: "sup-1",
-        cost_price: 1580,
-        serving_label: "توفير فوري عن الشراء الفردي",
-        servings_per_unit: 750,
-        availability: "available",
-        tiers: [{ min: 1, max: 2, price: 1850 }, { min: 3, max: null, price: 1740 }]
-      }
-    ];
-
     const CATEGORY_LABELS = {
       all: "كل الأصناف",
       cafe_desserts: "صوصات كافيهات وحلويات",
@@ -342,10 +254,17 @@
     }
 
     async function loadCatalogAndZones() {
-      const [{ data: zData }, { data: pData }] = await Promise.all([
-        sb.from("governorate_zones").select("*").order("name"),
+      const [{ data: zData, error: zErr }, { data: pData, error: pErr }] = await Promise.all([
+        sb.from("governorate_zones").select("*").order("sort_order", { ascending: true }),
         sb.from("products").select("*").order("created_at", { ascending: false })
       ]);
+
+      if (zErr || pErr) {
+        document.getElementById("productsGrid").innerHTML =
+          `<div class="card" style="grid-column:1/-1; color:var(--off-fg); font-size:13px;">تعذر تحميل البيانات من Supabase (${(zErr || pErr).message}). تأكد من تشغيل سكربت الجداول والسياسات في SQL Editor.</div>`;
+        return;
+      }
+
       zones = zData || [];
       products = pData || [];
       if (zones.length && !zones.some(z => z.id === selectedZoneId)) selectedZoneId = zones[0].id;
@@ -379,6 +298,11 @@
     function renderProducts() {
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
       const list = products.filter(p => (activeCategory === "all" || p.category === activeCategory) && (!q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)));
+      if (!list.length) {
+        document.getElementById("productsGrid").innerHTML =
+          `<div class="card" style="grid-column:1/-1; text-align:center; color:var(--muted); font-size:13px;">لا توجد أصناف مطابقة حالياً في الكتالوج.</div>`;
+        return;
+      }
       document.getElementById("productsGrid").innerHTML = list.map(p => {
         const inCart = cart.find(c => c.productId === p.id);
         const qty = inCart ? inCart.qty : 0;
@@ -534,7 +458,7 @@
         sb.from("customer_order_items").select("*"),
         sb.from("supplier_purchase_orders").select("*").order("created_at", { ascending: false })
       ]);
-      suppliers = sData || SEED_SUPPLIERS;
+      suppliers = sData || [];
       orders = oData || [];
       document.getElementById("newProdSupplier").innerHTML = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
       renderAdminSplit(poData || [], iData || []);
